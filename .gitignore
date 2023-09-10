@@ -23,7 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# enviroment files
+# environment files
+.env
 .env.*
 *.local
 *.dev
