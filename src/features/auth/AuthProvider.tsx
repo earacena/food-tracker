@@ -1,5 +1,5 @@
-import { SetStateAction, createContext, useEffect, useState } from "react"
-import Keycloak from "keycloak-js"
+import { createContext, useEffect, useState } from "react"
+import Keycloak, { KeycloakProfile } from "keycloak-js"
 
 interface AuthProviderProps {
   children: React.ReactNode
@@ -7,17 +7,23 @@ interface AuthProviderProps {
 
 interface AuthContextType {
   keycloak: Keycloak | null,
-  isAuth: boolean,
-  setAuth: React.Dispatch<SetStateAction<boolean>>
+  userProfile: KeycloakProfile | undefined
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null)
 
 function AuthProvider ({ children }: AuthProviderProps) {
-  const [isAuth, setAuth] = useState<boolean>(false)
   const [keycloak, setKeycloak] = useState<Keycloak | null>(null)
+  const [userProfile, setUserProfile] = useState<KeycloakProfile>()
 
   useEffect(() => {
+    // Retrieve information of authenticated user
+    const fetchUserProfile = async (client: Keycloak) => {
+      const fetchedUserProfile = await client.loadUserProfile()
+      setUserProfile(fetchedUserProfile)
+    }
+
+    // Initialize Keycloak and authenticate user
     const initializeKeycloak = async () => {
       const client = new Keycloak({
         url: import.meta.env.VITE_KEYCLOAK_URL,
@@ -25,20 +31,23 @@ function AuthProvider ({ children }: AuthProviderProps) {
         clientId: import.meta.env.VITE_KEYCLOAK_CLIENT,
       })
 
-      const response = await client.init({
+      await client.init({
         onLoad: 'login-required',
         checkLoginIframe: false,
       })
 
-      setAuth(response)
       setKeycloak(client)
+      
+      if (client.authenticated) {
+        fetchUserProfile(client)
+      }
     }
 
     initializeKeycloak()
   }, [])
 
   return (
-    <AuthContext.Provider value={{keycloak, isAuth, setAuth}}>
+    <AuthContext.Provider value={{ keycloak, userProfile }}>
       {children}
     </AuthContext.Provider>
   )
