@@ -1,17 +1,17 @@
 import { Avatar, AvatarFallback } from "@/components/ui/Avatar"
 import { useContext } from "react"
-import { AuthContext } from "../auth/AuthProvider"
+import { AuthContext } from "../Auth/AuthProvider"
 
-function UserCard () {
+function UserCard() {
   const auth = useContext(AuthContext)
 
   return (
     <>
-      {auth?.userProfile?.username}
+      {auth?.userInfo?.username}
       <Avatar>
         <AvatarFallback>
           <strong>
-            {auth?.userProfile?.username?.at(0)?.toUpperCase()}
+            {auth?.userInfo?.username?.at(0)?.toUpperCase()}
           </strong>
         </AvatarFallback>
       </Avatar>
