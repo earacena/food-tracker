@@ -1,14 +1,14 @@
-import { useContext } from 'react'
+import { Routes, Route } from 'react-router-dom'
+
 import './index.css'
-import { AuthContext } from './features/auth/AuthProvider'
-import { UserCard } from './features/User'
+import Dashboard from './features/Dashboard/Dashboard'
 
 function App() {
-  const auth = useContext(AuthContext)
+
   return (
-    <>
-      {auth?.keycloak?.authenticated ? <UserCard /> : null}
-    </>
+    <Routes>
+      <Route index element={<Dashboard />} />
+    </Routes>
   )
 }
 
