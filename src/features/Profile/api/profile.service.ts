@@ -23,7 +23,7 @@ async function fetchProfileByUserId ({ userId, token }: FetchProfileByUserIdProp
   console.log(responseJson)
   if (!responseJson.success) {
     const errorResponse = zErrorResponse.parse(responseJson)
-    console.log(errorResponse.errorMessage)
+    throw new Error(errorResponse.errorMessage)
   } else {
     const fetchedUserProfile = zProfile.parse(responseJson)
     return fetchedUserProfile
