@@ -7,20 +7,20 @@ interface AuthProviderProps {
 
 interface AuthContextType {
   keycloak: Keycloak | null,
-  userProfile: KeycloakProfile | undefined
+  userInfo: KeycloakProfile | undefined
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null)
 
 function AuthProvider ({ children }: AuthProviderProps) {
   const [keycloak, setKeycloak] = useState<Keycloak | null>(null)
-  const [userProfile, setUserProfile] = useState<KeycloakProfile>()
+  const [userInfo, setUserInfo] = useState<KeycloakProfile>()
 
   useEffect(() => {
     // Retrieve information of authenticated user
-    const fetchUserProfile = async (client: Keycloak) => {
+    const fetchUserKeycloakProfile = async (client: Keycloak) => {
       const fetchedUserProfile = await client.loadUserProfile()
-      setUserProfile(fetchedUserProfile)
+      setUserInfo(fetchedUserProfile)
     }
 
     // Initialize Keycloak and authenticate user
@@ -39,7 +39,7 @@ function AuthProvider ({ children }: AuthProviderProps) {
       setKeycloak(client)
       
       if (client.authenticated) {
-        fetchUserProfile(client)
+        fetchUserKeycloakProfile(client)
       }
     }
 
@@ -47,7 +47,7 @@ function AuthProvider ({ children }: AuthProviderProps) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ keycloak, userProfile }}>
+    <AuthContext.Provider value={{ keycloak, userInfo }}>
       {children}
     </AuthContext.Provider>
   )
