@@ -6,7 +6,7 @@ interface ProfileCardProps {
 
 function ProfileCard({ profile }: ProfileCardProps) {
   return (
-    <div className="flex flex-col border border-red-600 mx-auto my-10 items-center">
+    <div className="flex flex-col mx-auto my-10 items-center">
       <div>
         <span className="text-5xl">
           0000
