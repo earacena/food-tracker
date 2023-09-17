@@ -19,3 +19,18 @@ export const zProfileUpdatableFields = z.object({
 
 export type Profile = z.infer<typeof zProfile>
 export type Profiles = z.infer<typeof zProfiles>
+
+
+export const zProfileFetchResponse = z.object({
+  success: z.boolean(),
+  data: z.object({
+    profile: zProfile
+  })
+})
+
+export const zProfileCreateResponse = z.object({
+  success: z.boolean(),
+  data: z.object({
+    newProfile: zProfile
+  })
+})

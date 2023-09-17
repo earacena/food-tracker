@@ -1,5 +1,5 @@
 import { zErrorResponse } from "@/common.types"
-import { Profile, zProfile } from "../types/profile.types"
+import { Profile, zProfileCreateResponse, zProfileFetchResponse } from "../types/profile.types"
 
 interface FetchProfileByUserIdProps {
   userId: string | undefined,
@@ -30,8 +30,8 @@ async function fetchProfileByUserId ({ userId, token }: FetchProfileByUserIdProp
     const errorResponse = zErrorResponse.parse(responseJson)
     throw new Error(errorResponse.errorMessage)
   } else {
-    const fetchedUserProfile = zProfile.parse(responseJson.data.userProfile)
-    return fetchedUserProfile
+    const profileFetchResponse = zProfileFetchResponse.parse(responseJson)
+    return profileFetchResponse.data.profile
   }
 }
 
@@ -59,8 +59,8 @@ async function create ({ dailyCalorieGoal, userId, token }: CreateProfileProps):
     const errorResponse = zErrorResponse.parse(responseJson)
     throw new Error(errorResponse.errorMessage)
   } else{
-    const newUserProfile = zProfile.parse(responseJson.data.newUserProfile)
-    return newUserProfile
+    const profileCreateResponse = zProfileCreateResponse.parse(responseJson)
+    return profileCreateResponse.data.newProfile
   }
 }
 
