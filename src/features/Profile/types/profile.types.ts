@@ -24,7 +24,7 @@ export type Profiles = z.infer<typeof zProfiles>
 export const zProfileFetchResponse = z.object({
   success: z.boolean(),
   data: z.object({
-    profile: zProfile
+    userProfile: zProfile
   })
 })
 

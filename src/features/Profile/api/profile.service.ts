@@ -31,7 +31,7 @@ async function fetchProfileByUserId ({ userId, token }: FetchProfileByUserIdProp
     throw new Error(errorResponse.errorMessage)
   } else {
     const profileFetchResponse = zProfileFetchResponse.parse(responseJson)
-    return profileFetchResponse.data.profile
+    return profileFetchResponse.data.userProfile
   }
 }
 
