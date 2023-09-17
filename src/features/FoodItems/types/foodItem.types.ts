@@ -12,9 +12,18 @@ export const zFoodItem = z.object({
 
 export const zFoodItems = z.array(zFoodItem)
 
+export type FoodItem = z.infer<typeof zFoodItem>
+export type FoodItems = z.infer<typeof zFoodItems>
+
 export const zFoodItemCreateResponse = z.object({
   success: z.boolean(),
   data: z.object({
     newFoodItem: zFoodItem
   })
 })
+
+export const zFoodItemsFetchByUserIdResponse = z.object({
+  success: z.boolean(),
+  data: z.object({
+    userFoodItems: zFoodItems
+  })
