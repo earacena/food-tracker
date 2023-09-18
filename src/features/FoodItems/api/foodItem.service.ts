@@ -61,7 +61,7 @@ async function findFoodItemsByUserId({ userId, token }: FindFoodItemsByUserIdPro
     return
   }
 
-  const response = await fetch(`/api/foodItems/${userId}`, {
+  const response = await fetch(`/api/foodItems/user/${userId}`, {
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
@@ -73,6 +73,8 @@ async function findFoodItemsByUserId({ userId, token }: FindFoodItemsByUserIdPro
 
   if (!responseJson.success) {
     const errorResponse = zErrorResponse.parse(responseJson)
+
+    // Not found
     throw new Error(errorResponse.errorMessage)
   } else {
     const userFoodItemResponse = zFoodItemsFetchByUserIdResponse.parse(response.json)
@@ -83,3 +85,4 @@ async function findFoodItemsByUserId({ userId, token }: FindFoodItemsByUserIdPro
 export default {
   create,
   findFoodItemsByUserId
+}
