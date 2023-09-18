@@ -1,18 +1,22 @@
+import Meal from "./Meal"
+import { MealEntries } from "./types/mealEntries.types"
 import { Meals } from "./types/meals.types"
 
 interface MealsProps {
   meals: Meals
+  mealEntries: MealEntries
 }
 
-function Meals({ meals }: MealsProps) {
+function Meals({ meals, mealEntries }: MealsProps) {
   return (
-    <ul>
-      {meals.map((m) => (
-        <li key={m.id}>
-          meal item
-        </li>
-      ))}
-    </ul>
+    <>
+      Meals
+      <ul>
+        {meals.map((m) => (
+          <Meal key={m.id} meal={m} mealEntries={mealEntries.filter((me) => me.mealId === m.id)} />
+        ))}
+      </ul>
+    </>
   )
 }
 
