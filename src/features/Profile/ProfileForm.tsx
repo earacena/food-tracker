@@ -37,6 +37,7 @@ function ProfileForm() {
 
       user?.actions.setUserProfile(newProfile)
 
+      logger.log('redirecting to "/"')
       navigate('/')
     } catch (err: unknown) {
       logger.logError(err)
