@@ -27,3 +27,4 @@ export const zFoodItemsFetchByUserIdResponse = z.object({
   data: z.object({
     userFoodItems: zFoodItems
   })
+})
