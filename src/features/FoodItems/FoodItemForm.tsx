@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { SetStateAction, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import { useForm } from 'react-hook-form'
 
@@ -11,8 +11,13 @@ import { Input } from "@/components/ui/Input"
 import logger from "@/utils/Logger"
 import { Button } from "@/components/ui/Button"
 import foodItemService from "./api/foodItem.service"
+import { FoodItems } from "./types/foodItem.types"
 
-function FoodItemForm () {
+interface FoodItemFormProps {
+  setFoodItems: React.Dispatch<SetStateAction<FoodItems>>,
+}
+
+function FoodItemForm ({ setFoodItems }: FoodItemFormProps) {
   const auth = useContext(AuthContext)
 
   const { toast } = useToast()
@@ -29,16 +34,18 @@ function FoodItemForm () {
     }
   })
 
-  function onSubmit (values: FoodItemFormSchema) {
+  async function onSubmit (values: FoodItemFormSchema) {
     try {
-      const newFoodItem = foodItemService.create({
+      const newFoodItem = await foodItemService.create({
         ...values,
         userId: auth?.userInfo?.id,
         token: auth?.keycloak?.token
       })
 
-
-      navigate('/foodItems')
+      if (newFoodItem) {
+        setFoodItems((prevFoodItems) => prevFoodItems.concat(newFoodItem))
+        navigate('/foodItems')
+      }
     } catch (err: unknown) {
       logger.logError(err)
 
