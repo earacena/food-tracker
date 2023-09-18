@@ -66,7 +66,7 @@ function UserProvider({ children }: UserProviderProps) {
     }
 
     fetchUserProfile()
-  }, [auth, navigate])
+  }, [auth, toast, navigate])
 
   return (
     <UserContext.Provider value={{ userProfile, actions: { setUserProfile } }}>
