@@ -5,17 +5,63 @@ import Dashboard from './features/Dashboard/Dashboard'
 import ProfileForm from './features/Profile/ProfileForm'
 import { Toaster } from './components/ui/Toaster'
 import UserProvider from './features/User/UserProvider'
-import { FoodItemForm } from './features/Food'
+import { FoodItemForm } from './features/FoodItems'
+import { useFoodItems } from './features/FoodItems/hooks/foodItem.hooks'
+import useActivities from './features/Activity/hooks/useActivities'
+import useMeals from './features/Meals/hooks/useMeals'
+import MealForm from './features/Meals/MealForm'
+import ActivityForm from './features/Activity/ActivityForm'
+import { Meals } from './features/Meals'
 
 function App() {
+  const [foodItems, setFoodItems] = useFoodItems()
+  const [activities, setActivities] = useActivities()
+  const [meals, mealEntries, setMeals] = useMeals()
 
   return (
     <div className="flex w-full h-full flex-col">
       <UserProvider>
         <Routes>
-          <Route index element={<Dashboard />} />
-          <Route path="/profile/form" element={<ProfileForm />} />
-          <Route path="/foodItems/form" element={<FoodItemForm />} />
+          <Route 
+            index
+            path="/"
+            element={
+              <Dashboard
+                foodItems={foodItems}
+                activities={activities}
+                meals={meals}
+                mealEntries={mealEntries}
+              />
+            } 
+          />
+
+          <Route 
+            path="/profile/form"
+            element={<ProfileForm />}
+          />
+          <Route
+            path="/foodItems/form"
+            element={<FoodItemForm setFoodItems={setFoodItems} />}
+          />
+
+          <Route
+            path="/meals/form"
+            element={<MealForm setMeals={setMeals} />}
+          />
+
+          <Route
+            path="/meals"
+            element={<Meals meals={meals} mealEntries={mealEntries} />}
+          />
+
+          <Route
+            path="/activities/form"
+            element={<ActivityForm
+              setActivities={setActivities}
+              foodItems={foodItems}
+              meals={meals}
+            />}
+          />
         </Routes>
       </UserProvider>
       <Toaster />
