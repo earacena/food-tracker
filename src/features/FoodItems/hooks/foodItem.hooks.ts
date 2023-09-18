@@ -36,8 +36,6 @@ export function useFoodItems () {
           variant: 'destructive',
         })
       }
-      
-      navigate('/dashboard')
     }
 
     if (auth?.userInfo) {
@@ -46,5 +44,5 @@ export function useFoodItems () {
   }, [auth, navigate, toast])
 
 
-  return [foodItems, setFoodItems]
+  return [foodItems, setFoodItems] as const
 }
