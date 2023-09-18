@@ -13,3 +13,10 @@ export const zActivities = z.array(zActivity)
 
 export type Activity = z.infer<typeof zActivity>
 export type Activities = z.infer<typeof zActivities>
+
+export const zActivitiesFetchByUserIdResponse = z.object({
+  success: z.boolean(),
+  data: z.object({
+    userActivities: zActivities
+  })
+})
