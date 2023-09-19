@@ -48,26 +48,33 @@ function ActivityForm({ foodItems, meals }: ActivityFormProps) {
       })
     }
   }
+
+  const noMeals = selectType === 'meal' && meals.length === 0
+  const noFoodItems = selectType === 'foodItem' && foodItems.length === 0
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mx-6 my-9">
         <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Add new activity</h2>
 
-        <Select onValueChange={(value) => setSelectType(value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select consumption type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Types</SelectLabel>
-              <SelectItem value="foodItem">Individual item</SelectItem>
-              <SelectItem value="meal">Meal</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <FormDescription>
-          The type of consumption activity.
-        </FormDescription>
+        <FormItem>
+          <FormLabel>Consumption type</FormLabel>
+          <Select onValueChange={(value) => setSelectType(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select consumption type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Types</SelectLabel>
+                <SelectItem value="foodItem">Individual item</SelectItem>
+                <SelectItem value="meal">Meal</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <FormDescription>
+            The type of consumption activity.
+          </FormDescription>
+        </FormItem>
 
         {
           selectType === 'foodItem' && (
@@ -86,7 +93,7 @@ function ActivityForm({ foodItems, meals }: ActivityFormProps) {
                       </FormControl>
                       <SelectContent>
                         {foodItems.map((f) => (
-                          <SelectItem value={f.id.toString()}>{f.foodName}</SelectItem>
+                          <SelectItem key={f.id} value={f.id.toString()}>{f.foodName}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -135,7 +142,7 @@ function ActivityForm({ foodItems, meals }: ActivityFormProps) {
                       </FormControl>
                       <SelectContent>
                         {meals.map((m) => (
-                          <SelectItem value={m.id.toString()}>{m.name}</SelectItem>
+                          <SelectItem key={m.id} value={m.id.toString()}>{m.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -167,7 +174,7 @@ function ActivityForm({ foodItems, meals }: ActivityFormProps) {
           )
         }
 
-        <Button type='submit'>Submit</Button>
+        <Button type='submit' disabled={noMeals || noFoodItems}>Submit</Button>
       </form>
     </Form >
   )
