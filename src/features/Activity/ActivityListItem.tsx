@@ -1,29 +1,47 @@
+import logger from '@/utils/Logger'
 import { FoodItems } from '../FoodItems/types/foodItem.types'
+import { MealEntries } from '../Meals/types/mealEntries.types'
+import { Meals } from '../Meals/types/meals.types'
 import { Activity } from './types/activity.types'
 
 interface ActivityListItemProps {
   foodItems: FoodItems,
   meals: Meals,
-  activityListItem: Activity
+  activity: Activity
+  mealEntries: MealEntries
 }
 
-function ActivityListItem({ foodItems, meals, activityListItem }: ActivityListItemProps) {
+function ActivityListItem({ foodItems, meals, mealEntries, activity }: ActivityListItemProps) {
 
-  const foodItem = foodItems.find((f) => f.id === activityListItem.foodItemId)
-  const meal = meals.find((m) => m.id === activityListItem.mealId)
+  const foodItem = foodItems.find((f) => f.id === activity.foodItemId)
+  const meal = meals.find((m) => m.id === activity.mealId)
+  const entries = mealEntries.filter((me) => me.mealId === meal?.id)
 
-  let caloriesConsumed
+  const mealCalories = entries.reduce((acc, cur) => {
+    const item = foodItems.find((f) => f.id === cur.id)
+    let totalItemCalories = 0
+    if (item) {
+      const servings = cur.quantity / item?.servingSizeInGrams
+      totalItemCalories = item?.caloriesPerServing * servings
+    } else {
+      logger.log(`unable to find meal entry item: ${cur}`)
+    }
+
+    return acc + totalItemCalories
+  }, 0)
+
+  let foodItemCalories
   if (foodItem) {
-    caloriesConsumed = (activityListItem.quantity / foodItem.servingSizeInGrams) * foodItem.caloriesPerServing
-  } else {
-    caloriesConsumed = activityListItem.quantity * meal.caloriesPerServing
+    foodItemCalories = (activity.quantity / foodItem.servingSizeInGrams) * foodItem.caloriesPerServing
   }
 
   return (
     <li className="flex flex-row">
-      {caloriesConsumed} |
+      {foodItem ? foodItemCalories : mealCalories} |
       {" "}
-      {`${foodItem?.servingSizeInGrams}g serving of ${foodItem?.foodName}`}
+      {foodItem 
+        ? `${foodItem?.servingSizeInGrams}g serving of ${foodItem?.foodName}`
+        : `${meal?.name}`}
     </li>
   )
 }
