@@ -4,8 +4,8 @@ import { zFoodItemCreateResponse, zFoodItemsFetchByUserIdResponse } from "../typ
 interface CreateFoodItemProps {
   foodName: string
   caloriesPerServing: number
-  servingSizeInGrams: number | undefined
-  servingSizeInUnits: number | undefined
+  servingSizeInGrams: number
+  searchVisibility: 'public' | 'private'
   userId: string | undefined
   token: string | undefined
 }
@@ -19,7 +19,7 @@ async function create({
   foodName,
   caloriesPerServing,
   servingSizeInGrams,
-  servingSizeInUnits,
+  searchVisibility,
   userId,
   token,
 }: CreateFoodItemProps) {
@@ -30,8 +30,8 @@ async function create({
   const requestBody = JSON.stringify({
     foodName,
     caloriesPerServing,
-    servingSizeInGrams: servingSizeInGrams ?? null,
-    servingSizeInUnits: servingSizeInUnits ?? null,
+    servingSizeInGrams,
+    searchVisibility,
     userId
   })
 
@@ -77,7 +77,7 @@ async function findFoodItemsByUserId({ userId, token }: FindFoodItemsByUserIdPro
     // Not found
     throw new Error(errorResponse.errorMessage)
   } else {
-    const userFoodItemResponse = zFoodItemsFetchByUserIdResponse.parse(response.json)
+    const userFoodItemResponse = zFoodItemsFetchByUserIdResponse.parse(responseJson)
     return userFoodItemResponse.data.userFoodItems
   }
 }
