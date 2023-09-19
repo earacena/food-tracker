@@ -1,15 +1,16 @@
 import { useContext } from "react"
 import { ProfileCard } from "../Profile"
 import { UserContext } from "../User/UserProvider"
-import { ActivityList } from "../Activity"
-import { Activities } from "../Activity/types/activity.types"
-import { FoodItems } from "../FoodItems/types/foodItem.types"
-import { useFoodItems } from "../FoodItems/hooks/foodItem.hooks"
-import { Meals } from "../Meals/types/meals.types"
+import { FoodItems as FoodItemsType } from "../FoodItems/types/foodItem.types"
+import { Meals } from "../Meals"
+import { MealEntries } from "../Meals/types/mealEntries.types"
+import Activities from "../Activity/Activities"
+import { Activities as ActivitiesType } from "../Activity/types/activity.types"
+import FoodItems from "../FoodItems/FoodItems"
 
 interface DashboardProps {
-  activities: Activities
-  foodItems: FoodItems
+  activities: ActivitiesType
+  foodItems: FoodItemsType
   meals: Meals
   mealEntries: MealEntries
 }
@@ -18,15 +19,20 @@ function Dashboard({
   activities,
   foodItems,
   meals,
-  mealEntries,
+  mealEntries
 }: DashboardProps) {
   const user = useContext(UserContext)
   return (
     <>
       <ProfileCard profile={user?.userProfile} />
-      <ActivityList
+      <Activities
         activities={activities}
         meals={meals}
+        mealEntries={mealEntries}
+        foodItems={foodItems}
+      />
+      <Meals meals={meals} mealEntries={mealEntries} />
+      <FoodItems
         foodItems={foodItems}
       />
     </>
