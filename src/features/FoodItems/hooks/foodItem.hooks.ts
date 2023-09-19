@@ -4,12 +4,10 @@ import { AuthContext } from "@/features/Auth/AuthProvider";
 import foodItemService from "../api/foodItem.service";
 import { useToast } from "@/components/ui/toastHook";
 import logger from "@/utils/Logger";
-import { useNavigate } from "react-router-dom";
 
 export function useFoodItems () {
   const auth = useContext(AuthContext)
   const { toast } = useToast()
-  const navigate = useNavigate()
   const [foodItems, setFoodItems] = useState<FoodItems>([])
 
   useEffect(() => {
@@ -23,10 +21,6 @@ export function useFoodItems () {
         if (fetchedFoodItems) {
           setFoodItems(fetchedFoodItems)
         }
-
-        toast({
-          title: 'Successfully created a food item',
-        })
       } catch (err: unknown) {
         logger.logError(err)
 
@@ -41,7 +35,7 @@ export function useFoodItems () {
     if (auth?.userInfo) {
       fetchUserFoodItems()
     }
-  }, [auth, navigate, toast])
+  }, [auth, toast])
 
 
   return [foodItems, setFoodItems] as const
