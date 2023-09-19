@@ -12,12 +12,13 @@ import logger from "@/utils/Logger"
 import { Button } from "@/components/ui/Button"
 import foodItemService from "./api/foodItem.service"
 import { FoodItems } from "./types/foodItem.types"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
 
 interface FoodItemFormProps {
   setFoodItems: React.Dispatch<SetStateAction<FoodItems>>,
 }
 
-function FoodItemForm ({ setFoodItems }: FoodItemFormProps) {
+function FoodItemForm({ setFoodItems }: FoodItemFormProps) {
   const auth = useContext(AuthContext)
 
   const { toast } = useToast()
@@ -29,12 +30,11 @@ function FoodItemForm ({ setFoodItems }: FoodItemFormProps) {
       foodName: '',
       caloriesPerServing: 100,
       servingSizeInGrams: 0,
-      servingSizeInUnits: 0,
       searchVisibility: 'private'
     }
   })
 
-  async function onSubmit (values: FoodItemFormSchema) {
+  async function onSubmit(values: FoodItemFormSchema) {
     try {
       const newFoodItem = await foodItemService.create({
         ...values,
@@ -85,7 +85,7 @@ function FoodItemForm ({ setFoodItems }: FoodItemFormProps) {
             <FormItem>
               <FormLabel>Calories Per Serving</FormLabel>
               <FormControl>
-                <Input placeholder="100" {...field} />
+                <Input placeholder="100" type="number" {...field} />
               </FormControl>
               <FormDescription>
                 The number of calories (kcal) consumed with this food item.
@@ -102,7 +102,7 @@ function FoodItemForm ({ setFoodItems }: FoodItemFormProps) {
             <FormItem>
               <FormLabel>Serving Size In Grams</FormLabel>
               <FormControl>
-                <Input placeholder="150" {...field} />
+                <Input placeholder="150" type="number" {...field} />
               </FormControl>
               <FormDescription>
                 The number of grams in a single serving.
@@ -114,15 +114,23 @@ function FoodItemForm ({ setFoodItems }: FoodItemFormProps) {
 
         <FormField
           control={form.control}
-          name='servingSizeInUnits'
+          name='searchVisibility'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Serving Size In Units</FormLabel>
-              <FormControl>
-                <Input placeholder="5" {...field} />
-              </FormControl>
+              <FormLabel>Visibility</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger disabled>
+                    <SelectValue placeholder="Select visibility" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="public">Public</SelectItem>
+                  <SelectItem value="private">Private</SelectItem>
+                </SelectContent>
+              </Select>
               <FormDescription>
-                The number of pieces in a single serving.
+                This is whether this entry is publicly visible or visible only by you.
               </FormDescription>
               <FormMessage />
             </FormItem>
