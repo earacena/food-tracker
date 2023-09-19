@@ -12,6 +12,8 @@ import useMeals from './features/Meals/hooks/useMeals'
 import MealForm from './features/Meals/MealForm'
 import ActivityForm from './features/Activity/ActivityForm'
 import { Meals } from './features/Meals'
+import FoodItems from './features/FoodItems/FoodItems'
+import Menu from './features/Menu/Menu'
 
 function App() {
   const [foodItems, setFoodItems] = useFoodItems()
@@ -19,7 +21,8 @@ function App() {
   const [meals, mealEntries, setMeals] = useMeals()
 
   return (
-    <div className="flex w-full h-full flex-col">
+    <div className="flex w-full h-full flex-col items-start">
+      <Menu /> 
       <UserProvider>
         <Routes>
           <Route 
@@ -42,6 +45,11 @@ function App() {
           <Route
             path="/foodItems/form"
             element={<FoodItemForm setFoodItems={setFoodItems} />}
+          />
+
+          <Route
+            path="/foodItems"
+            element={<FoodItems foodItems={foodItems} />}
           />
 
           <Route
