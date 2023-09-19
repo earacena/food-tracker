@@ -5,7 +5,6 @@ export const zFoodItem = z.object({
   foodName: z.string(),
   caloriesPerServing: z.number(),
   servingSizeInGrams: z.number(),
-  servingSizeInUnits: z.number(),
   searchVisibility: z.enum(['private', 'public']),
   createdAt: z.coerce.date()
 })
