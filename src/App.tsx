@@ -14,11 +14,17 @@ import ActivityForm from './features/Activity/ActivityForm'
 import { Meals } from './features/Meals'
 import FoodItems from './features/FoodItems/FoodItems'
 import Menu from './features/Menu/Menu'
+import Activities from './features/Activity/Activities'
+import { useState } from 'react'
 
 function App() {
+
+  const [caloriesConsumedToday, setCaloriesConsumedToday] = useState<number>(0)
+
   const [foodItems, setFoodItems] = useFoodItems()
   const [activities, setActivities] = useActivities()
   const [meals, mealEntries, setMeals] = useMeals()
+
 
   return (
     <div className="flex w-full h-full flex-col items-start">
@@ -63,12 +69,27 @@ function App() {
           />
 
           <Route
+            path="/activities"
+            element={
+              <Activities 
+                foodItems={foodItems}
+                meals={meals}
+                mealEntries={mealEntries}
+                activities={activities}
+                setCaloriesConsumedToady={setCaloriesConsumedToday}
+              />
+            }
+          />
+
+          <Route
             path="/activities/form"
-            element={<ActivityForm
-              setActivities={setActivities}
-              foodItems={foodItems}
-              meals={meals}
-            />}
+            element={
+              <ActivityForm
+                setActivities={setActivities}
+                foodItems={foodItems}
+                meals={meals}
+              />
+            }
           />
         </Routes>
       </UserProvider>
