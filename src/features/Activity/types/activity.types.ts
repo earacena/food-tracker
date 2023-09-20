@@ -20,3 +20,10 @@ export const zActivitiesFetchByUserIdResponse = z.object({
     userActivities: zActivities
   })
 })
+
+export const zActivityCreateResponse = z.object({
+  success: z.boolean(),
+  data: z.object({
+    newActivity: zActivity
+  })
+})
