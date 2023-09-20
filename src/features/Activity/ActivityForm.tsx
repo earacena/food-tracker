@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -12,6 +12,9 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { FoodItems } from '../FoodItems/types/foodItem.types'
 import { Meals } from '../Meals/types/meals.types'
 import { Activities } from './types/activity.types'
+import activityService from './api/activity.service'
+import { useNavigate } from 'react-router-dom'
+import { AuthContext } from '../Auth/AuthProvider'
 
 interface ActivityFormProps {
   setActivities: Dispatch<SetStateAction<Activities>>
@@ -19,11 +22,11 @@ interface ActivityFormProps {
   meals: Meals
 }
 
-function ActivityForm({ foodItems, meals }: ActivityFormProps) {
-  // const auth = useContext(AuthContext)
+function ActivityForm({ setActivities, foodItems, meals }: ActivityFormProps) {
+  const auth = useContext(AuthContext)
 
   const { toast } = useToast()
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
   const [selectType, setSelectType] = useState<string>()
 
   const form = useForm<ActivityFormSchema>({
@@ -37,16 +40,29 @@ function ActivityForm({ foodItems, meals }: ActivityFormProps) {
 
   async function onSubmit(values: ActivityFormSchema) {
     try {
-      console.log(values)
+      const { foodItemId, mealId } = values
+      if (foodItemId || mealId) {
+        const newActivity = await activityService.create({
+          ...values,
+          userId: auth?.userInfo?.id,
+          token: auth?.keycloak?.token
+        })
+  
+        if (newActivity) {
+          setActivities((prevActivities) => prevActivities.concat(newActivity))
+        }
+      }
     } catch (err: unknown) {
       logger.logError(err)
 
       toast({
         title: 'Error',
-        description: 'Unable to create profile',
+        description: 'Unable to create activity',
         variant: 'destructive'
       })
     }
+
+    navigate('/activities')
   }
 
   const noMeals = selectType === 'meal' && meals.length === 0
@@ -54,9 +70,8 @@ function ActivityForm({ foodItems, meals }: ActivityFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mx-6 my-9">
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Add new activity</h2>
-
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto space-y-8  my-9">
+      <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Add new activity</h2>
         <FormItem>
           <FormLabel>Consumption type</FormLabel>
           <Select onValueChange={(value) => setSelectType(value)}>
