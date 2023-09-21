@@ -1,12 +1,10 @@
-import { useContext } from "react"
-import { ProfileCard } from "../Profile"
-import { UserContext } from "../User/UserProvider"
 import { FoodItems as FoodItemsType } from "../FoodItems/types/foodItem.types"
 import { Meals } from "../Meals"
 import { MealEntries } from "../Meals/types/mealEntries.types"
 import Activities from "../Activity/Activities"
 import { Activities as ActivitiesType } from "../Activity/types/activity.types"
 import FoodItems from "../FoodItems/FoodItems"
+import CalorieCounter from "./CalorieCounter"
 
 interface DashboardProps {
   activities: ActivitiesType
@@ -21,10 +19,13 @@ function Dashboard({
   meals,
   mealEntries
 }: DashboardProps) {
-  const user = useContext(UserContext)
   return (
     <>
-      <ProfileCard profile={user?.userProfile} />
+      <CalorieCounter 
+        activities={activities}
+        mealEntries={mealEntries}
+        foodItems={foodItems}
+      />
       <Activities
         activities={activities}
         meals={meals}
