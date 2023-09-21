@@ -19,8 +19,6 @@ import { useState } from 'react'
 
 function App() {
 
-  const [caloriesConsumedToday, setCaloriesConsumedToday] = useState<number>(0)
-
   const [foodItems, setFoodItems] = useFoodItems()
   const [activities, setActivities] = useActivities()
   const [meals, mealEntries, setMeals] = useMeals()
@@ -76,7 +74,6 @@ function App() {
                 meals={meals}
                 mealEntries={mealEntries}
                 activities={activities}
-                setCaloriesConsumedToady={setCaloriesConsumedToday}
               />
             }
           />
