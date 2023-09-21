@@ -1,22 +1,26 @@
-import Meal from "./Meal"
+import { FoodItems } from "../FoodItems/types/foodItem.types"
+import MealList from "./MealList"
 import { MealEntries } from "./types/mealEntries.types"
 import { Meals } from "./types/meals.types"
 
 interface MealsProps {
   meals: Meals
   mealEntries: MealEntries
+  foodItems: FoodItems
 }
 
-function Meals({ meals, mealEntries }: MealsProps) {
+function Meals({ meals, mealEntries, foodItems }: MealsProps) {
   return (
-    <>
-      Meals
-      <ul>
-        {meals.map((m) => (
-          <Meal key={m.id} meal={m} mealEntries={mealEntries.filter((me) => me.mealId === m.id)} />
-        ))}
-      </ul>
-    </>
+    <div className="flex flex-col items-center mx-auto">
+      <span className="text-xl text-semibold">
+        Meals
+      </span>
+      <MealList
+        meals={meals}
+        mealEntries={mealEntries}
+        foodItems={foodItems}
+      />
+    </div>
   )
 }
 
