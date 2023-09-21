@@ -23,11 +23,29 @@ function FoodItemActivityListItem({ activity, foodItems }: FoodItemActivityListI
     }
 
     computeFoodItemCalories()
-  }, [])
+  }, [activity.foodItemId, activity.quantityInGrams, foodItems])
 
   return (
-    <li>
-      {calories} * {foodItem?.foodName} ({activity.quantityInGrams}g)
+    <li className="flex flex-row border border-slate-500 p-3 rounded-md my-1 w-[360px]">
+      <span className="flex flex-col text-xs text-slate-500 pr-2">
+        Calories
+        <span className="text-lg text-slate-800">
+          {calories}
+        </span>
+      </span>
+
+      <span className="flex flex-col text-xs border-l-2 border-slate-400 text-slate-500 pr-2 flex-1 px-2">
+        Consumed
+        <span className="text-lg text-slate-800">
+          {foodItem && (foodItem?.foodName?.length > 10 ? foodItem?.foodName.slice(0, 9).concat('...') : foodItem?.foodName)}
+        </span>
+      </span>
+      <span className="flex flex-col text-xs border-l-2 border-slate-400 text-slate-500 pr-2 pl-2">
+        Serving (g)
+        <span className="text-lg text-slate-800">
+          {activity.quantityInGrams}
+        </span>
+      </span>
     </li>
   )
 }
