@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const zFoodItemFormSchema = z.object({
   foodName: z.string(),
-  caloriesPerServing: z.number(),
+  caloriesPerServing: z.coerce.number(),
   servingSizeInGrams: z.coerce.number(),
   searchVisibility: z.enum(['private', 'public']),
 })
