@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react"
 import { FoodItems } from "../FoodItems/types/foodItem.types"
 import { MealEntries } from "../Meals/types/mealEntries.types"
 import { Meals } from "../Meals/types/meals.types"
