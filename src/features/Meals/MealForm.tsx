@@ -11,6 +11,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/Input"
 import { MealFormSchema, zMealFormSchema } from "./types/mealForm.types"
 import { Meals } from "./types/meals.types"
+import { Button } from "@/components/ui/Button"
 
 interface MealFormProps {
   setMeals: Dispatch<SetStateAction<Meals>>
@@ -73,6 +74,8 @@ function MealForm({ setMeals }: MealFormProps) {
             </FormItem>
           )}
         />
+        
+        <Button type="submit">Submit</Button>
       </form>
     </Form>
 
