@@ -42,9 +42,10 @@ async function create({ name, userId, token }: CreateMealProps) {
     return
   }
 
-  const requestBody = JSON.stringify({ name })
+  const requestBody = JSON.stringify({ userId, name })
 
   const response = await fetch('/api/meals/', {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
