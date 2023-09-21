@@ -7,10 +7,12 @@ interface FoodItemsProps {
 
 function FoodItems ({ foodItems }: FoodItemsProps) {
   return (
-    <>
-      Food Items
+    <div className="flex flex-col items-center mx-auto">
+      <span className="text-xl text-semibold">
+        Food Items
+      </span>
       <FoodItemList foodItems={foodItems} />
-    </>
+    </div>
   )
 }
 
