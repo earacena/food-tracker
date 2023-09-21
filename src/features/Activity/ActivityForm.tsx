@@ -34,7 +34,8 @@ function ActivityForm({ setActivities, foodItems, meals }: ActivityFormProps) {
     defaultValues: {
       foodItemId: undefined,
       mealId: undefined,
-      quantity: 1
+      quantityInGrams: 100,
+      quantityInUnits: 1,
     },
   })
 
@@ -122,7 +123,7 @@ function ActivityForm({ setActivities, foodItems, meals }: ActivityFormProps) {
 
               <FormField
                 control={form.control}
-                name="quantity"
+                name="quantityInGrams"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Quantity (grams)</FormLabel>
@@ -171,7 +172,7 @@ function ActivityForm({ setActivities, foodItems, meals }: ActivityFormProps) {
 
               <FormField
                 control={form.control}
-                name="quantity"
+                name="quantityInUnits"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Quantity (servings)</FormLabel>
