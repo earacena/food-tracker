@@ -9,13 +9,13 @@ interface FindActivitiesByUserIdProps {
 interface CreateProps {
   mealId: number | undefined
   foodItemId: number | undefined
-  quantity: number
+  quantityInUnits: number | undefined
+  quantityInGrams: number | undefined
   userId: string | undefined,
   token: string | undefined
 }
 
 async function findActivitiesByUserId({ userId, token }: FindActivitiesByUserIdProps) {
-
   if (userId === undefined || token === undefined) {
     return
   }
@@ -40,7 +40,7 @@ async function findActivitiesByUserId({ userId, token }: FindActivitiesByUserIdP
 }
 
 
-async function create ({ mealId, foodItemId, quantity, userId, token }: CreateProps) {
+async function create ({ mealId, foodItemId, quantityInGrams, quantityInUnits, userId, token }: CreateProps) {
   if (userId === undefined || token === undefined) {
     return 
   }
@@ -48,7 +48,8 @@ async function create ({ mealId, foodItemId, quantity, userId, token }: CreatePr
   const requestBody = {
     mealId: mealId ?? null,
     foodItemId: foodItemId ?? null,
-    quantity,
+    quantityInGrams: quantityInGrams ?? null,
+    quantityInUnits: quantityInUnits ?? null,
     userId
   }
 
