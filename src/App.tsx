@@ -15,20 +15,21 @@ import { Meals } from './features/Meals'
 import FoodItems from './features/FoodItems/FoodItems'
 import Menu from './features/Menu/Menu'
 import Activities from './features/Activity/Activities'
+import MealEntryForm from './features/Meals/MealEntryForm'
 
 function App() {
 
   const [foodItems, setFoodItems] = useFoodItems()
   const [activities, setActivities] = useActivities()
-  const [meals, mealEntries, setMeals] = useMeals()
+  const [meals, mealEntries, setMeals, setMealEntries] = useMeals()
 
 
   return (
     <div className="flex w-full h-full flex-col items-start">
-      <Menu /> 
+      <Menu />
       <UserProvider>
         <Routes>
-          <Route 
+          <Route
             index
             path="/"
             element={
@@ -38,10 +39,10 @@ function App() {
                 meals={meals}
                 mealEntries={mealEntries}
               />
-            } 
+            }
           />
 
-          <Route 
+          <Route
             path="/profile/form"
             element={<ProfileForm />}
           />
@@ -56,19 +57,25 @@ function App() {
           />
 
           <Route
+            path="/meals"
+            element={<Meals foodItems={foodItems} meals={meals} mealEntries={mealEntries} />}
+          />
+          
+          <Route
             path="/meals/form"
             element={<MealForm setMeals={setMeals} />}
           />
-
+          
           <Route
-            path="/meals"
-            element={<Meals meals={meals} mealEntries={mealEntries} />}
+            path="/mealEntries/form/:mealId"
+            element={<MealEntryForm meals={meals} foodItems={foodItems} setMealEntries={setMealEntries} />}
           />
+
 
           <Route
             path="/activities"
             element={
-              <Activities 
+              <Activities
                 foodItems={foodItems}
                 meals={meals}
                 mealEntries={mealEntries}
