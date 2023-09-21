@@ -15,7 +15,6 @@ import { Meals } from './features/Meals'
 import FoodItems from './features/FoodItems/FoodItems'
 import Menu from './features/Menu/Menu'
 import Activities from './features/Activity/Activities'
-import { useState } from 'react'
 
 function App() {
 
