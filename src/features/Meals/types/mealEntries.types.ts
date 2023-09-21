@@ -19,3 +19,10 @@ export const zMealEntriesFetchByUserIdResponse = z.object({
     userMealEntries: zMealEntries
   })
 })
+
+export const zMealEntryCreateResponse = z.object({
+  success: z.boolean(),
+  data: z.object({
+    newMealEntry: zMealEntry
+  })
+})
