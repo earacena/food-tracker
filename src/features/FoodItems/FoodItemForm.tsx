@@ -80,23 +80,6 @@ function FoodItemForm({ setFoodItems }: FoodItemFormProps) {
 
         <FormField
           control={form.control}
-          name='caloriesPerServing'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Calories Per Serving</FormLabel>
-              <FormControl>
-                <Input placeholder="100" type="number" {...field} />
-              </FormControl>
-              <FormDescription>
-                The number of calories (kcal) consumed with this food item.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
           name='servingSizeInGrams'
           render={({ field }) => (
             <FormItem>
@@ -106,6 +89,23 @@ function FoodItemForm({ setFoodItems }: FoodItemFormProps) {
               </FormControl>
               <FormDescription>
                 The number of grams in a single serving.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name='caloriesPerServing'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Calories Per Serving</FormLabel>
+              <FormControl>
+                <Input placeholder="100" type="number" {...field} />
+              </FormControl>
+              <FormDescription>
+                The number of calories (kcal) consumed with this food item.
               </FormDescription>
               <FormMessage />
             </FormItem>
