@@ -12,7 +12,6 @@ interface MealEntriesListProps {
 }
 
 function MealEntriesList({ mealId, mealEntries, foodItems }: MealEntriesListProps) {
-
   const navigate = useNavigate()
 
   return (
@@ -27,8 +26,9 @@ function MealEntriesList({ mealId, mealEntries, foodItems }: MealEntriesListProp
       <ul className="m-1">
         {mealEntries.map((me) => (
           <MealEntriesListItem
+            key={me.id}
             mealEntry={me}
-            foodItem={foodItems.find((f) => f.id === me.foodItemId)}
+            foodItem={foodItems?.find((f) => f.id === me.foodItemId)}
           />
         ))}
       </ul>
