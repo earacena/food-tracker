@@ -3,6 +3,7 @@ import { Activities } from "../Activity/types/activity.types"
 import { FoodItem, FoodItems } from "../FoodItems/types/foodItem.types"
 import { MealEntries } from "../Meals/types/mealEntries.types"
 import { UserContext } from "../User/UserProvider"
+import { isSameDay } from "date-fns"
 
 interface CalorieCounterProps {
   activities: Activities
@@ -57,7 +58,9 @@ function CalorieCounter({ activities, mealEntries, foodItems }: CalorieCounterPr
 
   useEffect(() => {
     function computeCalories (): number {
-      const allCalories: number[] = activities.map((a) => {
+      const allCalories: number[] = activities
+        .filter((a) => isSameDay(a.createdAt, new Date()))
+        .map((a) => {
         if (a.foodItemId) {
           return computeFoodItemCalories({
             consumedQuantityInGrams: a.quantityInGrams,
