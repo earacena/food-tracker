@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
 import { MealEntries } from "./types/mealEntries.types"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/Form"
 import { useForm } from "react-hook-form"
@@ -8,10 +8,13 @@ import logger from "@/utils/Logger"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
 import { FoodItems } from "../FoodItems/types/foodItem.types"
 import { Input } from "@/components/ui/Input"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { Meal, Meals } from "./types/meals.types"
 import { z } from "zod"
 import { Button } from "@/components/ui/Button"
+import mealEntryService from "./api/mealEntry.service"
+import { AuthContext } from "../Auth/AuthProvider"
+import { useToast } from "@/components/ui/toastHook"
 
 interface MealEntryProps {
   meals: Meals
@@ -24,8 +27,13 @@ const zMealIdParam = z.object({
 })
 
 function MealEntryForm({ meals, foodItems, setMealEntries }: MealEntryProps) {
+  const auth = useContext(AuthContext)
+  const navigate = useNavigate()
+  const { toast } = useToast()
+
   const { mealId } = zMealIdParam.parse(useParams())
-  const [meal] = useState<Meal | undefined>(meals.find((m) => m.id === mealId))
+  const [meal, setMeal] = useState<Meal | undefined>()
+
 
   const form = useForm<MealEntryFormSchema>({
     resolver: zodResolver(zMealEntryFormSchema),
@@ -37,11 +45,32 @@ function MealEntryForm({ meals, foodItems, setMealEntries }: MealEntryProps) {
 
   async function onSubmit(values: MealEntryFormSchema) {
     try {
-      console.log({...values, mealId })
+      const newMealEntry = await mealEntryService.create({
+        ...values,
+        mealId,
+        userId: auth?.userInfo?.id,
+        token: auth?.keycloak?.token
+      })
+
+      if (newMealEntry) {
+        setMealEntries((prevEntries) => prevEntries.concat(newMealEntry))
+      }
     } catch (err: unknown) {
       logger.logError(err)
+
+      toast({
+        title: 'Error',
+        description: 'Unable to create meal entry',
+        variant: 'destructive'
+      })
     }
+
+    navigate('/meals')
   }
+
+  useEffect(() => {
+    setMeal(meals.find((m) => m.id === mealId))
+  }, [mealId, meals, setMeal])
 
   return (
     <Form {...form}>
