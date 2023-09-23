@@ -88,7 +88,7 @@ function ActivityList({ activities, foodItems, meals, mealEntries, onlyCurrentDa
       }
       {
         !noPastActivity && onlyCurrentDay && (
-          <span>
+          <span className="my-3">
             Past Activities
           </span>
         )
