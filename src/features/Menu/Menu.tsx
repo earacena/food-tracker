@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/Button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/Sheet"
 import { Link } from "react-router-dom"
-import { Menu as MenuIcon } from "lucide-react"
-import { useState } from "react"
+import { LogOut, Menu as MenuIcon } from "lucide-react"
+import { useContext, useState } from "react"
+import { AuthContext } from "../Auth/AuthProvider"
 
 interface LinkItem {
   link: string
@@ -17,7 +18,12 @@ const linkItems: LinkItem[]  = [
 ]
 
 function Menu() {
+  const auth = useContext(AuthContext)
   const [open, setOpen] = useState<boolean>(false)
+
+  async function logout() {
+    await auth?.keycloak?.logout()
+  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -26,7 +32,7 @@ function Menu() {
           <MenuIcon />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left">
+      <SheetContent side="left" className="flex flex-col">
         {linkItems.map((l) => (
           <Link key={l.label} to={l.link} className="flex flex-col mt-5">
             <Button className="border rounded-md p-2 text-2xl items-center h-30" variant="link" onClick={() => setOpen(false)}>
@@ -34,6 +40,11 @@ function Menu() {
             </Button>
           </Link>
         ))}
+
+        <Button variant="destructive" onClick={logout} className="self-center mt-auto">
+          <LogOut />
+          Sign Out
+        </Button>
       </SheetContent>
     </Sheet>
   )
