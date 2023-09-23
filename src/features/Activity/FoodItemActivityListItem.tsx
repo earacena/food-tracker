@@ -37,9 +37,10 @@ function FoodItemActivityListItem({ activity, foodItems }: FoodItemActivityListI
       <span className="flex flex-col text-xs border-l-2 border-slate-400 text-slate-500 pr-2 flex-1 px-2">
         Consumed
         <span className="text-lg text-slate-800">
-          {foodItem && (foodItem?.foodName?.length > 10 ? foodItem?.foodName.slice(0, 9).concat('...') : foodItem?.foodName)}
+          {foodItem && (foodItem?.foodName?.length > 15 ? foodItem?.foodName.slice(0, 16).concat('...') : foodItem?.foodName)}
         </span>
       </span>
+
       <span className="flex flex-col text-xs border-l-2 border-slate-400 text-slate-500 pr-2 pl-2">
         Serving (g)
         <span className="text-lg text-slate-800">
