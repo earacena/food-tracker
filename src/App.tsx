@@ -80,6 +80,8 @@ function App() {
                 meals={meals}
                 mealEntries={mealEntries}
                 activities={activities}
+                onlyCurrentDay
+                noPastActivity={false}
               />
             }
           />

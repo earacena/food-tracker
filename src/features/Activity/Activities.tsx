@@ -9,9 +9,11 @@ interface ActivitiesProps {
   meals: Meals
   mealEntries: MealEntries
   foodItems: FoodItems
+  onlyCurrentDay: boolean
+  noPastActivity: boolean
 }
 
-function Activities ({ meals, mealEntries, foodItems, activities }: ActivitiesProps) {
+function Activities ({ meals, mealEntries, foodItems, activities, onlyCurrentDay, noPastActivity }: ActivitiesProps) {
   return (
     <div className="flex flex-col items-center mx-auto">
       <span className="text-xl text-semibold">
@@ -22,6 +24,8 @@ function Activities ({ meals, mealEntries, foodItems, activities }: ActivitiesPr
         mealEntries={mealEntries}
         foodItems={foodItems}
         activities={activities}
+        onlyCurrentDay={onlyCurrentDay}
+        noPastActivity={noPastActivity}
       />
     </div>
   )

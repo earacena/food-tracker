@@ -3,7 +3,6 @@ import { Meals } from "../Meals"
 import { MealEntries } from "../Meals/types/mealEntries.types"
 import Activities from "../Activity/Activities"
 import { Activities as ActivitiesType } from "../Activity/types/activity.types"
-import FoodItems from "../FoodItems/FoodItems"
 import CalorieCounter from "./CalorieCounter"
 
 interface DashboardProps {
@@ -31,10 +30,8 @@ function Dashboard({
         meals={meals}
         mealEntries={mealEntries}
         foodItems={foodItems}
-      />
-      <Meals meals={meals} mealEntries={mealEntries} />
-      <FoodItems
-        foodItems={foodItems}
+        onlyCurrentDay
+        noPastActivity
       />
     </>
   )
