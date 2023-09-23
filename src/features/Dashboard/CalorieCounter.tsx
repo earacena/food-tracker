@@ -54,7 +54,8 @@ function computeMealCalories ({ consumedQuantityInUnits, foodItems, mealEntries 
 
 function CalorieCounter({ activities, mealEntries, foodItems }: CalorieCounterProps) {
   const user = useContext(UserContext)
-  const [calories, setCalories] = useState<number>()
+  const [calories, setCalories] = useState<number>(0)
+  const [calorieGoal, setCalorieGoal] = useState<number>(0)
 
   useEffect(() => {
     function computeCalories (): number {
@@ -81,11 +82,17 @@ function CalorieCounter({ activities, mealEntries, foodItems }: CalorieCounterPr
     setCalories(computeCalories())
   }, [activities, foodItems, mealEntries])
 
+  useEffect(() => {
+    if (user?.userProfile?.dailyCalorieGoal) {
+      setCalorieGoal(user?.userProfile?.dailyCalorieGoal)
+    }
+  }, [user?.userProfile?.dailyCalorieGoal])
+
   return (
     <div className="flex flex-col mx-auto my-10 items-center">
       <div>
         <span className="text-5xl">
-          {user && user.userProfile && user.userProfile.dailyCalorieGoal && calories && (user?.userProfile?.dailyCalorieGoal - calories)}
+          {calorieGoal - calories}
         </span>
         <span className="text-slate-400">
           /{user?.userProfile?.dailyCalorieGoal}
