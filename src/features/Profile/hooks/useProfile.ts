@@ -1,12 +1,13 @@
 import { useToast } from "@/components/ui/toastHook"
 import { AuthContext } from "@/features/Auth/AuthProvider"
-import profileService, { NotFoundError } from "@/features/Profile/api/profile.service"
+import { refreshToken } from "@/features/Auth/refreshToken"
+import profileService, { AuthError, NotFoundError } from "@/features/Profile/api/profile.service"
 import logger from "@/utils/Logger"
 import { useQuery } from "@tanstack/react-query"
 import { useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
-function useProfile () {
+function useProfile() {
   const auth = useContext(AuthContext)
   const { toast } = useToast()
   const navigate = useNavigate()
@@ -26,18 +27,19 @@ function useProfile () {
     if (profileQuery.error) {
       logger.logError(profileQuery.error)
 
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Unable to fetch activities'
-      })
-
       if (profileQuery.error instanceof NotFoundError) {
         navigate('/profile/form')
+      } else if (profileQuery.error instanceof AuthError && profileQuery.error.message === 'jwt expired') {
+        refreshToken(auth?.keycloak, logger)
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Unable to fetch profile'
+        })
       }
     }
-
-  }, [navigate, profileQuery.error, toast])
+  }, [auth?.keycloak, navigate, profileQuery.error, toast])
 
   return profileQuery
 }
