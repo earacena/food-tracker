@@ -1,71 +1,38 @@
 import { useToast } from "@/components/ui/toastHook"
 import { AuthContext } from "@/features/Auth/AuthProvider"
 import logger from "@/utils/Logger"
-import { useContext, useEffect, useState } from "react"
-import { Meals } from "../types/meals.types"
-import { MealEntries } from "../types/mealEntries.types"
+import { useContext, useEffect } from "react"
 import mealService from "../api/meal.service"
-import mealEntryService from "../api/mealEntry.service"
+import { useQuery } from "@tanstack/react-query"
 
 function useMeals() {
-  const { toast } = useToast()
   const auth = useContext(AuthContext)
+  const { toast } = useToast()
+  const validAuth: boolean = (auth?.userInfo?.id != null && auth?.keycloak?.token != null)
 
-  const [meals, setMeals] = useState<Meals>([])
-  const [mealEntries, setMealEntries] = useState<MealEntries>([])
+  const mealsQuery = useQuery({
+    queryKey: ['meals', auth?.userInfo?.id, auth?.keycloak?.token],
+    queryFn: async () => await mealService.findMealsByUserId({
+      userId: auth?.userInfo?.id,
+      token: auth?.keycloak?.token
+    }),
+    enabled: validAuth
+  })
 
   useEffect(() => {
+    if (mealsQuery.error) {
+      logger.logError(mealsQuery.error)
 
-    async function fetchUserMeals() {
-      try {
-        const fetchedMeals = await mealService.findMealsByUserId({
-          userId: auth?.userInfo?.id,
-          token: auth?.keycloak?.token
-        })
-
-        if (fetchedMeals) {
-          setMeals(fetchedMeals)
-        }
-      } catch (err: unknown) {
-        logger.logError(err)
-
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Unable to fetch meals'
-        })
-      }
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Unable to fetch meals'
+      })
     }
+  }, [mealsQuery.error, toast])
 
-    async function fetchUserMealEntries() {
-      try {
-        const fetchedMealEntries = await mealEntryService.findMealEntriesByUserId({
-          userId: auth?.userInfo?.id,
-          token: auth?.keycloak?.token
-        })
-
-        if (fetchedMealEntries) {
-          setMealEntries(fetchedMealEntries)
-        }
-      } catch (err: unknown) {
-        logger.logError(err)
-
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Unable to fetch meal entries'
-        })
-      }
-    }
-
-    if (auth?.keycloak && auth?.userInfo) {
-      fetchUserMeals()
-      fetchUserMealEntries()
-    }
-  }, [auth, toast])
-
-
-  return [meals, mealEntries, setMeals, setMealEntries] as const
+  return mealsQuery
 }
+
 
 export default useMeals
