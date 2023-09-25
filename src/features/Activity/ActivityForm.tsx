@@ -1,33 +1,30 @@
-import { Dispatch, SetStateAction, useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { useToast } from '@/components/ui/toastHook'
-import logger from '@/utils/Logger'
 import { ActivityFormSchema, zActivityFormSchema } from './types/activityForm.types'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/Form'
-import { Input } from '@/components/ui/Input'
-import { Button } from '@/components/ui/Button'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/Select'
-import { FoodItems } from '../FoodItems/types/foodItem.types'
-import { Meals } from '../Meals/types/meals.types'
-import { Activities } from './types/activity.types'
 import activityService from './api/activity.service'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../Auth/AuthProvider'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useFoodItems } from '../FoodItems/hooks/foodItem.hooks'
+import useMeals from '../Meals/hooks/useMeals'
+import logger from '@/utils/Logger'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/Form'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/Select'
+import { Input } from '@/components/ui/Input'
+import { Button } from '@/components/ui/Button'
 
-interface ActivityFormProps {
-  setActivities: Dispatch<SetStateAction<Activities>>
-  foodItems: FoodItems
-  meals: Meals
-}
 
-function ActivityForm({ setActivities, foodItems, meals }: ActivityFormProps) {
+function ActivityForm() {
   const auth = useContext(AuthContext)
 
-  const { toast } = useToast()
+  // const { toast } = useToast()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [selectType, setSelectType] = useState<string>()
+  const { data: meals } = useMeals()
+  const { data: foodItems } = useFoodItems()
 
   const form = useForm<ActivityFormSchema>({
     resolver: zodResolver(zActivityFormSchema),
@@ -39,40 +36,32 @@ function ActivityForm({ setActivities, foodItems, meals }: ActivityFormProps) {
     },
   })
 
-  async function onSubmit(values: ActivityFormSchema) {
-    try {
-      const { foodItemId, mealId } = values
-      if (foodItemId || mealId) {
-        const newActivity = await activityService.create({
-          ...values,
-          userId: auth?.userInfo?.id,
-          token: auth?.keycloak?.token
-        })
-  
-        if (newActivity) {
-          setActivities((prevActivities) => prevActivities.concat(newActivity))
-        }
-      }
-    } catch (err: unknown) {
-      logger.logError(err)
-
-      toast({
-        title: 'Error',
-        description: 'Unable to create activity',
-        variant: 'destructive'
+  const addActivity = useMutation({
+    mutationFn: async (values: ActivityFormSchema) => await activityService.create({
+      ...values,
+      userId: auth?.userInfo?.id,
+      token: auth?.keycloak?.token
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['activities', auth?.userInfo?.id, auth?.keycloak?.token]
       })
-    }
+      navigate('/activities')
+    },
+    onError: (error) => logger.logError(error)
+  })
 
-    navigate('/activities')
+  function onSubmit(values: ActivityFormSchema) {
+    addActivity.mutate(values)
   }
 
-  const noMeals = selectType === 'meal' && meals.length === 0
-  const noFoodItems = selectType === 'foodItem' && foodItems.length === 0
+  const noMeals = selectType === 'meal' && meals?.length === 0
+  const noFoodItems = selectType === 'foodItem' && foodItems?.length === 0
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto space-y-8  my-9">
-      <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Add new activity</h2>
+        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Add new activity</h2>
         <FormItem>
           <FormLabel>Consumption type</FormLabel>
           <Select onValueChange={(value) => setSelectType(value)}>
@@ -108,7 +97,7 @@ function ActivityForm({ setActivities, foodItems, meals }: ActivityFormProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {foodItems.map((f) => (
+                        {foodItems?.map((f) => (
                           <SelectItem key={f.id} value={f.id.toString()}>{f.foodName}</SelectItem>
                         ))}
                       </SelectContent>
@@ -157,7 +146,7 @@ function ActivityForm({ setActivities, foodItems, meals }: ActivityFormProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {meals.map((m) => (
+                        {meals?.map((m) => (
                           <SelectItem key={m.id} value={m.id.toString()}>{m.name}</SelectItem>
                         ))}
                       </SelectContent>
