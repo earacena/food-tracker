@@ -4,6 +4,8 @@ import foodItemService from "../api/foodItem.service";
 import { useToast } from "@/components/ui/toastHook";
 import logger from "@/utils/Logger";
 import { useQuery } from '@tanstack/react-query'
+import { refreshToken } from "@/features/Auth/refreshToken";
+import { AuthError } from "@/utils/errors";
 
 export function useFoodItems() {
   const auth = useContext(AuthContext)
@@ -24,13 +26,17 @@ export function useFoodItems() {
     if (foodItemsQuery.error) {
       logger.logError(foodItemsQuery.error)
 
-      toast({
-        title: 'Error',
-        description: 'Unable to fetch food items',
-        variant: 'destructive',
-      })
+      if (foodItemsQuery.error instanceof AuthError && foodItemsQuery.error.message === 'jwt expired') {
+        refreshToken(auth?.keycloak, logger)
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Unable to fetch food items'
+        })
+      }
     }
-  }, [foodItemsQuery.error, toast])
+  }, [auth?.keycloak, foodItemsQuery.error, toast])
 
   return foodItemsQuery
 }

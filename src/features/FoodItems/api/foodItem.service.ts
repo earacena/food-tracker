@@ -1,4 +1,6 @@
+import { AuthError } from "@/utils/errors"
 import { zFoodItemCreateResponse, zFoodItemsFetchByUserIdResponse } from "../types/foodItem.types"
+import { zErrorResponse } from "@/common.types"
 
 interface CreateFoodItemProps {
   foodName: string
@@ -44,11 +46,14 @@ async function create({
     body: requestBody
   })
 
-  const responseJson = await response.json()
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json())
+    throw new AuthError(errorResponse.errorMessage)
+  }
 
+  const responseJson = await response.json()
   const foodItemCreateResponse = zFoodItemCreateResponse.parse(responseJson)
   return foodItemCreateResponse.data.newFoodItem
-  
 }
 
 async function findFoodItemsByUserId({ userId, token }: FindFoodItemsByUserIdProps) {
@@ -63,6 +68,11 @@ async function findFoodItemsByUserId({ userId, token }: FindFoodItemsByUserIdPro
       authentication: `Bearer ${token}`
     }
   })
+
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json())
+    throw new AuthError(errorResponse.errorMessage)
+  }
 
   const responseJson = await response.json()
   const userFoodItemResponse = zFoodItemsFetchByUserIdResponse.parse(responseJson)
