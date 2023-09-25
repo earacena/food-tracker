@@ -4,6 +4,8 @@ import logger from "@/utils/Logger"
 import { useContext, useEffect } from "react"
 import mealService from "../api/meal.service"
 import { useQuery } from "@tanstack/react-query"
+import { refreshToken } from "@/features/Auth/refreshToken"
+import { AuthError } from "@/utils/errors"
 
 function useMeals() {
   const auth = useContext(AuthContext)
@@ -23,13 +25,17 @@ function useMeals() {
     if (mealsQuery.error) {
       logger.logError(mealsQuery.error)
 
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Unable to fetch meals'
-      })
+      if (mealsQuery.error instanceof AuthError && mealsQuery.error.message === 'jwt expired') {
+        refreshToken(auth?.keycloak, logger)
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Unable to fetch meals'
+        })
+      }
     }
-  }, [mealsQuery.error, toast])
+  }, [auth?.keycloak, mealsQuery.error, toast])
 
   return mealsQuery
 }
