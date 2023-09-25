@@ -1,44 +1,41 @@
 import { useEffect, useState } from "react"
 import { Activity } from "./types/activity.types"
-import { Meal, Meals } from "../Meals/types/meals.types"
+import { type Meal } from "../Meals/types/meals.types"
 import { MealEntries } from "../Meals/types/mealEntries.types"
 import { FoodItems } from "../FoodItems/types/foodItem.types"
 
 interface MealActivityListItemProps {
   activity: Activity
-  meals: Meals
-  mealEntries: MealEntries
-  foodItems: FoodItems
+  meal: Meal | undefined
+  mealEntries: MealEntries | undefined
+  foodItems: FoodItems | undefined
 }
 
-function MealActivityListItem({ activity, meals, mealEntries, foodItems }: MealActivityListItemProps) {
+function MealActivityListItem({ activity, meal, mealEntries, foodItems }: MealActivityListItemProps) {
 
   const [calories, setCalories] = useState<number>(0)
-  const [meal, setMeal] = useState<Meal | undefined>()
 
   useEffect(() => {
     function computeMealCalories() {
-      const allCalories: number[] = mealEntries
-        .filter((me) => me.mealId === activity.mealId)
-        .map((me) => {
-          const foodItem = foodItems.find((f) => f.id === me.foodItemId)
-          if (foodItem) {
-            return Math.floor((me.quantity / foodItem.servingSizeInGrams) * foodItem.caloriesPerServing)
-          } else {
-            return 0
-          }
-        })
-
-        return allCalories.reduce((acc, cur) => acc + cur, 0)
-    }
-
-    const meal = meals.find((m) => m.id === activity.mealId)
-    if (meal) {
-      setMeal(meal)
+      if (mealEntries) {
+        const allCalories: number[] = mealEntries
+          .map((me) => {
+            const foodItem = foodItems?.find((f) => f.id === me.foodItemId)
+            if (foodItem) {
+              return Math.floor((me.quantity / foodItem.servingSizeInGrams) * foodItem.caloriesPerServing)
+            } else {
+              return 0
+            }
+          })
+  
+          return allCalories.reduce((acc, cur) => acc + cur, 0)
+      } else {
+        return 0
+      }
     }
 
     setCalories(computeMealCalories())
-  }, [activity.mealId, foodItems, mealEntries, meals])
+  }, [activity.mealId, foodItems, mealEntries])
 
   return (
     <li className="flex flex-row border border-slate-500 p-3 rounded-md my-1 w-[360px]">
