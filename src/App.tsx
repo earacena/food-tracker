@@ -6,9 +6,6 @@ import ProfileForm from './features/Profile/ProfileForm'
 import { Toaster } from './components/ui/Toaster'
 import UserProvider from './features/User/UserProvider'
 import { FoodItemForm } from './features/FoodItems'
-import { useFoodItems } from './features/FoodItems/hooks/foodItem.hooks'
-import useActivities from './features/Activity/hooks/useActivities'
-import useMeals from './features/Meals/hooks/useMeals'
 import MealForm from './features/Meals/MealForm'
 import ActivityForm from './features/Activity/ActivityForm'
 import { Meals } from './features/Meals'
@@ -16,90 +13,79 @@ import FoodItems from './features/FoodItems/FoodItems'
 import Menu from './features/Menu/Menu'
 import Activities from './features/Activity/Activities'
 import MealEntryForm from './features/Meals/MealEntryForm'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
+const queryClient = new QueryClient()
 
 function App() {
-
-  const [foodItems, setFoodItems] = useFoodItems()
-  const [activities, setActivities] = useActivities()
-  const [meals, mealEntries, setMeals, setMealEntries] = useMeals()
-
-
   return (
-    <div className="flex w-full h-full flex-col items-start">
-      <Menu />
-      <UserProvider>
-        <Routes>
-          <Route
-            index
-            path="/"
-            element={
-              <Dashboard
-                foodItems={foodItems}
-                activities={activities}
-                meals={meals}
-                mealEntries={mealEntries}
-              />
-            }
-          />
+    <QueryClientProvider client={queryClient}>
 
-          <Route
-            path="/profile/form"
-            element={<ProfileForm />}
-          />
-          <Route
-            path="/foodItems/form"
-            element={<FoodItemForm setFoodItems={setFoodItems} />}
-          />
+      <div className="flex w-full h-full flex-col items-start">
+        <Menu />
+        <UserProvider>
+          <Routes>
+            <Route
+              index
+              path="/"
+              element={
+                <Dashboard />
+              }
+            />
 
-          <Route
-            path="/foodItems"
-            element={<FoodItems foodItems={foodItems} />}
-          />
+            <Route
+              path="/profile/form"
+              element={<ProfileForm />}
+            />
+            <Route
+              path="/foodItems/form"
+              element={<FoodItemForm />}
+            />
 
-          <Route
-            path="/meals"
-            element={<Meals foodItems={foodItems} meals={meals} mealEntries={mealEntries} />}
-          />
-          
-          <Route
-            path="/meals/form"
-            element={<MealForm setMeals={setMeals} />}
-          />
-          
-          <Route
-            path="/mealEntries/form/:mealId"
-            element={<MealEntryForm meals={meals} foodItems={foodItems} setMealEntries={setMealEntries} />}
-          />
+            <Route
+              path="/foodItems"
+              element={<FoodItems />}
+            />
+
+            <Route
+              path="/meals"
+              element={<Meals />}
+            />
+
+            <Route
+              path="/meals/form"
+              element={<MealForm />}
+            />
+
+            <Route
+              path="/mealEntries/form/:mealId"
+              element={<MealEntryForm />}
+            />
 
 
-          <Route
-            path="/activities"
-            element={
-              <Activities
-                foodItems={foodItems}
-                meals={meals}
-                mealEntries={mealEntries}
-                activities={activities}
-                onlyCurrentDay
-                noPastActivity={false}
-              />
-            }
-          />
+            <Route
+              path="/activities"
+              element={
+                <Activities
+                  onlyCurrentDay
+                  noPastActivity={false}
+                />
+              }
+            />
 
-          <Route
-            path="/activities/form"
-            element={
-              <ActivityForm
-                setActivities={setActivities}
-                foodItems={foodItems}
-                meals={meals}
-              />
-            }
-          />
-        </Routes>
-      </UserProvider>
-      <Toaster />
-    </div>
+            <Route
+              path="/activities/form"
+              element={
+                <ActivityForm />
+              }
+            />
+          </Routes>
+        </UserProvider>
+        <Toaster />
+      </div>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }
 
