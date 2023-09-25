@@ -1,4 +1,3 @@
-import { AuthError } from "@/utils/errors"
 import { Profile, zProfileCreateResponse, zProfileFetchResponse } from "../types/profile.types"
 import { zErrorResponse } from "@/common.types"
 
@@ -14,6 +13,7 @@ interface CreateProfileProps {
 }
 
 export class NotFoundError extends Error {}
+export class AuthError extends Error {}
 
 async function fetchProfileByUserId({ userId, token }: FetchProfileByUserIdProps): Promise<Profile | null> {
   if (userId == null || token == null) {
