@@ -1,4 +1,3 @@
-import { zErrorResponse } from "@/common.types"
 import { zMealCreateResponse, zMealsFetchByUserIdResponse } from "../types/meals.types"
 
 interface FindMealsByUserIdProps {
@@ -13,9 +12,8 @@ interface CreateMealProps {
 }
 
 async function findMealsByUserId({ userId, token }: FindMealsByUserIdProps) {
-
-  if (userId === undefined || token === undefined) {
-    return
+  if (userId == null && token == null) {
+    Promise.reject()
   }
 
   const response = await fetch(`/api/meals/user/${userId}`, {
@@ -27,19 +25,14 @@ async function findMealsByUserId({ userId, token }: FindMealsByUserIdProps) {
   })
 
   const responseJson = await response.json()
-
-  if (!responseJson.success) {
-    const errorResponse = zErrorResponse.parse(responseJson)
-    throw new Error(errorResponse.errorMessage)
-  } else {
-    const mealsFetchByUserIdResponse = zMealsFetchByUserIdResponse.parse(responseJson)
-    return mealsFetchByUserIdResponse.data.userMeals
-  }
+  const mealsFetchByUserIdResponse = zMealsFetchByUserIdResponse.parse(responseJson)
+  return mealsFetchByUserIdResponse.data.userMeals
+  
 }
 
 async function create({ name, userId, token }: CreateMealProps) {
-  if (userId === undefined || token === undefined) {
-    return
+  if (userId == null && token == null) {
+    Promise.reject()
   }
 
   const requestBody = JSON.stringify({ userId, name })
@@ -55,14 +48,8 @@ async function create({ name, userId, token }: CreateMealProps) {
   })
 
   const responseJson = await response.json()
-
-  if (!responseJson.success) {
-    const errorResponse = zErrorResponse.parse(responseJson)
-    throw new Error(errorResponse.errorMessage)
-  } else {
-    const mealCreateResponse = zMealCreateResponse.parse(responseJson)
-    return mealCreateResponse.data.newMeal
-  }
+  const mealCreateResponse = zMealCreateResponse.parse(responseJson)
+  return mealCreateResponse.data.newMeal
 }
 
 export default {
