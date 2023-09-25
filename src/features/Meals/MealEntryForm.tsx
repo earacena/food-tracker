@@ -1,36 +1,32 @@
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
-import { MealEntries } from "./types/mealEntries.types"
+import { useContext, useEffect, useState } from "react"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/Form"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { type MealEntryFormSchema, zMealEntryFormSchema } from "./types/mealEntryForm.types"
-import logger from "@/utils/Logger"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
-import { FoodItems } from "../FoodItems/types/foodItem.types"
 import { Input } from "@/components/ui/Input"
 import { useNavigate, useParams } from "react-router-dom"
-import { Meal, Meals } from "./types/meals.types"
+import { Meal } from "./types/meals.types"
 import { z } from "zod"
 import { Button } from "@/components/ui/Button"
 import mealEntryService from "./api/mealEntry.service"
 import { AuthContext } from "../Auth/AuthProvider"
-import { useToast } from "@/components/ui/toastHook"
-
-interface MealEntryProps {
-  meals: Meals
-  foodItems: FoodItems
-  setMealEntries: Dispatch<SetStateAction<MealEntries>>
-}
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import useMeals from "./hooks/useMeals"
+import { useFoodItems } from "../FoodItems/hooks/foodItem.hooks"
+import logger from "@/utils/Logger"
 
 const zMealIdParam = z.object({
   mealId: z.coerce.number()
 })
 
-function MealEntryForm({ meals, foodItems, setMealEntries }: MealEntryProps) {
+function MealEntryForm() {
   const auth = useContext(AuthContext)
   const navigate = useNavigate()
-  const { toast } = useToast()
+  const queryClient = useQueryClient()
 
+  const { data: meals } = useMeals()
+  const { data: foodItems } = useFoodItems()
   const { mealId } = zMealIdParam.parse(useParams())
   const [meal, setMeal] = useState<Meal | undefined>()
 
@@ -43,33 +39,29 @@ function MealEntryForm({ meals, foodItems, setMealEntries }: MealEntryProps) {
     }
   })
 
-  async function onSubmit(values: MealEntryFormSchema) {
-    try {
-      const newMealEntry = await mealEntryService.create({
-        ...values,
-        mealId,
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token
+  const addMealEntry = useMutation({
+    mutationFn: async (values: MealEntryFormSchema) => await mealEntryService.create({
+      ...values,
+      mealId,
+      userId: auth?.userInfo?.id,
+      token: auth?.keycloak?.token
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['mealEntries', auth?.userInfo?.id, auth?.keycloak?.token]
       })
 
-      if (newMealEntry) {
-        setMealEntries((prevEntries) => prevEntries.concat(newMealEntry))
-      }
-    } catch (err: unknown) {
-      logger.logError(err)
+      navigate('/meals')
+    },
+    onError: (error) => logger.logError(error)
+  })
 
-      toast({
-        title: 'Error',
-        description: 'Unable to create meal entry',
-        variant: 'destructive'
-      })
-    }
-
-    navigate('/meals')
+  function onSubmit (values: MealEntryFormSchema) {
+    addMealEntry.mutate(values)
   }
 
   useEffect(() => {
-    setMeal(meals.find((m) => m.id === mealId))
+    setMeal(meals?.find((m) => m.id === mealId))
   }, [mealId, meals, setMeal])
 
   return (
@@ -90,7 +82,7 @@ function MealEntryForm({ meals, foodItems, setMealEntries }: MealEntryProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {foodItems.map((f) => (
+                  {foodItems?.map((f) => (
                     <SelectItem key={f.id} value={f.id.toString()}>{f.foodName}</SelectItem>
                   ))}
                 </SelectContent>
