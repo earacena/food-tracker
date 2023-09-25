@@ -1,4 +1,6 @@
+import { zErrorResponse } from "@/common.types"
 import { zActivitiesFetchByUserIdResponse, zActivityCreateResponse } from "../types/activity.types"
+import { AuthError } from "@/utils/errors"
 
 interface FindActivitiesByUserIdProps {
   userId: string | undefined
@@ -26,6 +28,11 @@ async function findActivitiesByUserId({ userId, token }: FindActivitiesByUserIdP
       authentication: `Bearer ${token}`
     }
   })
+
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json())
+    throw new AuthError(errorResponse.errorMessage)
+  }
 
   const responseJson = await response.json()
   const activitiesFetchByUserIdResponse = zActivitiesFetchByUserIdResponse.parse(responseJson)
@@ -55,6 +62,11 @@ async function create ({ mealId, foodItemId, quantityInGrams, quantityInUnits, u
     },
     body: requestBody
   })
+  
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json())
+    throw new AuthError(errorResponse.errorMessage)
+  }
 
   const responseJson = await response.json()
   const activityCreateResponse = zActivityCreateResponse.parse(responseJson)
