@@ -140,6 +140,9 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">
 
+type ToastResult = { id: string, dismiss: () => void, update: (props: ToasterToast) => void }
+export type ToastFunction = (props: Toast) => ToastResult
+
 function toast({ ...props }: Toast) {
   const id = genId()
 
