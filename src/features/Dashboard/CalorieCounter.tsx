@@ -1,15 +1,11 @@
 import { useContext, useEffect, useState } from "react"
-import { Activities } from "../Activity/types/activity.types"
 import { FoodItem, FoodItems } from "../FoodItems/types/foodItem.types"
 import { MealEntries } from "../Meals/types/mealEntries.types"
 import { UserContext } from "../User/UserProvider"
 import { isSameDay } from "date-fns"
-
-interface CalorieCounterProps {
-  activities: Activities
-  mealEntries: MealEntries
-  foodItems: FoodItems
-}
+import { useFoodItems } from "../FoodItems/hooks/foodItem.hooks"
+import useMealEntries from "../Meals/hooks/useMealEntries"
+import useActivities from "../Activity/hooks/useActivities"
 
 interface ComputeFoodItemCaloriesProps {
   consumedQuantityInGrams: number | null,
@@ -18,8 +14,8 @@ interface ComputeFoodItemCaloriesProps {
 
 interface ComputeMealCaloriesProps {
   consumedQuantityInUnits: number | null,
-  foodItems: FoodItems,
-  mealEntries: MealEntries
+  foodItems: FoodItems | undefined,
+  mealEntries: MealEntries | undefined
 }
 
 function computeFoodItemCalories({ consumedQuantityInGrams, foodItem }: ComputeFoodItemCaloriesProps) {
@@ -30,8 +26,8 @@ function computeFoodItemCalories({ consumedQuantityInGrams, foodItem }: ComputeF
   return Math.floor((consumedQuantityInGrams / foodItem.servingSizeInGrams) * foodItem.caloriesPerServing)
 }
 
-function computeMealCalories ({ consumedQuantityInUnits, foodItems, mealEntries }: ComputeMealCaloriesProps) {
-  if (!consumedQuantityInUnits || !mealEntries) {
+function computeMealCalories({ consumedQuantityInUnits, foodItems, mealEntries }: ComputeMealCaloriesProps) {
+  if (!consumedQuantityInUnits || !mealEntries || !foodItems) {
     return 0
   }
 
@@ -52,31 +48,39 @@ function computeMealCalories ({ consumedQuantityInUnits, foodItems, mealEntries 
   return calories * consumedQuantityInUnits
 }
 
-function CalorieCounter({ activities, mealEntries, foodItems }: CalorieCounterProps) {
+function CalorieCounter() {
+  const { data: foodItems } = useFoodItems()
+  const { data: mealEntries } = useMealEntries()
+  const { data: activities } = useActivities()
+
   const user = useContext(UserContext)
   const [calories, setCalories] = useState<number>(0)
   const [calorieGoal, setCalorieGoal] = useState<number>(0)
 
   useEffect(() => {
-    function computeCalories (): number {
-      const allCalories: number[] = activities
-        .filter((a) => isSameDay(a.createdAt, new Date()))
-        .map((a) => {
-        if (a.foodItemId) {
-          return computeFoodItemCalories({
-            consumedQuantityInGrams: a.quantityInGrams,
-            foodItem: foodItems.find((f) => f.id === a.foodItemId)
+    function computeCalories(): number {
+      if (activities) {
+        const allCalories: number[] = activities
+          .filter((a) => isSameDay(a.createdAt, new Date()))
+          .map((a) => {
+            if (a.foodItemId) {
+              return computeFoodItemCalories({
+                consumedQuantityInGrams: a.quantityInGrams,
+                foodItem: foodItems?.find((f) => f.id === a.foodItemId)
+              })
+            } else {
+              return computeMealCalories({
+                consumedQuantityInUnits: a.quantityInUnits,
+                foodItems,
+                mealEntries: mealEntries?.filter((me) => me.mealId === a.mealId)
+              })
+            }
           })
-        } else {
-          return computeMealCalories({
-            consumedQuantityInUnits: a.quantityInUnits,
-            foodItems,
-            mealEntries: mealEntries.filter((me) => me.mealId === a.mealId)
-          })
-        }
-      })
 
-      return allCalories.reduce((acc, cur) => acc + cur, 0)
+        return allCalories.reduce((acc, cur) => acc + cur, 0)
+      } else {
+        return 0
+      }
     }
 
     setCalories(computeCalories())
