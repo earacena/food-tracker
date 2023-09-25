@@ -4,20 +4,19 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/Form"
 import { Input } from '@/components/ui/Input'
 import { Button } from "@/components/ui/Button"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { AuthContext } from "../Auth/AuthProvider"
 import profileService from "./api/profile.service"
-import { UserContext } from "../User/UserProvider"
 import { useNavigate } from "react-router-dom"
 import logger from "@/utils/Logger"
-import { useToast } from "@/components/ui/toastHook"
+import { useMutation } from "@tanstack/react-query"
+import { UserContext } from "../User/UserProvider"
 
 function ProfileForm() {
   const auth = useContext(AuthContext)
   const user = useContext(UserContext)
 
   const navigate = useNavigate()
-  const { toast } = useToast()
 
   const form = useForm<ProfileFormSchemaType>({
     resolver: zodResolver(zProfileFormSchema),
@@ -26,29 +25,27 @@ function ProfileForm() {
     },
   })
 
-  async function onSubmit(values: ProfileFormSchemaType) {
-    try {
-      const { dailyCalorieGoal } = values
-      const newProfile = await profileService.create({
-        dailyCalorieGoal,
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token
-      })
-
-      user?.actions.setUserProfile(newProfile)
-
-      logger.log('redirecting to "/"')
+  const addProfile = useMutation({
+    mutationFn: async (values: ProfileFormSchemaType) => await profileService.create({
+      ...values,
+      userId: auth?.userInfo?.id,
+      token: auth?.keycloak?.token
+    }),
+    onSuccess: () => {
       navigate('/')
-    } catch (err: unknown) {
-      logger.logError(err)
+    },
+    onError: (error) => logger.logError(error)
+  })
 
-      toast({
-        title: 'Error',
-        description: 'Unable to create profile',
-        variant: 'destructive'
-      })
-    }
+  function onSubmit (values: ProfileFormSchemaType) {
+    addProfile.mutate(values)
   }
+
+  useEffect(() => {
+    if (user?.userProfile != null) {
+      navigate('/')
+    }
+  })
 
   return (
     <Form {...form}>
