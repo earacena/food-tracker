@@ -18,9 +18,9 @@ function AuthProvider ({ children }: AuthProviderProps) {
 
   useEffect(() => {
     // Retrieve information of authenticated user
-    const fetchUserKeycloakProfile = async (client: Keycloak) => {
-      const fetchedUserProfile = await client.loadUserProfile()
-      setUserInfo(fetchedUserProfile)
+    const fetchUserKeycloakInfo = async (client: Keycloak) => {
+      const fetchedUserInfo = await client.loadUserProfile()
+      setUserInfo(fetchedUserInfo)
     }
 
     // Initialize Keycloak and authenticate user
@@ -37,9 +37,9 @@ function AuthProvider ({ children }: AuthProviderProps) {
       })
 
       setKeycloak(client)
-      
+
       if (client.authenticated) {
-        fetchUserKeycloakProfile(client)
+        fetchUserKeycloakInfo(client)
       }
     }
 
