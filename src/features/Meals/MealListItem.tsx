@@ -7,8 +7,10 @@ interface MealListItemProps {
 
 function MealListItem ({ meal }: MealListItemProps) {
   return (
-    <li className="flex flex-col border border-slate-500 rounded-md p-3 my-2">
-      {meal.name}
+    <li className="flex flex-col border border-slate-500 rounded-md p-3 w-full">
+      <span className="text-xl">
+        {meal.name}
+      </span>
       <span className="border-t-2 border-slate-400">
         <MealEntriesList
           mealId={meal.id}
