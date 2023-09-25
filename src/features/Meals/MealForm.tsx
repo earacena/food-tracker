@@ -1,27 +1,22 @@
-import { useContext, Dispatch, SetStateAction } from "react"
+import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import { useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import logger from "@/utils/Logger"
 import { AuthContext } from "../Auth/AuthProvider"
-import { useToast } from "@/components/ui/toastHook"
 import mealService from "./api/meal.service"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/Form"
 import { Input } from "@/components/ui/Input"
 import { MealFormSchema, zMealFormSchema } from "./types/mealForm.types"
-import { Meals } from "./types/meals.types"
 import { Button } from "@/components/ui/Button"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-interface MealFormProps {
-  setMeals: Dispatch<SetStateAction<Meals>>
-}
-
-function MealForm({ setMeals }: MealFormProps) {
+function MealForm() {
   const auth = useContext(AuthContext)
 
-  const { toast } = useToast()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const form = useForm<MealFormSchema>({
     resolver: zodResolver(zMealFormSchema),
@@ -30,33 +25,29 @@ function MealForm({ setMeals }: MealFormProps) {
     }
   })
 
-  async function onSubmit(values: MealFormSchema) {
-    try {
-      const newMeal = await mealService.create({
-        ...values,
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token
+  const addMeal = useMutation({
+    mutationFn: async (newMeal: MealFormSchema) => await mealService.create({
+      ...newMeal,
+      userId: auth?.userInfo?.id,
+      token: auth?.keycloak?.token
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['meals', auth?.userInfo?.id, auth?.keycloak?.token]
       })
 
-      if (newMeal) {
-        setMeals((prevMeals) => prevMeals.concat(newMeal))
-        logger.log('redirecting to meals')
-        navigate('/meals')
-      }
-    } catch (err: unknown) {
-      logger.logError(err)
+      navigate('/meals')
+    },
+    onError: (error) => logger.logError(error)
+  })
 
-      toast({
-        title: 'Error',
-        description: 'Unable to create meal',
-        variant: 'destructive'
-      })
-    }
+  function onSubmit(values: MealFormSchema) {
+    addMeal.mutate(values)
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mx-6 my-9">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto space-y-8 my-9">
         <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Add new food item</h2>
         <FormField
           control={form.control}
@@ -74,7 +65,7 @@ function MealForm({ setMeals }: MealFormProps) {
             </FormItem>
           )}
         />
-        
+
         <Button type="submit">Submit</Button>
       </form>
     </Form>
