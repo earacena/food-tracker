@@ -1,25 +1,27 @@
-import { Activities, Activity } from "./types/activity.types"
-import { FoodItems } from "../FoodItems/types/foodItem.types"
-import { Meals } from "../Meals/types/meals.types"
-import { MealEntries } from "../Meals/types/mealEntries.types"
+import { Activity } from "./types/activity.types"
 import { Button } from "@/components/ui/Button"
 import { Plus as PlusIcon } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import FoodItemActivityListItem from "./FoodItemActivityListItem"
 import MealActivityListItem from "./MealActivityFoodItem"
 import { isSameDay } from "date-fns"
+import { useFoodItems } from "../FoodItems/hooks/foodItem.hooks"
+import useMeals from "../Meals/hooks/useMeals"
+import useMealEntries from "../Meals/hooks/useMealEntries"
+import useActivities from "./hooks/useActivities"
 
 interface ActivityListProps {
-  activities: Activities,
-  foodItems: FoodItems
-  meals: Meals
-  mealEntries: MealEntries
   onlyCurrentDay: boolean
   noPastActivity: boolean
 }
 
-function ActivityList({ activities, foodItems, meals, mealEntries, onlyCurrentDay, noPastActivity }: ActivityListProps) {
+function ActivityList({ onlyCurrentDay, noPastActivity }: ActivityListProps) {
+
   const navigate = useNavigate()
+  const { data: foodItems } = useFoodItems()
+  const { data: meals } = useMeals()
+  const { data: mealEntries } = useMealEntries()
+  const { data: activities } = useActivities()
 
   function sameDayFilter(a: Activity): boolean {
     return isSameDay(a.createdAt, new Date())
@@ -36,7 +38,7 @@ function ActivityList({ activities, foodItems, meals, mealEntries, onlyCurrentDa
   return (
     <div className="flex flex-col items-center">
       {
-        !onlyCurrentDay && activities.length === 0 && (
+        !onlyCurrentDay && activities?.length === 0 && (
           <span className="text-sm text-slate-500 my-5">Nothing here, record some activity!</span>
         )
       }
@@ -68,7 +70,7 @@ function ActivityList({ activities, foodItems, meals, mealEntries, onlyCurrentDa
                       <FoodItemActivityListItem
                         key={a.id}
                         activity={a}
-                        foodItems={foodItems}
+                        foodItem={foodItems?.find((f) => a.foodItemId === f.id)}
                       />
                     )
                   } else {
@@ -77,8 +79,8 @@ function ActivityList({ activities, foodItems, meals, mealEntries, onlyCurrentDa
                         key={a.id}
                         activity={a}
                         foodItems={foodItems}
-                        meals={meals}
-                        mealEntries={mealEntries}
+                        meal={meals?.find((m) => m.id === a.mealId)}
+                        mealEntries={mealEntries?.filter((me) => me.mealId === a.mealId)}
                       />
                     )
                   }
@@ -97,15 +99,14 @@ function ActivityList({ activities, foodItems, meals, mealEntries, onlyCurrentDa
         !noPastActivity && (
           <ul>
             {
-              onlyCurrentDay && activities
-                .filter((a) => notSameDayFilter(a))
+              onlyCurrentDay && activities?.filter((a) => notSameDayFilter(a))
                 .map((a) => {
                   if (a.foodItemId) {
                     return (
                       <FoodItemActivityListItem
                         key={a.id}
                         activity={a}
-                        foodItems={foodItems}
+                        foodItem={foodItems?.find((f) => f.id === a.foodItemId)}
                       />
                     )
                   } else {
@@ -114,8 +115,8 @@ function ActivityList({ activities, foodItems, meals, mealEntries, onlyCurrentDa
                         key={a.id}
                         activity={a}
                         foodItems={foodItems}
-                        meals={meals}
-                        mealEntries={mealEntries}
+                        meal={meals?.find((m) => m.id === a.mealId)}
+                        mealEntries={mealEntries?.filter((me) => me.mealId === a.mealId)}
                       />
                     )
                   }
