@@ -1,4 +1,6 @@
+import { zErrorResponse } from "@/common.types"
 import { zMealEntriesFetchByUserIdResponse, zMealEntryCreateResponse } from "../types/mealEntries.types"
+import { AuthError } from "@/utils/errors"
 
 interface FindMealEntriesByUserIdProps {
   userId: string | undefined
@@ -27,8 +29,12 @@ async function findMealEntriesByUserId({ userId, token }: FindMealEntriesByUserI
     }
   })
 
-  const responseJson = await response.json()
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json())
+    throw new AuthError(errorResponse.errorMessage)
+  }
 
+  const responseJson = await response.json()
   const mealEntriesFetchByUserIdResponse = zMealEntriesFetchByUserIdResponse.parse(responseJson)
   return mealEntriesFetchByUserIdResponse.data.userMealEntries
 }
@@ -54,6 +60,11 @@ async function create({ foodItemId, mealId, quantity, userId, token }: CreatePro
     },
     body: requestBody
   })
+
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json())
+    throw new AuthError(errorResponse.errorMessage)
+  }
 
   const responseJson = await response.json()
   const mealEntryCreateResponse = zMealEntryCreateResponse.parse(responseJson)
