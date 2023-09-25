@@ -1,8 +1,7 @@
-import { zErrorResponse } from "@/common.types"
 import { zActivitiesFetchByUserIdResponse, zActivityCreateResponse } from "../types/activity.types"
 
 interface FindActivitiesByUserIdProps {
-  userId: string | undefined,
+  userId: string | undefined
   token: string | undefined
 }
 
@@ -11,13 +10,13 @@ interface CreateProps {
   foodItemId: number | undefined
   quantityInUnits: number | undefined
   quantityInGrams: number | undefined
-  userId: string | undefined,
+  userId: string | undefined
   token: string | undefined
 }
 
 async function findActivitiesByUserId({ userId, token }: FindActivitiesByUserIdProps) {
-  if (userId === undefined || token === undefined) {
-    return
+  if (userId == null || token == null) {
+    Promise.reject()
   }
 
   const response = await fetch(`/api/activities/user/${userId}`, {
@@ -29,29 +28,23 @@ async function findActivitiesByUserId({ userId, token }: FindActivitiesByUserIdP
   })
 
   const responseJson = await response.json()
-
-  if (!responseJson.success) {
-    const errorResponse = zErrorResponse.parse(responseJson)
-    throw new Error(errorResponse.errorMessage)
-  } else {
-    const activitiesFetchByUserIdResponse = zActivitiesFetchByUserIdResponse.parse(responseJson)
-    return activitiesFetchByUserIdResponse.data.userActivities
-  }
+  const activitiesFetchByUserIdResponse = zActivitiesFetchByUserIdResponse.parse(responseJson)
+  return activitiesFetchByUserIdResponse.data.userActivities
 }
 
 
 async function create ({ mealId, foodItemId, quantityInGrams, quantityInUnits, userId, token }: CreateProps) {
-  if (userId === undefined || token === undefined) {
-    return 
+  if (userId == null || token == null) {
+    Promise.reject()
   }
 
-  const requestBody = {
+  const requestBody = JSON.stringify({
     mealId: mealId ?? null,
     foodItemId: foodItemId ?? null,
     quantityInGrams: quantityInGrams ?? null,
     quantityInUnits: quantityInUnits ?? null,
     userId
-  }
+  })
 
   const response = await fetch(`/api/activities`, {
     method: 'POST',
@@ -60,18 +53,12 @@ async function create ({ mealId, foodItemId, quantityInGrams, quantityInUnits, u
       accept: 'application/json',
       authentication: `Bearer ${token}`
     },
-    body: JSON.stringify(requestBody)
+    body: requestBody
   })
 
   const responseJson = await response.json()
-
-  if (!responseJson.success) {
-    const errorResponse = zErrorResponse.parse(responseJson)
-    throw new Error(errorResponse.errorMessage)
-  } else {
-    const activityCreateResponse = zActivityCreateResponse.parse(responseJson)
-    return activityCreateResponse.data.newActivity
-  }
+  const activityCreateResponse = zActivityCreateResponse.parse(responseJson)
+  return activityCreateResponse.data.newActivity
 }
 
 export default {
