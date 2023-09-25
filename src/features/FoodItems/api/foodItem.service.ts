@@ -1,4 +1,3 @@
-import { zErrorResponse } from "@/common.types"
 import { zFoodItemCreateResponse, zFoodItemsFetchByUserIdResponse } from "../types/foodItem.types"
 
 interface CreateFoodItemProps {
@@ -23,8 +22,8 @@ async function create({
   userId,
   token,
 }: CreateFoodItemProps) {
-  if (userId === undefined || token === undefined) {
-    return
+  if (userId == null || token == null) {
+    Promise.reject()
   }
 
   const requestBody = JSON.stringify({
@@ -47,18 +46,14 @@ async function create({
 
   const responseJson = await response.json()
 
-  if (!responseJson.success) {
-    const errorResponse = zErrorResponse.parse(responseJson)
-    throw new Error(errorResponse.errorMessage)
-  } else {
-    const foodItemCreateResponse = zFoodItemCreateResponse.parse(responseJson)
-    return foodItemCreateResponse.data.newFoodItem
-  }
+  const foodItemCreateResponse = zFoodItemCreateResponse.parse(responseJson)
+  return foodItemCreateResponse.data.newFoodItem
+  
 }
 
 async function findFoodItemsByUserId({ userId, token }: FindFoodItemsByUserIdProps) {
-  if (userId === undefined || token === undefined) {
-    return
+  if (userId == null || token == null) {
+    Promise.reject()
   }
 
   const response = await fetch(`/api/foodItems/user/${userId}`, {
@@ -70,16 +65,8 @@ async function findFoodItemsByUserId({ userId, token }: FindFoodItemsByUserIdPro
   })
 
   const responseJson = await response.json()
-
-  if (!responseJson.success) {
-    const errorResponse = zErrorResponse.parse(responseJson)
-
-    // Not found
-    throw new Error(errorResponse.errorMessage)
-  } else {
-    const userFoodItemResponse = zFoodItemsFetchByUserIdResponse.parse(responseJson)
-    return userFoodItemResponse.data.userFoodItems
-  }
+  const userFoodItemResponse = zFoodItemsFetchByUserIdResponse.parse(responseJson)
+  return userFoodItemResponse.data.userFoodItems
 }
 
 export default {
