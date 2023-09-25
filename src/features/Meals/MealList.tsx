@@ -9,7 +9,7 @@ function MealList() {
   const { data: meals } = useMeals()
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-80">
       {
         meals?.length === 0 && (
           <span className="text-sm text-slate-500 my-5">
@@ -25,7 +25,7 @@ function MealList() {
 
       {
         meals && (
-          <ul>
+          <ul className="flex flex-col w-full">
             {meals.map((m) => (
               <MealListItem
                 key={m.id}
