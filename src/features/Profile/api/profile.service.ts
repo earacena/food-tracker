@@ -1,20 +1,23 @@
-import { zErrorResponse } from "@/common.types"
+import { AuthError } from "@/utils/errors"
 import { Profile, zProfileCreateResponse, zProfileFetchResponse } from "../types/profile.types"
+import { zErrorResponse } from "@/common.types"
 
 interface FetchProfileByUserIdProps {
-  userId: string | undefined,
-  token: string | undefined,
+  userId: string | undefined
+  token: string | undefined
 }
 
 interface CreateProfileProps {
   dailyCalorieGoal: number,
-  userId: string | undefined,
-  token: string | undefined,
+  userId: string | undefined
+  token: string | undefined
 }
 
-async function fetchProfileByUserId ({ userId, token }: FetchProfileByUserIdProps): Promise<Profile | null> {
-  if (userId === undefined || token === undefined) {
-    return null
+export class NotFoundError extends Error {}
+
+async function fetchProfileByUserId({ userId, token }: FetchProfileByUserIdProps): Promise<Profile | null> {
+  if (userId == null || token == null) {
+    Promise.reject()
   }
 
   const response = await fetch(`/api/profiles/${userId}`, {
@@ -23,22 +26,31 @@ async function fetchProfileByUserId ({ userId, token }: FetchProfileByUserIdProp
       authentication: `Bearer ${token}`
     }
   })
-  
-  const responseJson = await response.json()
 
-  if (!responseJson.success) {
-    const errorResponse = zErrorResponse.parse(responseJson)
-    throw new Error(errorResponse.errorMessage)
-  } else {
-    const profileFetchResponse = zProfileFetchResponse.parse(responseJson)
-    return profileFetchResponse.data.userProfile
+  if (response.status === 404) {
+    throw new NotFoundError()
   }
+
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json())
+    throw new AuthError(errorResponse.errorMessage)
+  }
+
+  const responseJson = await response.json()
+  const profileFetchResponse = zProfileFetchResponse.parse(responseJson)
+  return profileFetchResponse.data.userProfile
+
 }
 
-async function create ({ dailyCalorieGoal, userId, token }: CreateProfileProps): Promise<Profile | null> {
-  if (userId === undefined || token === undefined) {
-    return null
+async function create({ dailyCalorieGoal, userId, token }: CreateProfileProps): Promise<Profile | null> {
+  if (userId == null || token == null) {
+    Promise.reject()
   }
+
+  const requestBody = JSON.stringify({
+    userId,
+    dailyCalorieGoal
+  })
 
   const response = await fetch(`/api/profiles/`, {
     method: 'POST',
@@ -47,21 +59,17 @@ async function create ({ dailyCalorieGoal, userId, token }: CreateProfileProps):
       accept: 'application/json',
       authentication: `Bearer ${token}`
     },
-    body: JSON.stringify({
-      userId,
-      dailyCalorieGoal
-    })
+    body: requestBody
   })
 
-  const responseJson = await response.json()
-
-  if (!responseJson.success) {
-    const errorResponse = zErrorResponse.parse(responseJson)
-    throw new Error(errorResponse.errorMessage)
-  } else{
-    const profileCreateResponse = zProfileCreateResponse.parse(responseJson)
-    return profileCreateResponse.data.newProfile
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json())
+    throw new AuthError(errorResponse.errorMessage)
   }
+
+  const responseJson = await response.json()
+  const profileCreateResponse = zProfileCreateResponse.parse(responseJson)
+  return profileCreateResponse.data.newProfile
 }
 
 export default {
