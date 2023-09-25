@@ -1,8 +1,8 @@
-import { SetStateAction, useContext } from "react"
+import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import { useForm } from 'react-hook-form'
 
-import { useToast } from "@/components/ui/toastHook"
+// import { useToast } from "@/components/ui/toastHook"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AuthContext } from "../Auth/AuthProvider"
 import { FoodItemFormSchema, zFoodItemFormSchema } from "./types/foodItemForm.types"
@@ -11,17 +11,15 @@ import { Input } from "@/components/ui/Input"
 import logger from "@/utils/Logger"
 import { Button } from "@/components/ui/Button"
 import foodItemService from "./api/foodItem.service"
-import { FoodItems } from "./types/foodItem.types"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-interface FoodItemFormProps {
-  setFoodItems: React.Dispatch<SetStateAction<FoodItems>>,
-}
 
-function FoodItemForm({ setFoodItems }: FoodItemFormProps) {
+function FoodItemForm() {
   const auth = useContext(AuthContext)
 
-  const { toast } = useToast()
+  const queryClient  = useQueryClient()
+  // const { toast } = useToast()
   const navigate = useNavigate()
 
   const form = useForm<FoodItemFormSchema>({
@@ -33,33 +31,30 @@ function FoodItemForm({ setFoodItems }: FoodItemFormProps) {
       searchVisibility: 'private'
     }
   })
-
-  async function onSubmit(values: FoodItemFormSchema) {
-    try {
-      const newFoodItem = await foodItemService.create({
-        ...values,
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token
+  
+  const addFoodItem = useMutation({
+    mutationFn: async (newFoodItem: FoodItemFormSchema) => await foodItemService.create({
+      ...newFoodItem,
+      userId: auth?.userInfo?.id,
+      token: auth?.keycloak?.token
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['foodItems', auth?.userInfo?.id, auth?.keycloak?.token]
       })
 
-      if (newFoodItem) {
-        setFoodItems((prevFoodItems) => prevFoodItems.concat(newFoodItem))
-        navigate('/foodItems')
-      }
-    } catch (err: unknown) {
-      logger.logError(err)
+      navigate('/foodItems')
+    },
+    onError: (error) => logger.logError(error)
+  })
 
-      toast({
-        title: 'Error',
-        description: 'Unable to create food item',
-        variant: 'destructive'
-      })
-    }
+  async function onSubmit (values: FoodItemFormSchema) {
+    addFoodItem.mutate(values)
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mx-6 my-9">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto space-y-8 my-9">
         <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Add new food item</h2>
         <FormField
           control={form.control}
