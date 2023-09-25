@@ -12,7 +12,9 @@ interface MealEntriesListProps {
 function MealEntriesList({ mealId }: MealEntriesListProps) {
   const navigate = useNavigate()
   const { data: foodItems } = useFoodItems()
-  const { data: mealEntries } = useMealEntries()
+  const { data: allMealEntries } = useMealEntries()
+
+  const mealEntries = allMealEntries?.filter((me) => me.mealId === mealId)
 
   return (
     <div className="flex flex-col items-end">
@@ -23,6 +25,7 @@ function MealEntriesList({ mealId }: MealEntriesListProps) {
           </span>
         )
       }
+
       <ul className="m-1">
         {
           mealEntries?.map((me) => (
@@ -34,6 +37,7 @@ function MealEntriesList({ mealId }: MealEntriesListProps) {
           ))
         }
       </ul>
+
       <Button size="sm" onClick={() => navigate(`/mealEntries/form/${mealId}`)}>
         <PlusIcon />
         Add New Entry
