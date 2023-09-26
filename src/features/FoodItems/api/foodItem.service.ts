@@ -1,25 +1,18 @@
 import { AuthError } from "@/utils/errors"
 import { zFoodItemCreateResponse, zFoodItemsFetchByUserIdResponse } from "../types/foodItem.types"
-import { zErrorResponse } from "@/common.types"
+import { AuthenticationProps, zErrorResponse } from "@/common.types"
 
-interface CreateFoodItemProps {
+interface CreateFoodItemProps extends AuthenticationProps {
   foodName: string
   caloriesPerServing: number
   servingSizeInGrams: number
   searchVisibility: 'public' | 'private'
-  userId: string | undefined
-  token: string | undefined
 }
 
-interface FindFoodItemsByUserIdProps {
-  userId: string | undefined
-  token: string | undefined
-}
+interface FindFoodItemsByUserIdProps extends AuthenticationProps {}
 
-interface DeleteFoodItemProps {
-  foodItemId: number,
-  userId: string | undefined
-  token: string | undefined
+interface DeleteFoodItemProps extends AuthenticationProps {
+  foodItemId: number
 }
 
 async function create({
