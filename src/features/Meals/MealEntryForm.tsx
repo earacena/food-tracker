@@ -66,9 +66,9 @@ function MealEntryForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto space-y-8  my-9">
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Add new meal entry</h2>
-        <h3 className="flex flex-col items-center">{meal?.name}</h3>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col mx-auto space-y-8 my-9 w-[360px] p-5">
+        <h2 className="self-center scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Add new meal entry</h2>
+        <h3 className="self-center" >{meal?.name}</h3>
         <FormField
           control={form.control}
           name='foodItemId'
