@@ -1,19 +1,17 @@
-import { zErrorResponse } from "@/common.types"
+import { AuthenticationProps, zErrorResponse } from "@/common.types"
 import { zMealEntriesFetchByUserIdResponse, zMealEntryCreateResponse } from "../types/mealEntries.types"
 import { AuthError } from "@/utils/errors"
 
-interface FindMealEntriesByUserIdProps {
-  userId: string | undefined
-  token: string | undefined
-}
+interface FindMealEntriesByUserIdProps extends AuthenticationProps {}
 
-interface CreateProps {
+interface CreateProps extends AuthenticationProps {
   foodItemId: number,
   mealId: number,
   quantity: number,
-  userId: string | undefined
-  token: string | undefined
+}
 
+interface DeleteMealEntryProps extends AuthenticationProps {
+  mealEntryId: number
 }
 
 async function findMealEntriesByUserId({ userId, token }: FindMealEntriesByUserIdProps) {
@@ -71,7 +69,28 @@ async function create({ foodItemId, mealId, quantity, userId, token }: CreatePro
   return mealEntryCreateResponse.data.newMealEntry
 }
 
+async function deleteMealEntry ({ mealEntryId, userId, token }: DeleteMealEntryProps) {
+  if (userId == null || token == null) {
+    Promise.reject()
+  }
+
+  const response = await fetch(`/api/mealEntries/${mealEntryId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      accept: 'application/json',
+      authentication: `Bearer $[token]`
+    }
+  })
+
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json())
+    throw new AuthError(errorResponse.errorMessage)
+  }
+}
+
 export default {
   findMealEntriesByUserId,
-  create
+  create,
+  deleteMealEntry
 }
