@@ -1,16 +1,11 @@
-import { zErrorResponse } from "@/common.types"
+import { AuthenticationProps, zErrorResponse } from "@/common.types"
 import { zMealCreateResponse, zMealsFetchByUserIdResponse } from "../types/meals.types"
 import { AuthError } from "@/utils/errors"
 
-interface FindMealsByUserIdProps {
-  userId: string | undefined
-  token: string | undefined
-}
+interface FindMealsByUserIdProps extends AuthenticationProps {}
 
-interface CreateMealProps {
+interface CreateMealProps extends AuthenticationProps {
   name: string
-  userId: string | undefined
-  token: string | undefined
 }
 
 async function findMealsByUserId({ userId, token }: FindMealsByUserIdProps) {
