@@ -1,3 +1,4 @@
+import FoodItemDropdownMenu from "./FoodItemDropdownMenu"
 import { FoodItem } from "./types/foodItem.types"
 
 interface FoodListItem {
@@ -27,6 +28,8 @@ function FoodListItem ({ foodItem }: FoodListItem) {
         {foodItem.servingSizeInGrams}
         </span>
       </span>
+
+      <FoodItemDropdownMenu foodItem={foodItem} />
     </li>
   )
 }
