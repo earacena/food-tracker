@@ -16,6 +16,12 @@ interface FindFoodItemsByUserIdProps {
   token: string | undefined
 }
 
+interface DeleteFoodItemProps {
+  foodItemId: number,
+  userId: string | undefined
+  token: string | undefined
+}
+
 async function create({
   foodName,
   caloriesPerServing,
@@ -79,7 +85,28 @@ async function findFoodItemsByUserId({ userId, token }: FindFoodItemsByUserIdPro
   return userFoodItemResponse.data.userFoodItems
 }
 
+async function deleteFoodItem ({ foodItemId, userId, token }: DeleteFoodItemProps) {
+  if (userId == null || token == null) {
+    Promise.reject()
+  }
+
+  const response = await fetch(`/api/foodItems/${foodItemId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      accept: 'application/json',
+      authentication: `Bearer ${token}`
+    }
+  })
+
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json())
+    throw new AuthError(errorResponse.errorMessage)
+  }
+}
+
 export default {
   create,
-  findFoodItemsByUserId
+  findFoodItemsByUserId,
+  deleteFoodItem
 }
