@@ -1,19 +1,14 @@
-import { zErrorResponse } from "@/common.types"
+import { AuthenticationProps, zErrorResponse } from "@/common.types"
 import { zActivitiesFetchByUserIdResponse, zActivityCreateResponse } from "../types/activity.types"
 import { AuthError } from "@/utils/errors"
 
-interface FindActivitiesByUserIdProps {
-  userId: string | undefined
-  token: string | undefined
-}
+interface FindActivitiesByUserIdProps extends AuthenticationProps {}
 
-interface CreateProps {
+interface CreateProps extends AuthenticationProps {
   mealId: number | undefined
   foodItemId: number | undefined
   quantityInUnits: number | undefined
   quantityInGrams: number | undefined
-  userId: string | undefined
-  token: string | undefined
 }
 
 async function findActivitiesByUserId({ userId, token }: FindActivitiesByUserIdProps) {
