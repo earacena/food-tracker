@@ -49,7 +49,7 @@ function ProfileForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mx-6 my-9">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto space-y-8 my-9 w-[360px]">
         <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Create a new profile</h2>
         <FormField
           control={form.control}
