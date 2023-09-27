@@ -10,11 +10,13 @@ import profileService from "./api/profile.service"
 import { useNavigate } from "react-router-dom"
 import logger from "@/utils/Logger"
 import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { UserContext } from "../User/UserProvider"
 
 function ProfileForm() {
   const auth = useContext(AuthContext)
   const user = useContext(UserContext)
+  const queryClient = useQueryClient()
 
   const navigate = useNavigate()
 
@@ -32,6 +34,9 @@ function ProfileForm() {
       token: auth?.keycloak?.token
     }),
     onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['profile', auth?.userInfo?.id, auth?.keycloak?.token]
+      })
       navigate('/')
     },
     onError: (error) => logger.logError(error)
