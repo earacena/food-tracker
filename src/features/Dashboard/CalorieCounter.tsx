@@ -35,13 +35,12 @@ function computeMealCalories({ consumedQuantityInUnits, foodItems, mealEntries }
   const items = foodItems.filter((f) => foodItemIds.includes(f.id))
 
   let calories: number = 0
-  for (let i = 0; i < foodItemIds.length; ++i) {
-    const id = foodItemIds[i]
-    const item = items.find((i) => i.id === id)
-    const entry = mealEntries.find((me) => me.foodItemId === id)
+  for (let i = 0; i < items.length; ++i) {
+    const item = items[i]
+    const entry = mealEntries.find((me) => me.foodItemId === item.id)
 
-    if (entry && item) {
-      calories += Math.floor((entry.quantity / item?.servingSizeInGrams) / item?.caloriesPerServing)
+    if (entry != null) {
+      calories += computeFoodItemCalories({ consumedQuantityInGrams: entry.quantity, foodItem: item })
     }
   }
 
