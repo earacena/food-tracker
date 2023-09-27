@@ -79,7 +79,7 @@ async function deleteMealEntry ({ mealEntryId, userId, token }: DeleteMealEntryP
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
-      authentication: `Bearer $[token]`
+      authentication: `Bearer ${token}`
     }
   })
 
