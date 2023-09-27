@@ -1,4 +1,5 @@
 import { FoodItem } from "../FoodItems/types/foodItem.types"
+import MealEntryDropdownMenu from "./MealEntryDropdownMenu"
 import { MealEntry } from "./types/mealEntries.types"
 
 interface MealEntriesListProps {
@@ -26,6 +27,11 @@ function MealEntriesListItem({ mealEntry, foodItem }: MealEntriesListProps) {
           {mealEntry.quantity}
         </span>
       </span>
+
+      <MealEntryDropdownMenu
+        mealEntry={mealEntry}
+        foodItem={foodItem}
+      />
     </li>
   )
 }
