@@ -4,19 +4,20 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/Form"
 import { Input } from '@/components/ui/Input'
 import { Button } from "@/components/ui/Button"
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../Auth/AuthProvider"
 import profileService from "./api/profile.service"
 import { useNavigate } from "react-router-dom"
 import logger from "@/utils/Logger"
-import { useMutation } from "@tanstack/react-query"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { UserContext } from "../User/UserProvider"
+import { Loader2 } from "lucide-react"
 
 function ProfileForm() {
   const auth = useContext(AuthContext)
   const user = useContext(UserContext)
   const queryClient = useQueryClient()
+  const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
 
@@ -28,21 +29,29 @@ function ProfileForm() {
   })
 
   const addProfile = useMutation({
-    mutationFn: async (values: ProfileFormSchemaType) => await profileService.create({
-      ...values,
-      userId: auth?.userInfo?.id,
-      token: auth?.keycloak?.token
-    }),
+    mutationFn: async (values: ProfileFormSchemaType) => {
+      setLoading(true)
+      return await profileService.create({
+        ...values,
+        userId: auth?.userInfo?.id,
+        token: auth?.keycloak?.token
+      })
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['profile', auth?.userInfo?.id, auth?.keycloak?.token]
       })
+      
+      setLoading(false)
       navigate('/')
     },
-    onError: (error) => logger.logError(error)
+    onError: (error) => {
+      setLoading(false)
+      logger.logError(error)
+    }
   })
 
-  function onSubmit (values: ProfileFormSchemaType) {
+  function onSubmit(values: ProfileFormSchemaType) {
     addProfile.mutate(values)
   }
 
@@ -72,7 +81,10 @@ function ProfileForm() {
             </FormItem>
           )}
         />
-        <Button type='submit'>Submit</Button>
+        <Button type='submit' disabled={loading}>
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Submit
+        </Button>
       </form>
     </Form>
   )
