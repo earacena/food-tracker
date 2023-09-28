@@ -13,7 +13,9 @@ interface CreateProps extends AuthenticationProps {
 interface DeleteMealEntryProps extends AuthenticationProps {
   mealEntryId: number
 }
-
+interface DeleteMealEntriesByMealIdProps extends AuthenticationProps {
+  mealId: number
+}
 async function findMealEntriesByUserId({ userId, token }: FindMealEntriesByUserIdProps) {
   if (userId == null || token == null) {
     Promise.reject()
@@ -89,8 +91,29 @@ async function deleteMealEntry ({ mealEntryId, userId, token }: DeleteMealEntryP
   }
 }
 
+async function deleteMealEntriesByMealId ({ mealId, userId, token }: DeleteMealEntriesByMealIdProps) {
+  if (userId == null || token == null) {
+    Promise.reject()
+  }
+
+  const response = await fetch(`/api/mealEntries/meal/${mealId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      accept: 'application/json',
+      authentication: `Bearer ${token}`
+    }
+  })
+
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json())
+    throw new AuthError(errorResponse.errorMessage)
+  }
+}
+
 export default {
   findMealEntriesByUserId,
   create,
-  deleteMealEntry
+  deleteMealEntry,
+  deleteMealEntriesByMealId,
 }
