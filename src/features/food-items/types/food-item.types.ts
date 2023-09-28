@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 export const zFoodItem = z.object({
   id: z.number(),
@@ -6,24 +6,24 @@ export const zFoodItem = z.object({
   caloriesPerServing: z.number(),
   servingSizeInGrams: z.number(),
   searchVisibility: z.enum(['private', 'public']),
-  createdAt: z.coerce.date()
-})
+  createdAt: z.coerce.date(),
+});
 
-export const zFoodItems = z.array(zFoodItem)
+export const zFoodItems = z.array(zFoodItem);
 
-export type FoodItem = z.infer<typeof zFoodItem>
-export type FoodItems = z.infer<typeof zFoodItems>
+export type FoodItem = z.infer<typeof zFoodItem>;
+export type FoodItems = z.infer<typeof zFoodItems>;
 
 export const zFoodItemCreateResponse = z.object({
   success: z.boolean(),
   data: z.object({
-    newFoodItem: zFoodItem
-  })
-})
+    newFoodItem: zFoodItem,
+  }),
+});
 
 export const zFoodItemsFetchByUserIdResponse = z.object({
   success: z.boolean(),
   data: z.object({
-    userFoodItems: zFoodItems
-  })
-})
+    userFoodItems: zFoodItems,
+  }),
+});

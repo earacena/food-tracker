@@ -1,18 +1,23 @@
-import { AuthError } from "@/utils/errors"
-import { zFoodItemCreateResponse, zFoodItemsFetchByUserIdResponse } from '../types/food-item.types'
-import { AuthenticationProps, zErrorResponse } from "@/common.types"
+import { AuthError } from '@/utils/errors';
+import type { AuthenticationProps } from '@/common.types';
+import { zErrorResponse } from '@/common.types';
+import type { FoodItem, FoodItems } from '../types/food-item.types';
+import {
+  zFoodItemCreateResponse,
+  zFoodItemsFetchByUserIdResponse,
+} from '../types/food-item.types';
 
 interface CreateFoodItemProps extends AuthenticationProps {
-  foodName: string
-  caloriesPerServing: number
-  servingSizeInGrams: number
-  searchVisibility: 'public' | 'private'
+  foodName: string;
+  caloriesPerServing: number;
+  servingSizeInGrams: number;
+  searchVisibility: 'public' | 'private';
 }
 
-interface FindFoodItemsByUserIdProps extends AuthenticationProps {}
+type FindFoodItemsByUserIdProps = AuthenticationProps;
 
 interface DeleteFoodItemProps extends AuthenticationProps {
-  foodItemId: number
+  foodItemId: number;
 }
 
 async function create({
@@ -22,9 +27,9 @@ async function create({
   searchVisibility,
   userId,
   token,
-}: CreateFoodItemProps) {
-  if (userId == null || token == null) {
-    Promise.reject()
+}: CreateFoodItemProps): Promise<FoodItem> {
+  if (userId === undefined || token === undefined) {
+    void Promise.reject();
   }
 
   const requestBody = JSON.stringify({
@@ -32,55 +37,64 @@ async function create({
     caloriesPerServing,
     servingSizeInGrams,
     searchVisibility,
-    userId
-  })
+    userId,
+  });
 
   const response = await fetch('/api/foodItems/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
-      authentication: `Bearer ${token}`
+      authentication: `Bearer ${token}`,
     },
-    body: requestBody
-  })
+    body: requestBody,
+  });
 
   if (response.status === 401) {
-    const errorResponse = zErrorResponse.parse(await response.json())
-    throw new AuthError(errorResponse.errorMessage)
+    const errorResponse = zErrorResponse.parse(await response.json());
+    throw new AuthError(errorResponse.errorMessage);
   }
 
-  const responseJson = await response.json()
-  const foodItemCreateResponse = zFoodItemCreateResponse.parse(responseJson)
-  return foodItemCreateResponse.data.newFoodItem
+  const foodItemCreateResponse = zFoodItemCreateResponse.parse(
+    await response.json(),
+  );
+  return foodItemCreateResponse.data.newFoodItem;
 }
 
-async function findFoodItemsByUserId({ userId, token }: FindFoodItemsByUserIdProps) {
-  if (userId == null || token == null) {
-    Promise.reject()
+async function findFoodItemsByUserId({
+  userId,
+  token,
+}: FindFoodItemsByUserIdProps): Promise<FoodItems> {
+  if (userId === undefined || token === undefined) {
+    void Promise.reject();
   }
 
   const response = await fetch(`/api/foodItems/user/${userId}`, {
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
-      authentication: `Bearer ${token}`
-    }
-  })
+      authentication: `Bearer ${token}`,
+    },
+  });
 
   if (response.status === 401) {
-    const errorResponse = zErrorResponse.parse(await response.json())
-    throw new AuthError(errorResponse.errorMessage)
+    const errorResponse = zErrorResponse.parse(await response.json());
+    throw new AuthError(errorResponse.errorMessage);
   }
 
-  const responseJson = await response.json()
-  const userFoodItemResponse = zFoodItemsFetchByUserIdResponse.parse(responseJson)
-  return userFoodItemResponse.data.userFoodItems
+  const userFoodItemResponse = zFoodItemsFetchByUserIdResponse.parse(
+    await response.json(),
+  );
+  return userFoodItemResponse.data.userFoodItems;
 }
 
-async function deleteFoodItem ({ foodItemId, userId, token }: DeleteFoodItemProps) {
-  if (userId == null || token == null) {
-    Promise.reject()
+async function deleteFoodItem({
+  foodItemId,
+  userId,
+  token,
+}: DeleteFoodItemProps): Promise<void> {
+  if (userId === undefined || token === undefined) {
+    void Promise.reject();
   }
 
   const response = await fetch(`/api/foodItems/${foodItemId}`, {
@@ -88,18 +102,18 @@ async function deleteFoodItem ({ foodItemId, userId, token }: DeleteFoodItemProp
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
-      authentication: `Bearer ${token}`
-    }
-  })
+      authentication: `Bearer ${token}`,
+    },
+  });
 
   if (response.status === 401) {
-    const errorResponse = zErrorResponse.parse(await response.json())
-    throw new AuthError(errorResponse.errorMessage)
+    const errorResponse = zErrorResponse.parse(await response.json());
+    throw new AuthError(errorResponse.errorMessage);
   }
 }
 
-export default {
+export const foodItemService = {
   create,
   findFoodItemsByUserId,
-  deleteFoodItem
-}
+  deleteFoodItem,
+};

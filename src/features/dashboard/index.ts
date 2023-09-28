@@ -1,1 +1,1 @@
-export { default as Dashboard } from './dashboard'
+export { Dashboard } from './dashboard';

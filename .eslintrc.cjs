@@ -1,19 +1,19 @@
-const { resolve } = require('path')
+const { resolve } = require('path');
 
-const project = resolve(__dirname, 'tsconfig.json')
+const project = resolve(__dirname, 'tsconfig.json');
 
 module.exports = {
   root: true,
   env: { browser: true, es2020: true },
   parserOptions: {
-    project
+    project,
   },
   settings: {
     'import/resolver': {
       typescript: {
-        project
-      }
-    }
+        project,
+      },
+    },
   },
   extends: [
     require.resolve('@vercel/style-guide/eslint/browser'),
@@ -26,17 +26,14 @@ module.exports = {
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
-  plugins: [
-    'react-refresh',
-    '@tanstack/query'
-  ],
+  plugins: ['react-refresh', '@tanstack/query'],
   rules: {
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
     ],
-    "@tanstack/query/exhaustive-deps": "error",
-    "@tanstack/query/prefer-query-object-syntax": "error",
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
+    '@tanstack/query/exhaustive-deps': 'error',
+    '@tanstack/query/prefer-query-object-syntax': 'error',
+    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
   },
-}
+};

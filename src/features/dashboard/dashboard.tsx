@@ -1,13 +1,11 @@
-import Activities from '../activity/activities'
-import CalorieCounter from './calorie-counter'
+import { Activities } from '../activity';
+import { CalorieCounter } from './calorie-counter';
 
-function Dashboard() {
+export function Dashboard(): JSX.Element {
   return (
     <>
       <CalorieCounter />
-      <Activities onlyCurrentDay noPastActivity />
+      <Activities noPastActivity onlyCurrentDay />
     </>
-  )
+  );
 }
-
-export default Dashboard

@@ -1,43 +1,57 @@
-import { AuthenticationProps, zErrorResponse } from "@/common.types"
-import { zActivitiesFetchByUserIdResponse, zActivityCreateResponse } from "../types/activity.types"
-import { AuthError } from "@/utils/errors"
+import type { AuthenticationProps } from '@/common.types';
+import { zErrorResponse } from '@/common.types';
+import { AuthError } from '@/utils/errors';
+import type { Activities, Activity } from '../types/activity.types';
+import {
+  zActivitiesFetchByUserIdResponse,
+  zActivityCreateResponse,
+} from '../types/activity.types';
 
-interface FindActivitiesByUserIdProps extends AuthenticationProps {}
+type FindActivitiesByUserIdProps = AuthenticationProps;
 
 interface CreateProps extends AuthenticationProps {
-  mealId: number | undefined
-  foodItemId: number | undefined
-  quantityInUnits: number | undefined
-  quantityInGrams: number | undefined
+  mealId: number | undefined;
+  foodItemId: number | undefined;
+  quantityInUnits: number | undefined;
+  quantityInGrams: number | undefined;
 }
 
-async function findActivitiesByUserId({ userId, token }: FindActivitiesByUserIdProps) {
-  if (userId == null || token == null) {
-    Promise.reject()
+async function findActivitiesByUserId({
+  userId,
+  token,
+}: FindActivitiesByUserIdProps): Promise<Activities> {
+  if (userId === undefined || token === undefined) {
+    void Promise.reject();
   }
 
   const response = await fetch(`/api/activities/user/${userId}`, {
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
-      authentication: `Bearer ${token}`
-    }
-  })
+      authentication: `Bearer ${token}`,
+    },
+  });
 
   if (response.status === 401) {
-    const errorResponse = zErrorResponse.parse(await response.json())
-    throw new AuthError(errorResponse.errorMessage)
+    const errorResponse = zErrorResponse.parse(await response.json());
+    throw new AuthError(errorResponse.errorMessage);
   }
 
-  const responseJson = await response.json()
-  const activitiesFetchByUserIdResponse = zActivitiesFetchByUserIdResponse.parse(responseJson)
-  return activitiesFetchByUserIdResponse.data.userActivities
+  const activitiesFetchByUserIdResponse =
+    zActivitiesFetchByUserIdResponse.parse(await response.json());
+  return activitiesFetchByUserIdResponse.data.userActivities;
 }
 
-
-async function create ({ mealId, foodItemId, quantityInGrams, quantityInUnits, userId, token }: CreateProps) {
-  if (userId == null || token == null) {
-    Promise.reject()
+async function create({
+  mealId,
+  foodItemId,
+  quantityInGrams,
+  quantityInUnits,
+  userId,
+  token,
+}: CreateProps): Promise<Activity> {
+  if (userId === undefined || token === undefined) {
+    void Promise.reject();
   }
 
   const requestBody = JSON.stringify({
@@ -45,30 +59,31 @@ async function create ({ mealId, foodItemId, quantityInGrams, quantityInUnits, u
     foodItemId: foodItemId ?? null,
     quantityInGrams: quantityInGrams ?? null,
     quantityInUnits: quantityInUnits ?? null,
-    userId
-  })
+    userId,
+  });
 
   const response = await fetch(`/api/activities`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
-      authentication: `Bearer ${token}`
+      authentication: `Bearer ${token}`,
     },
-    body: requestBody
-  })
-  
+    body: requestBody,
+  });
+
   if (response.status === 401) {
-    const errorResponse = zErrorResponse.parse(await response.json())
-    throw new AuthError(errorResponse.errorMessage)
+    const errorResponse = zErrorResponse.parse(await response.json());
+    throw new AuthError(errorResponse.errorMessage);
   }
 
-  const responseJson = await response.json()
-  const activityCreateResponse = zActivityCreateResponse.parse(responseJson)
-  return activityCreateResponse.data.newActivity
+  const activityCreateResponse = zActivityCreateResponse.parse(
+    await response.json(),
+  );
+  return activityCreateResponse.data.newActivity;
 }
 
-export default {
+export const activityService = {
   findActivitiesByUserId,
-  create
-}
+  create,
+};

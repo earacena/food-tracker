@@ -1,42 +1,53 @@
-import { useContext, useEffect } from "react";
-import { AuthContext } from '@/features/auth/auth-provider';
-import foodItemService from '../api/food-item.service';
+import { useContext, useEffect } from 'react';
+import type { UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/toast-hook';
-import logger from '@/utils/logger';
-import { useQuery } from '@tanstack/react-query'
+import { logger } from '@/utils/logger';
+import { AuthContext } from '@/features/auth/auth-provider';
 import { refreshToken } from '@/features/auth/refresh-token';
-import { AuthError } from "@/utils/errors";
+import { AuthError } from '@/utils/errors';
+import { foodItemService } from '../api/food-item.service';
+import type { FoodItems } from '../types/food-item.types';
 
-export function useFoodItems() {
-  const auth = useContext(AuthContext)
-  const { toast } = useToast()
+export function useFoodItems(): UseQueryResult<FoodItems> {
+  const auth = useContext(AuthContext);
+  const { toast } = useToast();
 
-  const validAuth: boolean = (auth?.userInfo?.id != null && auth?.keycloak?.token != null)
+  const validAuth: boolean =
+    auth?.userInfo?.id !== undefined && auth.keycloak?.token !== undefined;
 
   const foodItemsQuery = useQuery({
     queryKey: ['foodItems', auth?.userInfo?.id, auth?.keycloak?.token],
-    queryFn: async () => await foodItemService.findFoodItemsByUserId({
-      userId: auth?.userInfo?.id,
-      token: auth?.keycloak?.token
-    }),
+    queryFn: () =>
+      foodItemService.findFoodItemsByUserId({
+        userId: auth?.userInfo?.id,
+        token: auth?.keycloak?.token,
+      }),
     enabled: validAuth,
-  })
+  });
 
   useEffect(() => {
-    if (foodItemsQuery.error) {
-      logger.logError(foodItemsQuery.error)
+    async function processErrors(): Promise<void> {
+      if (foodItemsQuery.error) {
+        logger.logError(foodItemsQuery.error);
 
-      if (foodItemsQuery.error instanceof AuthError && foodItemsQuery.error.message === 'jwt expired') {
-        refreshToken(auth?.keycloak, logger)
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Unable to fetch food items'
-        })
+        if (
+          foodItemsQuery.error instanceof AuthError &&
+          foodItemsQuery.error.message === 'jwt expired'
+        ) {
+          await refreshToken(auth?.keycloak, logger);
+        } else {
+          toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Unable to fetch food items',
+          });
+        }
       }
     }
-  }, [auth?.keycloak, foodItemsQuery.error, toast])
 
-  return foodItemsQuery
+    void processErrors();
+  }, [auth?.keycloak, foodItemsQuery.error, toast]);
+
+  return foodItemsQuery;
 }

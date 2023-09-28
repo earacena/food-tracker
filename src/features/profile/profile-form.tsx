@@ -1,73 +1,80 @@
-import { useForm } from "react-hook-form"
-import { zProfileFormSchema, ProfileFormSchemaType } from './types/profile-form.types'
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { useContext, useEffect, useState } from "react"
-import { AuthContext } from '../auth/auth-provider'
-import profileService from "./api/profile.service"
-import { useNavigate } from "react-router-dom"
-import logger from '@/utils/logger'
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { UserContext } from '../user/user-provider'
-import { Loader2 } from "lucide-react"
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
+import { logger } from '@/utils/logger';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { AuthContext } from '../auth/auth-provider';
+import { profileService } from './api/profile.service';
+import { zProfileFormSchema } from './types/profile-form.types';
+import type { ProfileFormSchemaType } from './types/profile-form.types';
 
-function ProfileForm() {
-  const auth = useContext(AuthContext)
-  const user = useContext(UserContext)
-  const queryClient = useQueryClient()
-  const [loading, setLoading] = useState(false)
+export function ProfileForm(): JSX.Element {
+  const auth = useContext(AuthContext);
+  const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const form = useForm<ProfileFormSchemaType>({
     resolver: zodResolver(zProfileFormSchema),
     defaultValues: {
       dailyCalorieGoal: 2000,
     },
-  })
+  });
 
   const addProfile = useMutation({
-    mutationFn: async (values: ProfileFormSchemaType) => {
-      setLoading(true)
-      return await profileService.create({
+    mutationFn: (values: ProfileFormSchemaType) =>
+      profileService.create({
         ...values,
         userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token
-      })
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['profile', auth?.userInfo?.id, auth?.keycloak?.token]
-      })
-      
-      setLoading(false)
-      navigate('/')
+        token: auth?.keycloak?.token,
+      }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['profile', auth?.userInfo?.id, auth?.keycloak?.token],
+      });
+
+      navigate('/');
     },
     onError: (error) => {
-      setLoading(false)
-      logger.logError(error)
-    }
-  })
+      setLoading(false);
+      logger.logError(error);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
 
-  function onSubmit(values: ProfileFormSchemaType) {
-    addProfile.mutate(values)
+  function onSubmit(values: ProfileFormSchemaType): void {
+    setLoading(true);
+    addProfile.mutate(values);
   }
-
-  useEffect(() => {
-    if (user?.userProfile != null) {
-      navigate('/')
-    }
-  })
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col mx-auto space-y-8 my-9 w-[360px] p-5">
-        <h2 className="self-center scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Create a new profile</h2>
+      <form
+        className="flex flex-col mx-auto space-y-8 my-9 w-[360px] p-5"
+        onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
+      >
+        <h2 className="self-center scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+          Create a new profile
+        </h2>
         <FormField
           control={form.control}
-          name='dailyCalorieGoal'
+          name="dailyCalorieGoal"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Daily Calorie Goal</FormLabel>
@@ -75,19 +82,18 @@ function ProfileForm() {
                 <Input placeholder="2000" {...field} />
               </FormControl>
               <FormDescription>
-                This is the amount of calories you would like to consume every day.
+                This is the amount of calories you would like to consume every
+                day.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type='submit' disabled={loading}>
-          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        <Button disabled={loading} type="submit">
+          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Submit
         </Button>
       </form>
     </Form>
-  )
+  );
 }
-
-export default ProfileForm

@@ -1,22 +1,18 @@
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { useContext } from "react"
-import { AuthContext } from '../auth/auth-provider'
+import { useContext } from 'react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { AuthContext } from '@/features/auth';
 
-function UserCard() {
-  const auth = useContext(AuthContext)
+export function UserCard(): JSX.Element {
+  const auth = useContext(AuthContext);
 
   return (
     <>
       {auth?.userInfo?.username}
       <Avatar>
         <AvatarFallback>
-          <strong>
-            {auth?.userInfo?.username?.at(0)?.toUpperCase()}
-          </strong>
+          <strong>{auth?.userInfo?.username?.at(0)?.toUpperCase()}</strong>
         </AvatarFallback>
       </Avatar>
     </>
-  )
+  );
 }
-
-export default UserCard

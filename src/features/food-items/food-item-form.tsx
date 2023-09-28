@@ -1,26 +1,38 @@
-import { useContext } from "react"
-import { useNavigate } from "react-router-dom"
-import { useForm } from 'react-hook-form'
+import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { logger } from '@/utils/logger';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { AuthContext } from '../auth/auth-provider';
+import { zFoodItemFormSchema } from './types/food-item-form.types';
+import type { FoodItemFormSchema } from './types/food-item-form.types';
+import { foodItemService } from './api/food-item.service';
 
-// import { useToast } from '@/components/ui/toast-hook'
-import { zodResolver } from "@hookform/resolvers/zod"
-import { AuthContext } from '../auth/auth-provider'
-import { FoodItemFormSchema, zFoodItemFormSchema } from './types/food-item-form.types'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import logger from '@/utils/logger'
-import { Button } from '@/components/ui/button'
-import foodItemService from './api/food-item.service'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+export function FoodItemForm(): JSX.Element {
+  const auth = useContext(AuthContext);
 
-
-function FoodItemForm() {
-  const auth = useContext(AuthContext)
-
-  const queryClient  = useQueryClient()
+  const queryClient = useQueryClient();
   // const { toast } = useToast()
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const form = useForm<FoodItemFormSchema>({
     resolver: zodResolver(zFoodItemFormSchema),
@@ -28,37 +40,45 @@ function FoodItemForm() {
       foodName: '',
       caloriesPerServing: 100,
       servingSizeInGrams: 0,
-      searchVisibility: 'private'
-    }
-  })
-  
-  const addFoodItem = useMutation({
-    mutationFn: async (newFoodItem: FoodItemFormSchema) => await foodItemService.create({
-      ...newFoodItem,
-      userId: auth?.userInfo?.id,
-      token: auth?.keycloak?.token
-    }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['foodItems', auth?.userInfo?.id, auth?.keycloak?.token]
-      })
-
-      navigate('/foodItems')
+      searchVisibility: 'private',
     },
-    onError: (error) => logger.logError(error)
-  })
+  });
 
-  async function onSubmit (values: FoodItemFormSchema) {
-    addFoodItem.mutate(values)
+  const addFoodItem = useMutation({
+    mutationFn: (newFoodItem: FoodItemFormSchema) =>
+      foodItemService.create({
+        ...newFoodItem,
+        userId: auth?.userInfo?.id,
+        token: auth?.keycloak?.token,
+      }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['foodItems', auth?.userInfo?.id, auth?.keycloak?.token],
+      });
+
+      navigate('/foodItems');
+    },
+    onError: (error) => {
+      logger.logError(error);
+    },
+  });
+
+  function onSubmit(values: FoodItemFormSchema): void {
+    addFoodItem.mutate(values);
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col mx-auto space-y-8 my-9 w-[360px] p-5">
-        <h2 className="self-center scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Add new food item</h2>
+      <form
+        className="flex flex-col mx-auto space-y-8 my-9 w-[360px] p-5"
+        onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
+      >
+        <h2 className="self-center scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+          Add new food item
+        </h2>
         <FormField
           control={form.control}
-          name='foodName'
+          name="foodName"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Food Name</FormLabel>
@@ -75,7 +95,7 @@ function FoodItemForm() {
 
         <FormField
           control={form.control}
-          name='servingSizeInGrams'
+          name="servingSizeInGrams"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Serving Size In Grams</FormLabel>
@@ -92,7 +112,7 @@ function FoodItemForm() {
 
         <FormField
           control={form.control}
-          name='caloriesPerServing'
+          name="caloriesPerServing"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Calories Per Serving</FormLabel>
@@ -109,11 +129,11 @@ function FoodItemForm() {
 
         <FormField
           control={form.control}
-          name='searchVisibility'
+          name="searchVisibility"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Visibility</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select defaultValue={field.value} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger disabled>
                     <SelectValue placeholder="Select visibility" />
@@ -125,7 +145,8 @@ function FoodItemForm() {
                 </SelectContent>
               </Select>
               <FormDescription>
-                This is whether this entry is publicly visible or visible only by you.
+                This is whether this entry is publicly visible or visible only
+                by you.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -135,7 +156,5 @@ function FoodItemForm() {
         <Button type="submit">Submit</Button>
       </form>
     </Form>
-  )
+  );
 }
-
-export default FoodItemForm

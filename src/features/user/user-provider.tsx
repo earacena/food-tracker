@@ -1,29 +1,23 @@
-import { createContext } from "react"
-import { Profile } from '../profile/types/profile.types'
-import useProfile from '../profile/hooks/use-profile'
+import { createContext } from 'react';
+import { useProfile } from '../profile';
+import type { Profile } from '../profile';
 
-export const UserContext = createContext<UserContextType | null>(null)
-
-// interface UserContextActions {
-//   setUserProfile: React.Dispatch<SetStateAction<Profile | null>>
-// }
+export const UserContext = createContext<UserContextType | null>(null);
 
 interface UserContextType {
-  userProfile: Profile | null | undefined,
+  userProfile: Profile | null | undefined;
 }
 
 interface UserProviderProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
-function UserProvider({ children }: UserProviderProps) {
-  const { data: userProfile } = useProfile()
+export function UserProvider({ children }: UserProviderProps): JSX.Element {
+  const { data: userProfile } = useProfile();
 
   return (
     <UserContext.Provider value={{ userProfile }}>
       {children}
     </UserContext.Provider>
-  )
+  );
 }
-
-export default UserProvider

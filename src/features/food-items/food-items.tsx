@@ -1,14 +1,10 @@
-import FoodItemList from './food-item-list'
+import { FoodItemList } from './food-item-list';
 
-function FoodItems () {
+export function FoodItems(): JSX.Element {
   return (
     <div className="flex flex-col items-center mx-auto">
-      <span className="text-3xl text-semibold">
-        Food Items
-      </span>
+      <span className="text-3xl text-semibold">Food Items</span>
       <FoodItemList />
     </div>
-  )
+  );
 }
-
-export default FoodItems
