@@ -34,6 +34,13 @@ module.exports = {
     ],
     '@tanstack/query/exhaustive-deps': 'error',
     '@tanstack/query/prefer-query-object-syntax': 'error',
-    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+            "**/*.spec.{ts,tsx}",
+        ]
+      }
+    ]
   },
 };
