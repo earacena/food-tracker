@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { logger } from '@/utils/logger';
-import { AuthContext } from '../auth/auth-provider';
+import { AuthContext } from '@/features/auth';
 import type { FoodItem } from './types/food-item.types';
 import { foodItemService } from './api/food-item.service';
 
@@ -34,13 +34,13 @@ export function FoodItemDropdownMenu({
     mutationFn: async ({ foodItemId }: DeleteMutationProps) => {
       await foodItemService.deleteFoodItem({
         foodItemId,
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token,
+        userId: auth?.userId,
+        token: auth?.token,
       });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['foodItems', auth?.userInfo?.id, auth?.keycloak?.token],
+        queryKey: ['foodItems', auth?.userId, auth?.token],
       });
     },
     onError: (error) => {

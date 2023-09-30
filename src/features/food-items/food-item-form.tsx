@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { AuthContext } from '../auth/auth-provider';
+import { AuthContext } from '../auth';
 import { zFoodItemFormSchema } from './types/food-item-form.types';
 import type { FoodItemFormSchema } from './types/food-item-form.types';
 import { foodItemService } from './api/food-item.service';
@@ -48,12 +48,12 @@ export function FoodItemForm(): JSX.Element {
     mutationFn: (newFoodItem: FoodItemFormSchema) =>
       foodItemService.create({
         ...newFoodItem,
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token,
+        userId: auth?.userId,
+        token: auth?.token,
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['foodItems', auth?.userInfo?.id, auth?.keycloak?.token],
+        queryKey: ['foodItems', auth?.userId, auth?.token],
       });
 
       navigate('/foodItems');

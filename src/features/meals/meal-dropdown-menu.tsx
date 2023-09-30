@@ -21,7 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { AuthContext } from '../auth/auth-provider';
+import { AuthContext } from '@/features/auth';
 import { mealService } from './api/meal.service';
 import { mealEntryService } from './api/meal-entry.service';
 import type { Meal } from './types/meals.types';
@@ -43,23 +43,23 @@ export function MealDropdownMenu({ meal }: MealDropdownMenuProps): JSX.Element {
     mutationFn: async ({ mealId }: DeleteMutationProps) => {
       await mealEntryService.deleteMealEntriesByMealId({
         mealId,
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token,
+        userId: auth?.userId,
+        token: auth?.token,
       });
 
       await mealService.deleteMeal({
         mealId,
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token,
+        userId: auth?.userId,
+        token: auth?.token,
       });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['mealEntries', auth?.userInfo?.id, auth?.keycloak?.token],
+        queryKey: ['mealEntries', auth?.userId, auth?.token],
       });
 
       await queryClient.invalidateQueries({
-        queryKey: ['meals', auth?.userInfo?.id, auth?.keycloak?.token],
+        queryKey: ['meals', auth?.userId, auth?.token],
       });
     },
     onError: (error) => {

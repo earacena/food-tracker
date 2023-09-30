@@ -2,26 +2,28 @@ import { useContext, useEffect } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/toast-hook';
-import { AuthContext } from '@/features/auth/auth-provider';
+import { AuthContext } from '@/features/auth';
 import { logger } from '@/utils/logger';
 import { refreshToken } from '@/features/auth/refresh-token';
 import { AuthError } from '@/utils/errors';
 import { activityService } from '../api/activity.service';
 import type { Activities } from '../types/activity.types';
+import { KeycloakContext } from '@/features/auth/keycloak-context';
 
 export function useActivities(): UseQueryResult<Activities> {
   const auth = useContext(AuthContext);
+  const keycloak = useContext(KeycloakContext);
   const { toast } = useToast();
 
   const validAuth: boolean =
-    auth?.userInfo?.id !== undefined && auth.keycloak?.token !== undefined;
+    auth?.userId !== undefined && auth?.token !== undefined;
 
   const activitiesQuery = useQuery({
-    queryKey: ['activities', auth?.userInfo?.id, auth?.keycloak?.token],
+    queryKey: ['activities', auth?.userId, auth?.token],
     queryFn: () =>
       activityService.findActivitiesByUserId({
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token,
+        userId: auth?.userId,
+        token: auth?.token,
       }),
     enabled: validAuth,
   });
@@ -35,7 +37,11 @@ export function useActivities(): UseQueryResult<Activities> {
           activitiesQuery.error instanceof AuthError &&
           activitiesQuery.error.message === 'jwt expired'
         ) {
-          await refreshToken(auth?.keycloak, logger);
+          await refreshToken({
+            client: keycloak?.client,
+            setToken: auth?.setToken,
+            logger,
+          });
         } else {
           toast({
             variant: 'destructive',
@@ -47,7 +53,7 @@ export function useActivities(): UseQueryResult<Activities> {
     }
 
     void processErrors();
-  }, [activitiesQuery.error, auth?.keycloak, toast]);
+  }, [activitiesQuery.error, keycloak?.client, toast]);
 
   return activitiesQuery;
 }

@@ -1,11 +1,11 @@
 import { zErrorResponse } from '@/common.types';
 import { AuthError, NotFoundError } from '@/utils/errors';
+import { logger } from '@/utils/logger';
 import type { Profile } from '../types/profile.types';
 import {
   zProfileCreateResponse,
   zProfileFetchResponse,
 } from '../types/profile.types';
-import { logger } from '@/utils/logger';
 
 interface FetchProfileByUserIdProps {
   userId: string | undefined;

@@ -1,9 +1,8 @@
-import { useContext } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { AuthContext } from '@/features/auth';
+import { useProfile } from '../profile';
 
 export function UserCard(): JSX.Element {
-  const auth = useContext(AuthContext);
+  const { data: userProfile } = useProfile();
 
   return (
     <>

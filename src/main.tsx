@@ -4,17 +4,24 @@ import { createRoot } from 'react-dom/client';
 import { App } from './app.tsx';
 import './index.css';
 import { AuthProvider } from './features/auth/auth-provider.tsx';
+import { KeycloakProvider } from './features/auth/keycloak-provider.tsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+const client = new QueryClient();
 const rootNode = document.getElementById('root');
 
 if (rootNode) {
   createRoot(rootNode).render(
-    <AuthProvider>
+    <KeycloakProvider>
       <StrictMode>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <AuthProvider>
+          <BrowserRouter>
+            <QueryClientProvider client={client}>
+              <App />
+            </QueryClientProvider>
+          </BrowserRouter>
+        </AuthProvider>
       </StrictMode>
-    </AuthProvider>,
+    </KeycloakProvider>,
   );
 }

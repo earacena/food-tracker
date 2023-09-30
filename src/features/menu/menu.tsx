@@ -3,7 +3,7 @@ import { LogOut, Menu as MenuIcon } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { AuthContext } from '../auth/auth-provider';
+import { KeycloakContext } from '@/features/auth/keycloak-context';
 
 interface LinkItem {
   link: string;
@@ -18,11 +18,11 @@ const linkItems: LinkItem[] = [
 ];
 
 export function Menu(): JSX.Element {
-  const auth = useContext(AuthContext);
+  const keycloak = useContext(KeycloakContext);
   const [open, setOpen] = useState<boolean>(false);
 
   async function logout(): Promise<void> {
-    await auth?.keycloak?.logout();
+    await keycloak?.client?.logout();
   }
 
   return (

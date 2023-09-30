@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -16,17 +16,25 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { AuthContext } from '../auth/auth-provider';
+import { AuthContext } from '@/features/auth/';
 import { profileService } from './api/profile.service';
 import { zProfileFormSchema } from './types/profile-form.types';
 import type { ProfileFormSchemaType } from './types/profile-form.types';
+import { useProfile } from '.';
 
 export function ProfileForm(): JSX.Element {
   const auth = useContext(AuthContext);
+  const { data: userProfile } = useProfile();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userProfile !== undefined && userProfile !== null) {
+      navigate('/');
+    }
+  }, [navigate, userProfile]);
 
   const form = useForm<ProfileFormSchemaType>({
     resolver: zodResolver(zProfileFormSchema),
@@ -39,12 +47,12 @@ export function ProfileForm(): JSX.Element {
     mutationFn: (values: ProfileFormSchemaType) =>
       profileService.create({
         ...values,
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token,
+        userId: auth?.userId,
+        token: auth?.token,
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['profile', auth?.userInfo?.id, auth?.keycloak?.token],
+        queryKey: ['profile', auth?.userId, auth?.token],
       });
 
       navigate('/');

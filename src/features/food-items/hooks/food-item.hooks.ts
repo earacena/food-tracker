@@ -3,25 +3,27 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/toast-hook';
 import { logger } from '@/utils/logger';
-import { AuthContext } from '@/features/auth/auth-provider';
+import { AuthContext } from '@/features/auth';
 import { refreshToken } from '@/features/auth/refresh-token';
 import { AuthError } from '@/utils/errors';
 import { foodItemService } from '../api/food-item.service';
 import type { FoodItems } from '../types/food-item.types';
+import { KeycloakContext } from '@/features/auth/keycloak-context';
 
 export function useFoodItems(): UseQueryResult<FoodItems> {
+  const keycloak = useContext(KeycloakContext);
   const auth = useContext(AuthContext);
   const { toast } = useToast();
 
   const validAuth: boolean =
-    auth?.userInfo?.id !== undefined && auth.keycloak?.token !== undefined;
+    auth?.userId !== undefined && auth?.token !== undefined;
 
   const foodItemsQuery = useQuery({
-    queryKey: ['foodItems', auth?.userInfo?.id, auth?.keycloak?.token],
+    queryKey: ['foodItems', auth?.userId, auth?.token],
     queryFn: () =>
       foodItemService.findFoodItemsByUserId({
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token,
+        userId: auth?.userId,
+        token: auth?.token,
       }),
     enabled: validAuth,
   });
@@ -35,7 +37,11 @@ export function useFoodItems(): UseQueryResult<FoodItems> {
           foodItemsQuery.error instanceof AuthError &&
           foodItemsQuery.error.message === 'jwt expired'
         ) {
-          await refreshToken(auth?.keycloak, logger);
+          await refreshToken({
+            client: keycloak?.client,
+            setToken: auth?.setToken,
+            logger,
+          });
         } else {
           toast({
             variant: 'destructive',
@@ -47,7 +53,7 @@ export function useFoodItems(): UseQueryResult<FoodItems> {
     }
 
     void processErrors();
-  }, [auth?.keycloak, foodItemsQuery.error, toast]);
+  }, [keycloak, foodItemsQuery.error, toast]);
 
   return foodItemsQuery;
 }

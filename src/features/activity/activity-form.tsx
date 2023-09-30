@@ -25,8 +25,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useMeals } from '../meals/hooks/use-meals';
-import { useFoodItems } from '../food-items/hooks/food-item.hooks';
-import { AuthContext } from '../auth/auth-provider';
+import { useFoodItems } from '../food-items';
+import { AuthContext } from '../auth';
 import { zActivityFormSchema } from './types/activity-form.types';
 import type { ActivityFormSchema } from './types/activity-form.types';
 import { activityService } from './api/activity.service';
@@ -55,12 +55,12 @@ export function ActivityForm(): JSX.Element {
     mutationFn: (values: ActivityFormSchema) =>
       activityService.create({
         ...values,
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token,
+        userId: auth?.userId,
+        token: auth?.token,
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['activities', auth?.userInfo?.id, auth?.keycloak?.token],
+        queryKey: ['activities', auth?.userId, auth?.token],
       });
       navigate('/activities');
     },

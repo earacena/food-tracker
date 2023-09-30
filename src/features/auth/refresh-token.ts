@@ -1,13 +1,22 @@
 import type Keycloak from 'keycloak-js';
 import { debounce } from 'lodash';
 import { type Logger } from '@/utils/logger';
+import { Dispatch, SetStateAction } from 'react';
 
-async function refresh(
-  keycloak: Keycloak | null | undefined,
-  logger: Logger,
-): Promise<void> {
-  if (keycloak) {
-    if (await keycloak.updateToken(5)) {
+interface RefreshProps {
+  client: Keycloak | null | undefined;
+  setToken: Dispatch<SetStateAction<string | undefined>> | undefined;
+  logger: Logger;
+}
+
+async function refresh({
+  client,
+  setToken,
+  logger,
+}: RefreshProps): Promise<void> {
+  if (client) {
+    if ((await client.updateToken(5)) && setToken) {
+      setToken(client.token);
       logger.log('successfully refreshed token');
     } else {
       logger.log('unable to refresh token');

@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { AuthContext } from '../auth/auth-provider';
+import { AuthContext } from '@/features/auth';
 import { mealService } from './api/meal.service';
 import type { MealFormSchema } from './types/meal-form.types';
 import { zMealFormSchema } from './types/meal-form.types';
@@ -37,12 +37,12 @@ export function MealForm(): JSX.Element {
     mutationFn: (newMeal: MealFormSchema) =>
       mealService.create({
         ...newMeal,
-        userId: auth?.userInfo?.id,
-        token: auth?.keycloak?.token,
+        userId: auth?.userId,
+        token: auth?.token,
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['meals', auth?.userInfo?.id, auth?.keycloak?.token],
+        queryKey: ['meals', auth?.userId, auth?.token],
       });
 
       navigate('/meals');
