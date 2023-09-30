@@ -4,8 +4,8 @@ export const zFoodItem = z.object({
   id: z.number(),
   foodName: z.string(),
   userId: z.string().uuid(),
-  caloriesPerServing: z.number(),
-  servingSizeInGrams: z.number(),
+  caloriesPerServing: z.number().gte(1),
+  servingSizeInGrams: z.number().gte(1),
   searchVisibility: z.enum(['private', 'public']),
   createdAt: z.coerce.date(),
 });
