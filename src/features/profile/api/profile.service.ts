@@ -6,6 +6,7 @@ import {
   zProfileCreateResponse,
   zProfileFetchResponse,
 } from '../types/profile.types';
+import { baseUrl } from '@/config';
 
 interface FetchProfileByUserIdProps {
   userId: string | undefined;
@@ -26,7 +27,7 @@ async function fetchProfileByUserId({
     void Promise.reject();
   }
 
-  const response = await fetch(`/api/profiles/${userId}`, {
+  const response = await fetch(baseUrl + `/api/profiles/${userId}`, {
     headers: {
       accept: 'application/json',
       authentication: `Bearer ${token}`,
@@ -62,7 +63,7 @@ async function create({
     dailyCalorieGoal,
   });
 
-  const response = await fetch(`/api/profiles/`, {
+  const response = await fetch(baseUrl + `/api/profiles/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
