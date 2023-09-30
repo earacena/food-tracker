@@ -9,6 +9,11 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: ['./setup-tests.ts'],
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
