@@ -6,6 +6,7 @@ import {
   zMealEntriesFetchByUserIdResponse,
   zMealEntryCreateResponse,
 } from '../types/meal-entries.types';
+import { baseUrl } from '@/config';
 
 type FindMealEntriesByUserIdProps = AuthenticationProps;
 
@@ -29,7 +30,7 @@ async function findMealEntriesByUserId({
     void Promise.reject();
   }
 
-  const response = await fetch(`/api/mealEntries/user/${userId}`, {
+  const response = await fetch(baseUrl + `/api/mealEntries/user/${userId}`, {
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',

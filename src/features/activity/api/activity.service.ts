@@ -6,6 +6,7 @@ import {
   zActivitiesFetchByUserIdResponse,
   zActivityCreateResponse,
 } from '../types/activity.types';
+import { baseUrl } from '@/config';
 
 type FindActivitiesByUserIdProps = AuthenticationProps;
 
@@ -24,7 +25,7 @@ async function findActivitiesByUserId({
     void Promise.reject();
   }
 
-  const response = await fetch(`/api/activities/user/${userId}`, {
+  const response = await fetch(baseUrl + `/api/activities/user/${userId}`, {
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
@@ -62,7 +63,7 @@ async function create({
     userId,
   });
 
-  const response = await fetch(`/api/activities`, {
+  const response = await fetch(baseUrl + `/api/activities`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
