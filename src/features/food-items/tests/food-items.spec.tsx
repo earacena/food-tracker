@@ -1,4 +1,4 @@
-import { FoodItems, useFoodItems } from '..';
+import { FoodItems } from '..';
 import { renderApp } from '@/utils/tests';
 
 describe('FoodItems', () => {
