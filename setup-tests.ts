@@ -11,8 +11,8 @@ beforeAll(() => server.listen());
 
 afterEach(() => {
   // Reset request handlers to avoid a test interfering with other tests
-
   server.resetHandlers();
+
   // Runs a cleanup after each test case (e.g. clearing jsdom)
   cleanup();
 });
