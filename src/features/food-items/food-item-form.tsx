@@ -48,8 +48,8 @@ export function FoodItemForm(): JSX.Element {
     mutationFn: (newFoodItem: FoodItemFormSchema) =>
       foodItemService.create({
         ...newFoodItem,
-        userId: auth?.userId,
-        token: auth?.token,
+        userId: auth?.userId ?? null,
+        token: auth?.token ?? null,
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({

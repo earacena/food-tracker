@@ -29,7 +29,7 @@ async function create({
   userId,
   token,
 }: CreateFoodItemProps): Promise<FoodItem> {
-  if (userId === undefined || token === undefined) {
+  if (userId === null || token === null) {
     void Promise.reject();
   }
 
@@ -66,7 +66,7 @@ async function findFoodItemsByUserId({
   userId,
   token,
 }: FindFoodItemsByUserIdProps): Promise<FoodItems> {
-  if (userId === undefined || token === undefined) {
+  if (userId === null || token === null) {
     void Promise.reject();
   }
 
@@ -94,7 +94,7 @@ async function deleteFoodItem({
   userId,
   token,
 }: DeleteFoodItemProps): Promise<void> {
-  if (userId === undefined || token === undefined) {
+  if (userId === null || token === null) {
     void Promise.reject();
   }
 

@@ -3,10 +3,8 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/toast-hook';
 import { logger } from '@/utils/logger';
-import { AuthContext } from '@/features/auth';
-import { refreshToken } from '@/features/auth/refresh-token';
+import { AuthContext, refreshToken, KeycloakContext } from '@/features/auth';
 import { AuthError } from '@/utils/errors';
-import { KeycloakContext } from '@/features/auth/keycloak-context';
 import { foodItemService } from '../api/food-item.service';
 import type { FoodItems } from '../types/food-item.types';
 
@@ -15,15 +13,14 @@ export function useFoodItems(): UseQueryResult<FoodItems> {
   const auth = useContext(AuthContext);
   const { toast } = useToast();
 
-  const validAuth: boolean =
-    auth?.userId !== undefined && auth.token !== undefined;
+  const validAuth: boolean = auth?.userId !== null && auth?.token !== null;
 
   const foodItemsQuery = useQuery({
     queryKey: ['foodItems', auth?.userId, auth?.token],
     queryFn: () =>
       foodItemService.findFoodItemsByUserId({
-        userId: auth?.userId,
-        token: auth?.token,
+        userId: auth?.userId ?? null,
+        token: auth?.token ?? null,
       }),
     enabled: validAuth,
   });
@@ -38,8 +35,8 @@ export function useFoodItems(): UseQueryResult<FoodItems> {
           foodItemsQuery.error.message === 'jwt expired'
         ) {
           await refreshToken({
-            client: keycloak?.client,
-            setToken: auth?.setToken,
+            client: keycloak?.client ?? null,
+            setToken: auth?.setToken ?? null,
             logger,
           });
         } else {

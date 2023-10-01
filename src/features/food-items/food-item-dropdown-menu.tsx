@@ -34,8 +34,8 @@ export function FoodItemDropdownMenu({
     mutationFn: async ({ foodItemId }: DeleteMutationProps) => {
       await foodItemService.deleteFoodItem({
         foodItemId,
-        userId: auth?.userId,
-        token: auth?.token,
+        userId: auth?.userId ?? null,
+        token: auth?.token ?? null,
       });
     },
     onSuccess: async () => {
