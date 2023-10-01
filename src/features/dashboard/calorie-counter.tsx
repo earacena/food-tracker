@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { isSameDay } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
 import type { FoodItem, FoodItems } from '../food-items/types/food-item.types';
 import type { MealEntries } from '../meals/types/meal-entries.types';
 import { useFoodItems } from '../food-items';
@@ -104,8 +105,20 @@ export function CalorieCounter(): JSX.Element {
   return (
     <div className="flex flex-col mx-auto my-10 items-center">
       <div>
-        <span className="text-5xl">{calorieGoal - calories}</span>
-        <span className="text-slate-400">/{userProfile?.dailyCalorieGoal}</span>
+        {!calorieGoal || !calories ? (
+          <div className="flex flex-row items-end">
+            <Skeleton className="h-12 w-32" />
+            <span className="text-slate-400">/</span>
+            <Skeleton className="h-5 w-12" />
+          </div>
+        ) : (
+          <>
+            <span className="text-5xl">{calorieGoal - calories}</span>
+            <span className="text-slate-400">
+              /{userProfile?.dailyCalorieGoal}
+            </span>
+          </>
+        )}
       </div>
       calories to go!
     </div>
