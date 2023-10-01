@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useFoodItems } from '../food-items/hooks/food-item.hooks';
 import { MealEntriesListItem } from './meal-entries-list-item';
 import { useMealEntries } from './hooks/use-meal-entries';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface MealEntriesListProps {
   mealId: number;
@@ -12,9 +13,23 @@ interface MealEntriesListProps {
 export function MealEntriesList({ mealId }: MealEntriesListProps): JSX.Element {
   const navigate = useNavigate();
   const { data: foodItems } = useFoodItems();
-  const { data: allMealEntries } = useMealEntries();
+  const { data: allMealEntries, isLoading } = useMealEntries();
 
   const mealEntries = allMealEntries?.filter((me) => me.mealId === mealId);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-end">
+        <Skeleton className="h-20 m-1 mt-2 w-72" />
+        <Skeleton className="h-20 m-1 w-72" />
+        <Skeleton className="h-20 m-1 mb-2 w-72" />
+        <Button size="sm" disabled>
+          <PlusIcon />
+          Add New Entry
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-end">
@@ -33,7 +48,6 @@ export function MealEntriesList({ mealId }: MealEntriesListProps): JSX.Element {
           />
         ))}
       </ul>
-
       <Button
         onClick={() => {
           navigate(`/mealEntries/form/${mealId}`);
