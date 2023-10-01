@@ -1,10 +1,11 @@
-import { FoodItems } from '..';
+import { screen } from '@testing-library/react';
 import { renderApp } from '@/utils/tests';
+import { FoodItems } from '..';
 
-describe('FoodItems', () => {
+describe('foodItems', () => {
   it('should render an appropriate heading', async () => {
-    const result = renderApp(<FoodItems />);
+    renderApp(<FoodItems />);
 
-    expect(await result.findByRole('heading')).toHaveTextContent('Food Items');
+    expect(await screen.findByRole('heading')).toHaveTextContent('Food Items');
   });
 });

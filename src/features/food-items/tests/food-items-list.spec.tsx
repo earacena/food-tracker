@@ -1,21 +1,22 @@
+import { HttpResponse, http } from 'msw';
+import { screen } from '@testing-library/react';
+import { renderApp } from '@/utils/tests';
 import { server } from '../../../../setup-tests';
 import { FoodItemList } from '../food-item-list';
-import { renderApp } from '@/utils/tests';
-import { HttpResponse, http } from 'msw';
 
-describe('FoodItemList', () => {
+describe('foodItemList', () => {
   it('should contain a creation button', async () => {
-    const result = renderApp(<FoodItemList />);
+    renderApp(<FoodItemList />);
 
-    expect(await result.findByRole('button')).toHaveTextContent(
+    expect(await screen.findByRole('button')).toHaveTextContent(
       'Add Food Item',
     );
   });
 
   it('should contain a list when there are items', async () => {
-    const result = renderApp(<FoodItemList />);
+    renderApp(<FoodItemList />);
 
-    expect(await result.findByRole('list')).toBeDefined();
+    expect(await screen.findByRole('list')).toBeDefined();
   });
 
   it('should display a message when there are no items', async () => {
@@ -28,10 +29,10 @@ describe('FoodItemList', () => {
       ),
     );
 
-    const result = renderApp(<FoodItemList />);
+    renderApp(<FoodItemList />);
 
     expect(
-      await result.findByText('Nothing here, add some items!'),
+      await screen.findByText('Nothing here, add some items!'),
     ).toBeDefined();
   });
 });

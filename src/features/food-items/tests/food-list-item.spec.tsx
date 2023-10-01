@@ -1,9 +1,10 @@
+import { randomUUID } from 'node:crypto';
+import { screen } from '@testing-library/react';
 import { renderApp } from '@/utils/tests';
-import { generateFoodItems } from './food-items.test-utils';
-import { randomUUID } from 'crypto';
 import { FoodListItem } from '../food-list-item';
+import { generateFoodItems } from './food-items.test-utils';
 
-describe('FoodListItem', () => {
+describe('foodListItem', () => {
   const foodItem = generateFoodItems({
     numOfGenerated: 1,
     userId: randomUUID(),
@@ -11,31 +12,25 @@ describe('FoodListItem', () => {
 
   it('should have a food name section', async () => {
     if (foodItem) {
-      const result = renderApp(<FoodListItem foodItem={foodItem} />);
-
-      expect(await result.findByText(/name/i)).toBeDefined();
-    } else {
-      throw new Error('undefined test data');
+      renderApp(<FoodListItem foodItem={foodItem} />);
     }
+
+    expect(await screen.findByText(/name/i)).toBeDefined();
   });
 
   it('should have calories per serving section', async () => {
     if (foodItem) {
-      const result = renderApp(<FoodListItem foodItem={foodItem} />);
-
-      expect(await result.findByText(/calories/i)).toBeDefined();
-    } else {
-      throw new Error('undefined test data');
+      renderApp(<FoodListItem foodItem={foodItem} />);
     }
+
+    expect(await screen.findByText(/calories/i)).toBeDefined();
   });
 
   it('should have serving size section', async () => {
     if (foodItem) {
-      const result = renderApp(<FoodListItem foodItem={foodItem} />);
-
-      expect(await result.findByText(/serving/i)).toBeDefined();
-    } else {
-      throw new Error('undefined test data');
+      renderApp(<FoodListItem foodItem={foodItem} />);
     }
+
+    expect(await screen.findByText(/serving/i)).toBeDefined();
   });
 });
