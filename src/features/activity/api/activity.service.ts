@@ -1,12 +1,12 @@
 import type { ServiceProps } from '@/common.types';
 import { zErrorResponse } from '@/common.types';
 import { AuthError } from '@/utils/errors';
+import { baseUrl } from '@/config';
 import type { Activities, Activity } from '../types/activity.types';
 import {
   zActivitiesFetchByUserIdResponse,
   zActivityCreateResponse,
 } from '../types/activity.types';
-import { baseUrl } from '@/config';
 
 type FindActivitiesByUserIdProps = ServiceProps;
 
@@ -25,7 +25,7 @@ async function findActivitiesByUserId({
     void Promise.reject();
   }
 
-  const response = await fetch(baseUrl + `/api/activities/user/${userId}`, {
+  const response = await fetch(`${baseUrl}/api/activities/user/${userId}`, {
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
@@ -63,7 +63,7 @@ async function create({
     userId,
   });
 
-  const response = await fetch(baseUrl + `/api/activities`, {
+  const response = await fetch(`${baseUrl}/api/activities`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
