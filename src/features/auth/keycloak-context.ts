@@ -1,5 +1,6 @@
-import Keycloak from 'keycloak-js';
-import { Dispatch, SetStateAction, createContext } from 'react';
+import type Keycloak from 'keycloak-js';
+import type { Dispatch, SetStateAction } from 'react';
+import { createContext } from 'react';
 
 interface KeycloakContextType {
   client: Keycloak | null;
