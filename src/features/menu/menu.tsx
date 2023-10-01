@@ -3,7 +3,7 @@ import { LogOut, Menu as MenuIcon } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { KeycloakContext } from '@/features/auth/keycloak-context';
+import { KeycloakContext } from '@/features/auth';
 
 interface LinkItem {
   link: string;
