@@ -16,15 +16,14 @@ export function useProfile(): UseQueryResult<Profile | null> {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const validAuth: boolean =
-    auth?.userId !== undefined && auth.token !== undefined;
+  const validAuth: boolean = auth?.userId !== null && auth?.token !== null;
 
   const profileQuery = useQuery({
     queryKey: ['profile', auth?.userId, auth?.token],
     queryFn: () =>
       profileService.fetchProfileByUserId({
-        userId: auth?.userId,
-        token: auth?.token,
+        userId: auth?.userId ?? null,
+        token: auth?.token ?? null,
       }),
     retry: false,
     enabled: validAuth,
@@ -42,8 +41,8 @@ export function useProfile(): UseQueryResult<Profile | null> {
           profileQuery.error.message === 'jwt expired'
         ) {
           await refreshToken({
-            client: keycloak?.client,
-            setToken: auth?.setToken,
+            client: keycloak?.client ?? null,
+            setToken: auth?.setToken ?? null,
             logger,
           });
         } else {

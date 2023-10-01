@@ -19,7 +19,7 @@ async function fetchProfileByUserId({
   userId,
   token,
 }: FetchProfileByUserIdProps): Promise<Profile | null> {
-  if (userId === undefined || token === undefined) {
+  if (userId === null || token === null) {
     void Promise.reject();
   }
 
@@ -50,7 +50,7 @@ async function create({
   userId,
   token,
 }: CreateProfileProps): Promise<Profile | null> {
-  if (userId === undefined || token === undefined) {
+  if (userId === null || token === null) {
     void Promise.reject();
   }
 
