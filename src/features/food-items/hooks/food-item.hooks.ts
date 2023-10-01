@@ -6,9 +6,9 @@ import { logger } from '@/utils/logger';
 import { AuthContext } from '@/features/auth';
 import { refreshToken } from '@/features/auth/refresh-token';
 import { AuthError } from '@/utils/errors';
+import { KeycloakContext } from '@/features/auth/keycloak-context';
 import { foodItemService } from '../api/food-item.service';
 import type { FoodItems } from '../types/food-item.types';
-import { KeycloakContext } from '@/features/auth/keycloak-context';
 
 export function useFoodItems(): UseQueryResult<FoodItems> {
   const keycloak = useContext(KeycloakContext);
@@ -16,7 +16,7 @@ export function useFoodItems(): UseQueryResult<FoodItems> {
   const { toast } = useToast();
 
   const validAuth: boolean =
-    auth?.userId !== undefined && auth?.token !== undefined;
+    auth?.userId !== undefined && auth.token !== undefined;
 
   const foodItemsQuery = useQuery({
     queryKey: ['foodItems', auth?.userId, auth?.token],
@@ -53,7 +53,7 @@ export function useFoodItems(): UseQueryResult<FoodItems> {
     }
 
     void processErrors();
-  }, [keycloak, foodItemsQuery.error, toast]);
+  }, [keycloak, auth?.setToken, foodItemsQuery.error, toast]);
 
   return foodItemsQuery;
 }
