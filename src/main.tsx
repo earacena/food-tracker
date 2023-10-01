@@ -1,11 +1,11 @@
 import { StrictMode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { App } from './app.tsx';
 import './index.css';
 import { AuthProvider } from './features/auth/auth-provider.tsx';
 import { KeycloakProvider } from './features/auth/keycloak-provider.tsx';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const client = new QueryClient();
 const rootNode = document.getElementById('root');
