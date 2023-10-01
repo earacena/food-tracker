@@ -20,7 +20,7 @@ import { AuthContext } from '@/features/auth/';
 import { profileService } from './api/profile.service';
 import { zProfileFormSchema } from './types/profile-form.types';
 import type { ProfileFormSchemaType } from './types/profile-form.types';
-import { useProfile } from '.';
+import { useProfile } from './hooks/use-profile';
 
 export function ProfileForm(): JSX.Element {
   const auth = useContext(AuthContext);
