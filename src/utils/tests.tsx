@@ -1,7 +1,8 @@
-import { AuthContext } from '@/features/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { RenderResult } from '@testing-library/react';
 import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import { AuthContext } from '@/features/auth';
 
 function createTestQueryClient(): QueryClient {
   return new QueryClient({
@@ -11,38 +12,59 @@ function createTestQueryClient(): QueryClient {
       },
     },
     logger: {
+      // eslint-disable-next-line no-console -- console is used for testing
       log: console.log,
+      // eslint-disable-next-line no-console -- console is used for testing
       warn: console.warn,
+      // eslint-disable-next-line @typescript-eslint/no-empty-function -- error logging is silenced
       error: () => {},
     },
   });
 }
 
-export function createWrapper() {
-  const queryClient = createTestQueryClient();
+type ReactWrapperFn = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => JSX.Element;
 
-  return ({ children }: { children: React.ReactNode }) => (
-    <AuthContext.Provider
-      value={{
-        token: 'token',
-        userId: crypto.randomUUID(),
-        setToken: () => {},
-        setUserId: () => {},
-      }}
-    >
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </AuthContext.Provider>
-  );
+export function createWrapper(): ReactWrapperFn {
+  const queryClient = createTestQueryClient();
+  const wrapper = function ({
+    children,
+  }: {
+    children: React.ReactNode;
+  }): JSX.Element {
+    return (
+      <AuthContext.Provider
+        value={{
+          token: 'token',
+          userId: crypto.randomUUID(),
+          // eslint-disable-next-line @typescript-eslint/no-empty-function -- not necessary when using msw to mock requests
+          setToken: () => {},
+          // eslint-disable-next-line @typescript-eslint/no-empty-function -- not necessary when using msw to mock requests
+          setUserId: () => {},
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </AuthContext.Provider>
+    );
+  };
+  return wrapper;
 }
 
-export function renderApp(ui: React.ReactElement) {
+export function renderApp(ui: React.ReactElement): RenderResult {
   const queryClient = createTestQueryClient();
   const { rerender, ...result } = render(
     <AuthContext.Provider
       value={{
         token: 'token',
         userId: crypto.randomUUID(),
+        // eslint-disable-next-line @typescript-eslint/no-empty-function -- not necessary when using msw to mock requests
         setToken: () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function -- not necessary when using msw to mock requests
         setUserId: () => {},
       }}
     >
@@ -54,13 +76,15 @@ export function renderApp(ui: React.ReactElement) {
 
   return {
     ...result,
-    rerender: (rerenderUi: React.ReactElement) =>
+    rerender: (rerenderUi: React.ReactElement) => {
       rerender(
         <AuthContext.Provider
           value={{
             token: 'token',
             userId: crypto.randomUUID(),
+            // eslint-disable-next-line @typescript-eslint/no-empty-function -- not necessary when using msw to mock requests
             setToken: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function -- not necessary when using msw to mock requests
             setUserId: () => {},
           }}
         >
@@ -70,6 +94,7 @@ export function renderApp(ui: React.ReactElement) {
             </QueryClientProvider>
           </BrowserRouter>
         </AuthContext.Provider>,
-      ),
+      );
+    },
   };
 }
