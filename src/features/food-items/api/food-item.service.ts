@@ -1,12 +1,12 @@
 import { AuthError } from '@/utils/errors';
 import type { ServiceProps } from '@/common.types';
 import { zErrorResponse } from '@/common.types';
+import { baseUrl } from '@/config';
 import type { FoodItem, FoodItems } from '../types/food-item.types';
 import {
   zFoodItemCreateResponse,
   zFoodItemsFetchByUserIdResponse,
 } from '../types/food-item.types';
-import { baseUrl } from '@/config';
 
 interface CreateFoodItemProps extends ServiceProps {
   foodName: string;
@@ -41,7 +41,7 @@ async function create({
     userId,
   });
 
-  const response = await fetch(baseUrl + '/api/foodItems/', {
+  const response = await fetch(`${baseUrl}/api/foodItems/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ async function findFoodItemsByUserId({
     void Promise.reject();
   }
 
-  const response = await fetch(baseUrl + `/api/foodItems/user/${userId}`, {
+  const response = await fetch(`${baseUrl}/api/foodItems/user/${userId}`, {
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
@@ -98,7 +98,7 @@ async function deleteFoodItem({
     void Promise.reject();
   }
 
-  const response = await fetch(baseUrl + `/api/foodItems/${foodItemId}`, {
+  const response = await fetch(`${baseUrl}/api/foodItems/${foodItemId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

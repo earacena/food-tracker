@@ -1,7 +1,7 @@
 import type Keycloak from 'keycloak-js';
 import { debounce } from 'lodash';
+import type { Dispatch, SetStateAction } from 'react';
 import { type Logger } from '@/utils/logger';
-import { Dispatch, SetStateAction } from 'react';
 
 interface RefreshProps {
   client: Keycloak | null | undefined;

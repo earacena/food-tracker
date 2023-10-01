@@ -1,12 +1,13 @@
-import { ServiceProps, zErrorResponse } from '@/common.types';
+import type { ServiceProps } from '@/common.types';
+import { zErrorResponse } from '@/common.types';
 import { AuthError, NotFoundError } from '@/utils/errors';
 import { logger } from '@/utils/logger';
+import { baseUrl } from '@/config';
 import type { Profile } from '../types/profile.types';
 import {
   zProfileCreateResponse,
   zProfileFetchResponse,
 } from '../types/profile.types';
-import { baseUrl } from '@/config';
 
 type FetchProfileByUserIdProps = ServiceProps;
 
@@ -22,7 +23,7 @@ async function fetchProfileByUserId({
     void Promise.reject();
   }
 
-  const response = await fetch(baseUrl + `/api/profiles/${userId}`, {
+  const response = await fetch(`${baseUrl}/api/profiles/${userId}`, {
     headers: {
       accept: 'application/json',
       authentication: `Bearer ${token}`,
@@ -58,7 +59,7 @@ async function create({
     dailyCalorieGoal,
   });
 
-  const response = await fetch(baseUrl + `/api/profiles/`, {
+  const response = await fetch(`${baseUrl}/api/profiles/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

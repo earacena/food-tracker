@@ -1,12 +1,12 @@
 import type { ServiceProps } from '@/common.types';
 import { zErrorResponse } from '@/common.types';
 import { AuthError } from '@/utils/errors';
+import { baseUrl } from '@/config';
 import type { Meal, Meals } from '../types/meals.types';
 import {
   zMealCreateResponse,
   zMealsFetchByUserIdResponse,
 } from '../types/meals.types';
-import { baseUrl } from '@/config';
 
 type FindMealsByUserIdProps = ServiceProps;
 
@@ -26,7 +26,7 @@ async function findMealsByUserId({
     void Promise.reject();
   }
 
-  const response = await fetch(baseUrl + `/api/meals/user/${userId}`, {
+  const response = await fetch(`${baseUrl}/api/meals/user/${userId}`, {
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
@@ -52,7 +52,7 @@ async function create({ name, userId, token }: CreateMealProps): Promise<Meal> {
 
   const requestBody = JSON.stringify({ userId, name });
 
-  const response = await fetch(baseUrl + '/api/meals/', {
+  const response = await fetch(`${baseUrl}/api/meals/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ async function deleteMeal({
     void Promise.reject();
   }
 
-  const response = await fetch(baseUrl + `/api/meals/${mealId}`, {
+  const response = await fetch(`${baseUrl}/api/meals/${mealId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

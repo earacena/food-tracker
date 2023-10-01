@@ -1,12 +1,12 @@
 import type { ServiceProps } from '@/common.types';
 import { zErrorResponse } from '@/common.types';
 import { AuthError } from '@/utils/errors';
+import { baseUrl } from '@/config';
 import type { MealEntries, MealEntry } from '../types/meal-entries.types';
 import {
   zMealEntriesFetchByUserIdResponse,
   zMealEntryCreateResponse,
 } from '../types/meal-entries.types';
-import { baseUrl } from '@/config';
 
 type FindMealEntriesByUserIdProps = ServiceProps;
 
@@ -30,7 +30,7 @@ async function findMealEntriesByUserId({
     void Promise.reject();
   }
 
-  const response = await fetch(baseUrl + `/api/mealEntries/user/${userId}`, {
+  const response = await fetch(`${baseUrl}/api/mealEntries/user/${userId}`, {
     headers: {
       'Content-Type': 'application/json',
       accept: 'application/json',
