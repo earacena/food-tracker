@@ -41,10 +41,4 @@ module.exports = {
       },
     ],
   },
-  'jest/prefer-lowercase-title': [
-    'error',
-    {
-      ignore: ['describe'],
-    },
-  ],
 };
