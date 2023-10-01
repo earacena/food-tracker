@@ -4,8 +4,8 @@ import type { Dispatch, SetStateAction } from 'react';
 import { type Logger } from '@/utils/logger';
 
 interface RefreshProps {
-  client: Keycloak | null | undefined;
-  setToken: Dispatch<SetStateAction<string | undefined>> | undefined;
+  client: Keycloak | null;
+  setToken: Dispatch<SetStateAction<string | null>> | null;
   logger: Logger;
 }
 
@@ -15,8 +15,8 @@ async function refresh({
   logger,
 }: RefreshProps): Promise<void> {
   if (client) {
-    if ((await client.updateToken(5)) && setToken) {
-      setToken(client.token);
+    if ((await client.updateToken(5)) && setToken !== null) {
+      setToken(client.token ?? null);
       logger.log('successfully refreshed token');
     } else {
       logger.log('unable to refresh token');

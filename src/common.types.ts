@@ -6,6 +6,6 @@ export const zErrorResponse = z.object({
 });
 
 export interface ServiceProps {
-  userId: string | undefined;
-  token: string | undefined;
+  userId: string | null;
+  token: string | null;
 }

@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import Keycloak from 'keycloak-js';
 import { z } from 'zod';
-import { KeycloakContext } from './keycloak-context';
+import type { KeycloakContextType } from './types/auth.types';
 
 interface KeycloakProviderProps {
   children: React.ReactNode;
 }
+
+export const KeycloakContext = createContext<KeycloakContextType | null>(null);
 
 export function KeycloakProvider({
   children,

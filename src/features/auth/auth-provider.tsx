@@ -1,7 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type Keycloak from 'keycloak-js';
-import { AuthContext } from './auth-context';
-import { KeycloakContext } from './keycloak-context';
+import { KeycloakContext } from './keycloak-provider';
+import type { AuthContextType } from './types/auth.types';
+
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -9,15 +11,15 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const keycloak = useContext(KeycloakContext);
-  const [token, setToken] = useState<string>();
-  const [userId, setUserId] = useState<string>();
+  const [token, setToken] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     async function extractAuthInfo(client: Keycloak): Promise<void> {
-      setToken(client.token);
+      setToken(client.token ?? null);
 
       const userInfo = await client.loadUserProfile();
-      setUserId(userInfo.id);
+      setUserId(userInfo.id ?? null);
     }
 
     if (keycloak?.client && keycloak.client.authenticated) {

@@ -1,5 +1,3 @@
-export { AuthProvider } from './auth-provider';
-export { KeycloakProvider } from './keycloak-provider';
-export { KeycloakContext } from './keycloak-context';
-export { AuthContext } from './auth-context';
+export { KeycloakProvider, KeycloakContext } from './keycloak-provider';
+export { AuthProvider, AuthContext } from './auth-provider';
 export { refreshToken } from './refresh-token';
