@@ -9,6 +9,7 @@ import { MealActivityListItem } from './meal-activity-food-item';
 import { FoodItemActivityListItem } from './food-item-activity-list-item';
 import type { Activity } from './types/activity.types';
 import { useActivities } from './hooks/use-activities';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ActivityListProps {
   onlyCurrentDay: boolean;
@@ -23,7 +24,7 @@ export function ActivityList({
   const { data: foodItems } = useFoodItems();
   const { data: meals } = useMeals();
   const { data: mealEntries } = useMealEntries();
-  const { data: activities } = useActivities();
+  const { data: activities, isLoading } = useActivities();
 
   function sameDayFilter(a: Activity): boolean {
     return isSameDay(a.createdAt, new Date());
@@ -35,6 +36,30 @@ export function ActivityList({
 
   function allActivitiesFilter(): boolean {
     return true;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center">
+      <Button
+        className="my-1"
+        disabled
+      >
+        <PlusIcon />
+        Add New Activity
+      </Button>
+        {!noPastActivity && onlyCurrentDay ? (
+          <span className="my-3">Today&apos;s Activities</span>
+        ) : null}
+        <Skeleton className="w-[360px] h-24 m-2" />
+        <Skeleton className="w-[360px] h-24 m-2" />
+        {!noPastActivity && onlyCurrentDay ? (
+        <span className="my-3">Past Activities</span>
+      ) : null}
+        <Skeleton className="w-[360px] h-24 m-2" />
+        <Skeleton className="w-[360px] h-24 m-2" />
+      </div>
+    );
   }
 
   return (
@@ -53,6 +78,7 @@ export function ActivityList({
         <PlusIcon />
         Add New Activity
       </Button>
+
       {!noPastActivity && onlyCurrentDay ? (
         <span className="my-3">Today&apos;s Activities</span>
       ) : null}
