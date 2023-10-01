@@ -59,8 +59,8 @@ export function MealEntryForm(): JSX.Element {
       mealEntryService.create({
         ...values,
         mealId,
-        userId: auth?.userId,
-        token: auth?.token,
+        userId: auth?.userId ?? null,
+        token: auth?.token ?? null,
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -137,7 +137,9 @@ export function MealEntryForm(): JSX.Element {
           )}
         />
 
-        <Button type="submit">Submit</Button>
+        <Button disabled={auth?.token !== null} type="submit">
+          Submit
+        </Button>
       </form>
     </Form>
   );

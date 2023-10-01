@@ -13,14 +13,16 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { logger } from '@/utils/logger';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { AuthContext } from '@/features/auth';
 import { mealService } from './api/meal.service';
 import { mealEntryService } from './api/meal-entry.service';
@@ -35,7 +37,7 @@ interface DeleteMutationProps {
 }
 
 export function MealDropdownMenu({ meal }: MealDropdownMenuProps): JSX.Element {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const auth = useContext(AuthContext);
   const queryClient = useQueryClient();
 
@@ -43,14 +45,14 @@ export function MealDropdownMenu({ meal }: MealDropdownMenuProps): JSX.Element {
     mutationFn: async ({ mealId }: DeleteMutationProps) => {
       await mealEntryService.deleteMealEntriesByMealId({
         mealId,
-        userId: auth?.userId,
-        token: auth?.token,
+        userId: auth?.userId ?? null,
+        token: auth?.token ?? null,
       });
 
       await mealService.deleteMeal({
         mealId,
-        userId: auth?.userId,
-        token: auth?.token,
+        userId: auth?.userId ?? null,
+        token: auth?.token ?? null,
       });
     },
     onSuccess: async () => {
@@ -68,7 +70,7 @@ export function MealDropdownMenu({ meal }: MealDropdownMenuProps): JSX.Element {
   });
 
   return (
-    <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
+    <AlertDialog onOpenChange={setAlertDialogOpen} open={alertDialogOpen}>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild className="p-1">
           <Button className="p-1" variant="ghost">
@@ -81,49 +83,45 @@ export function MealDropdownMenu({ meal }: MealDropdownMenuProps): JSX.Element {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DialogTrigger asChild>
+            <AlertDialogTrigger asChild>
               <DropdownMenuItem>
                 <Trash className="mr-2 h-4 w-4 text-red-400" />
                 <span className="text-lg text-red-400">Delete</span>
               </DropdownMenuItem>
-            </DialogTrigger>
+            </AlertDialogTrigger>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
             Are you sure you want to delete &apos;{meal.name}&apos;?
-          </DialogTitle>
-          <DialogDescription>
+          </AlertDialogTitle>
+          <AlertDialogDescription>
             This action cannot be reversed. All activities associated with this
             activity will also be deleted. Are you sure you want to delete this
             meal, its meal entries, and activities referencing it?
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel
             onClick={() => {
-              setDialogOpen(false);
+              setAlertDialogOpen(false);
             }}
-            type="button"
           >
             Cancel
-          </Button>
-          <Button
-            className="font-bold text-red-600"
+          </AlertDialogCancel>
+          <AlertDialogAction
             onClick={() => {
               removeMeal.mutate({
                 mealId: meal.id,
               });
             }}
-            type="button"
-            variant="secondary"
           >
-            Confirm
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

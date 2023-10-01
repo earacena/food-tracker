@@ -14,15 +14,14 @@ export function useMealEntries(): UseQueryResult<MealEntries> {
   const keycloak = useContext(KeycloakContext);
   const { toast } = useToast();
 
-  const validAuth: boolean =
-    auth?.userId !== undefined && auth.token !== undefined;
+  const validAuth: boolean = auth?.userId !== null && auth?.token !== null;
 
   const mealEntriesQuery = useQuery({
     queryKey: ['mealEntries', auth?.userId, auth?.token],
     queryFn: () =>
       mealEntryService.findMealEntriesByUserId({
-        userId: auth?.userId,
-        token: auth?.token,
+        userId: auth?.userId ?? null,
+        token: auth?.token ?? null,
       }),
     enabled: validAuth,
   });
@@ -37,8 +36,8 @@ export function useMealEntries(): UseQueryResult<MealEntries> {
           mealEntriesQuery.error.message === 'jwt expired'
         ) {
           await refreshToken({
-            client: keycloak?.client,
-            setToken: auth?.setToken,
+            client: keycloak?.client ?? null,
+            setToken: auth?.setToken ?? null,
             logger,
           });
         } else {

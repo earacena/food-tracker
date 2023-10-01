@@ -22,7 +22,7 @@ async function findMealsByUserId({
   userId,
   token,
 }: FindMealsByUserIdProps): Promise<Meals> {
-  if (userId === undefined && token === undefined) {
+  if (userId === null && token === null) {
     void Promise.reject();
   }
 
@@ -46,7 +46,7 @@ async function findMealsByUserId({
 }
 
 async function create({ name, userId, token }: CreateMealProps): Promise<Meal> {
-  if (userId === undefined && token === undefined) {
+  if (userId === null || token === null) {
     void Promise.reject();
   }
 
@@ -76,7 +76,7 @@ async function deleteMeal({
   userId,
   token,
 }: DeleteMealProps): Promise<void> {
-  if (userId === undefined || token === undefined) {
+  if (userId === null || token === null) {
     void Promise.reject();
   }
 
