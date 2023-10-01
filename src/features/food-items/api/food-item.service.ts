@@ -1,5 +1,5 @@
 import { AuthError } from '@/utils/errors';
-import type { AuthenticationProps } from '@/common.types';
+import type { ServiceProps } from '@/common.types';
 import { zErrorResponse } from '@/common.types';
 import type { FoodItem, FoodItems } from '../types/food-item.types';
 import {
@@ -8,16 +8,16 @@ import {
 } from '../types/food-item.types';
 import { baseUrl } from '@/config';
 
-interface CreateFoodItemProps extends AuthenticationProps {
+interface CreateFoodItemProps extends ServiceProps {
   foodName: string;
   caloriesPerServing: number;
   servingSizeInGrams: number;
   searchVisibility: 'public' | 'private';
 }
 
-type FindFoodItemsByUserIdProps = AuthenticationProps;
+type FindFoodItemsByUserIdProps = ServiceProps;
 
-interface DeleteFoodItemProps extends AuthenticationProps {
+interface DeleteFoodItemProps extends ServiceProps {
   foodItemId: number;
 }
 

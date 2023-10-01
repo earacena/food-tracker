@@ -5,7 +5,7 @@ export const zErrorResponse = z.object({
   errorMessage: z.string(),
 });
 
-export interface AuthenticationProps {
+export interface ServiceProps {
   userId: string | undefined;
   token: string | undefined;
 }

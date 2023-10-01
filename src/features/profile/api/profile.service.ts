@@ -1,4 +1,4 @@
-import { zErrorResponse } from '@/common.types';
+import { ServiceProps, zErrorResponse } from '@/common.types';
 import { AuthError, NotFoundError } from '@/utils/errors';
 import { logger } from '@/utils/logger';
 import type { Profile } from '../types/profile.types';
@@ -8,15 +8,10 @@ import {
 } from '../types/profile.types';
 import { baseUrl } from '@/config';
 
-interface FetchProfileByUserIdProps {
-  userId: string | undefined;
-  token: string | undefined;
-}
+type FetchProfileByUserIdProps = ServiceProps;
 
-interface CreateProfileProps {
+interface CreateProfileProps extends ServiceProps {
   dailyCalorieGoal: number;
-  userId: string | undefined;
-  token: string | undefined;
 }
 
 async function fetchProfileByUserId({

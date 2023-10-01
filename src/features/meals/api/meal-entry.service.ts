@@ -1,4 +1,4 @@
-import type { AuthenticationProps } from '@/common.types';
+import type { ServiceProps } from '@/common.types';
 import { zErrorResponse } from '@/common.types';
 import { AuthError } from '@/utils/errors';
 import type { MealEntries, MealEntry } from '../types/meal-entries.types';
@@ -8,18 +8,18 @@ import {
 } from '../types/meal-entries.types';
 import { baseUrl } from '@/config';
 
-type FindMealEntriesByUserIdProps = AuthenticationProps;
+type FindMealEntriesByUserIdProps = ServiceProps;
 
-interface CreateProps extends AuthenticationProps {
+interface CreateProps extends ServiceProps {
   foodItemId: number;
   mealId: number;
   quantity: number;
 }
 
-interface DeleteMealEntryProps extends AuthenticationProps {
+interface DeleteMealEntryProps extends ServiceProps {
   mealEntryId: number;
 }
-interface DeleteMealEntriesByMealIdProps extends AuthenticationProps {
+interface DeleteMealEntriesByMealIdProps extends ServiceProps {
   mealId: number;
 }
 async function findMealEntriesByUserId({
