@@ -41,21 +41,18 @@ export function ActivityList({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center">
-      <Button
-        className="my-1"
-        disabled
-      >
-        <PlusIcon />
-        Add New Activity
-      </Button>
+        <Button className="my-1" disabled>
+          <PlusIcon />
+          Add New Activity
+        </Button>
         {!noPastActivity && onlyCurrentDay ? (
           <span className="my-3">Today&apos;s Activities</span>
         ) : null}
         <Skeleton className="w-[360px] h-24 m-2" />
         <Skeleton className="w-[360px] h-24 m-2" />
         {!noPastActivity && onlyCurrentDay ? (
-        <span className="my-3">Past Activities</span>
-      ) : null}
+          <span className="my-3">Past Activities</span>
+        ) : null}
         <Skeleton className="w-[360px] h-24 m-2" />
         <Skeleton className="w-[360px] h-24 m-2" />
       </div>
