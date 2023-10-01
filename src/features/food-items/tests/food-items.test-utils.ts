@@ -1,8 +1,8 @@
-import { baseUrl } from '@/config';
-import { randomValueFromZeroTo } from '@/utils/math';
 import { HttpResponse, http } from 'msw';
 import { z } from 'zod';
-import { FoodItems } from '../types/food-item.types';
+import { baseUrl } from '@/config';
+import { randomValueFromZeroTo } from '@/utils/math';
+import type { FoodItems } from '../types/food-item.types';
 
 export function generateFoodItems({
   numOfGenerated,
@@ -17,7 +17,7 @@ export function generateFoodItems({
     generatedFoodItems.push({
       id: i,
       userId,
-      foodName: 'food-' + crypto.randomUUID(),
+      foodName: `food-${crypto.randomUUID()}`,
       caloriesPerServing: randomValueFromZeroTo({ to: 1000 }),
       servingSizeInGrams: randomValueFromZeroTo({ to: 1000 }),
       searchVisibility: 'private',
@@ -29,7 +29,7 @@ export function generateFoodItems({
 }
 
 export const foodItemsRequestHandlers = [
-  http.get(baseUrl + '/api/foodItems/user/:userId', ({ params }) => {
+  http.get(`${baseUrl}/api/foodItems/user/:userId`, ({ params }) => {
     const { userId } = z.object({ userId: z.string().uuid() }).parse(params);
     const body = {
       success: true,
