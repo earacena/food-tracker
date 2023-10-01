@@ -6,9 +6,9 @@ import { AuthContext } from '@/features/auth';
 import { logger } from '@/utils/logger';
 import { refreshToken } from '@/features/auth/refresh-token';
 import { AuthError } from '@/utils/errors';
+import { KeycloakContext } from '@/features/auth/keycloak-context';
 import { activityService } from '../api/activity.service';
 import type { Activities } from '../types/activity.types';
-import { KeycloakContext } from '@/features/auth/keycloak-context';
 
 export function useActivities(): UseQueryResult<Activities> {
   const auth = useContext(AuthContext);
@@ -16,7 +16,7 @@ export function useActivities(): UseQueryResult<Activities> {
   const { toast } = useToast();
 
   const validAuth: boolean =
-    auth?.userId !== undefined && auth?.token !== undefined;
+    auth?.userId !== undefined && auth.token !== undefined;
 
   const activitiesQuery = useQuery({
     queryKey: ['activities', auth?.userId, auth?.token],
@@ -53,7 +53,7 @@ export function useActivities(): UseQueryResult<Activities> {
     }
 
     void processErrors();
-  }, [activitiesQuery.error, keycloak?.client, toast]);
+  }, [activitiesQuery.error, keycloak?.client, auth?.setToken, toast]);
 
   return activitiesQuery;
 }

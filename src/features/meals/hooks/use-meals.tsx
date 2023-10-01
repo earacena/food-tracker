@@ -2,13 +2,12 @@ import { useContext, useEffect } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/toast-hook';
-import { AuthContext } from '@/features/auth';
+import { AuthContext, KeycloakContext } from '@/features/auth';
 import { logger } from '@/utils/logger';
 import { refreshToken } from '@/features/auth/refresh-token';
 import { AuthError } from '@/utils/errors';
 import { mealService } from '../api/meal.service';
 import type { Meals } from '../types/meals.types';
-import { KeycloakContext } from '@/features/auth';
 
 export function useMeals(): UseQueryResult<Meals> {
   const auth = useContext(AuthContext);
@@ -16,7 +15,7 @@ export function useMeals(): UseQueryResult<Meals> {
   const { toast } = useToast();
 
   const validAuth: boolean =
-    auth?.userId !== undefined && auth?.token !== undefined;
+    auth?.userId !== undefined && auth.token !== undefined;
 
   const mealsQuery = useQuery({
     queryKey: ['meals', auth?.userId, auth?.token],
@@ -53,7 +52,7 @@ export function useMeals(): UseQueryResult<Meals> {
     }
 
     void processErrors();
-  }, [keycloak, mealsQuery.error, toast]);
+  }, [keycloak, auth?.setToken, mealsQuery.error, toast]);
 
   return mealsQuery;
 }

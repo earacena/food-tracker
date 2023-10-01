@@ -17,7 +17,7 @@ export function useProfile(): UseQueryResult<Profile | null> {
   const navigate = useNavigate();
 
   const validAuth: boolean =
-    auth?.userId !== undefined && auth?.token !== undefined;
+    auth?.userId !== undefined && auth.token !== undefined;
 
   const profileQuery = useQuery({
     queryKey: ['profile', auth?.userId, auth?.token],
@@ -57,7 +57,7 @@ export function useProfile(): UseQueryResult<Profile | null> {
     }
 
     void processErrors();
-  }, [keycloak, navigate, profileQuery.error, toast]);
+  }, [keycloak, auth?.setToken, navigate, profileQuery.error, toast]);
 
   return profileQuery;
 }

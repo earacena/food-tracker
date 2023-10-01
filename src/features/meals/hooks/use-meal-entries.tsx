@@ -1,14 +1,13 @@
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useContext, useEffect } from 'react';
-import { AuthContext } from '@/features/auth';
+import { AuthContext, KeycloakContext } from '@/features/auth';
 import { useToast } from '@/components/ui/toast-hook';
 import { logger } from '@/utils/logger';
 import { refreshToken } from '@/features/auth/refresh-token';
 import { AuthError } from '@/utils/errors';
 import { mealEntryService } from '../api/meal-entry.service';
 import type { MealEntries } from '../types/meal-entries.types';
-import { KeycloakContext } from '@/features/auth';
 
 export function useMealEntries(): UseQueryResult<MealEntries> {
   const auth = useContext(AuthContext);
@@ -16,7 +15,7 @@ export function useMealEntries(): UseQueryResult<MealEntries> {
   const { toast } = useToast();
 
   const validAuth: boolean =
-    auth?.userId !== undefined && auth?.token !== undefined;
+    auth?.userId !== undefined && auth.token !== undefined;
 
   const mealEntriesQuery = useQuery({
     queryKey: ['mealEntries', auth?.userId, auth?.token],
@@ -53,7 +52,7 @@ export function useMealEntries(): UseQueryResult<MealEntries> {
     }
 
     void processErrors();
-  }, [keycloak, mealEntriesQuery.error, toast]);
+  }, [keycloak, auth?.setToken, mealEntriesQuery.error, toast]);
 
   return mealEntriesQuery;
 }
