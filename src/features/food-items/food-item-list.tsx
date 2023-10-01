@@ -1,9 +1,9 @@
 import { PlusIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { FoodListItem } from './food-list-item';
 import { useFoodItems } from './hooks/food-item.hooks';
-import { Skeleton } from '@/components/ui/skeleton';
 
 export function FoodItemList(): JSX.Element {
   const navigate = useNavigate();

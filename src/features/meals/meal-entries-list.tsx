@@ -1,10 +1,10 @@
 import { PlusIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useFoodItems } from '../food-items/hooks/food-item.hooks';
 import { MealEntriesListItem } from './meal-entries-list-item';
 import { useMealEntries } from './hooks/use-meal-entries';
-import { Skeleton } from '@/components/ui/skeleton';
 
 interface MealEntriesListProps {
   mealId: number;
@@ -23,7 +23,7 @@ export function MealEntriesList({ mealId }: MealEntriesListProps): JSX.Element {
         <Skeleton className="h-20 m-1 mt-2 w-72" />
         <Skeleton className="h-20 m-1 w-72" />
         <Skeleton className="h-20 m-1 mb-2 w-72" />
-        <Button size="sm" disabled>
+        <Button disabled size="sm">
           <PlusIcon />
           Add New Entry
         </Button>

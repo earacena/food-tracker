@@ -1,8 +1,8 @@
+import { renderHook, waitFor } from '@testing-library/react';
+import { HttpResponse, http } from 'msw';
 import { createWrapper } from '@/utils/tests';
 import { useFoodItems } from '..';
-import { renderHook, waitFor } from '@testing-library/react';
 import { server } from '../../../../setup-tests';
-import { HttpResponse, http } from 'msw';
 import { zFoodItems } from '../types/food-item.types';
 
 describe('useFoodItems hook', () => {
@@ -11,7 +11,9 @@ describe('useFoodItems hook', () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
 
     // Follow list structure
     expect(result.current.data).toBeDefined();
@@ -40,7 +42,9 @@ describe('useFoodItems hook', () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isError).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
 
     expect(result.current.error).toBeDefined();
   });
@@ -64,7 +68,9 @@ describe('useFoodItems hook', () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isError).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
 
     expect(result.current.error).toBeDefined();
   });
@@ -88,7 +94,9 @@ describe('useFoodItems hook', () => {
       wrapper: createWrapper(),
     });
 
-    await waitFor(() => expect(result.current.isError).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
 
     expect(result.current.error).toBeDefined();
   });
