@@ -3,10 +3,27 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { FoodListItem } from './food-list-item';
 import { useFoodItems } from './hooks/food-item.hooks';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function FoodItemList(): JSX.Element {
   const navigate = useNavigate();
-  const { data: foodItems } = useFoodItems();
+  const { data: foodItems, isLoading } = useFoodItems();
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center">
+        <Skeleton className=" w-[360px] h-16 rounded-lg m-2" />
+        <Skeleton className=" w-[360px] h-16 rounded-lg m-2" />
+        <Skeleton className=" w-[360px] h-16 rounded-lg m-2" />
+        <Skeleton className=" w-[360px] h-16 rounded-lg m-2" />
+        <Skeleton className=" w-[360px] h-16 rounded-lg m-2" />
+        <Button className="my-2" disabled>
+          <PlusIcon />
+          Add Food Item
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center">
