@@ -2,6 +2,7 @@ import { Plus as PlusIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { isSameDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useFoodItems } from '../food-items/hooks/food-item.hooks';
 import { useMeals } from '../meals/hooks/use-meals';
 import { useMealEntries } from '../meals/hooks/use-meal-entries';
@@ -9,16 +10,15 @@ import { MealActivityListItem } from './meal-activity-food-item';
 import { FoodItemActivityListItem } from './food-item-activity-list-item';
 import type { Activity } from './types/activity.types';
 import { useActivities } from './hooks/use-activities';
-import { Skeleton } from '@/components/ui/skeleton';
 
 interface ActivityListProps {
-  onlyCurrentDay: boolean;
-  noPastActivity: boolean;
+  todayHeader: boolean;
+  pastActivity: boolean;
 }
 
 export function ActivityList({
-  onlyCurrentDay,
-  noPastActivity,
+  todayHeader,
+  pastActivity,
 }: ActivityListProps): JSX.Element {
   const navigate = useNavigate();
   const { data: foodItems } = useFoodItems();
@@ -34,10 +34,6 @@ export function ActivityList({
     return !sameDayFilter(a);
   }
 
-  function allActivitiesFilter(): boolean {
-    return true;
-  }
-
   if (isLoading) {
     return (
       <div className="flex flex-col items-center">
@@ -45,14 +41,12 @@ export function ActivityList({
           <PlusIcon />
           Add New Activity
         </Button>
-        {!noPastActivity && onlyCurrentDay ? (
+        {todayHeader ? (
           <span className="my-3">Today&apos;s Activities</span>
         ) : null}
         <Skeleton className="w-[360px] h-24 m-2" />
         <Skeleton className="w-[360px] h-24 m-2" />
-        {!noPastActivity && onlyCurrentDay ? (
-          <span className="my-3">Past Activities</span>
-        ) : null}
+        {pastActivity ? <span className="my-3">Past Activities</span> : null}
         <Skeleton className="w-[360px] h-24 m-2" />
         <Skeleton className="w-[360px] h-24 m-2" />
       </div>
@@ -61,7 +55,7 @@ export function ActivityList({
 
   return (
     <div className="flex flex-col items-center">
-      {!onlyCurrentDay && activities?.length === 0 && (
+      {activities?.length === 0 && (
         <span className="text-sm text-slate-500 my-5">
           Nothing here, record some activity!
         </span>
@@ -76,82 +70,76 @@ export function ActivityList({
         Add New Activity
       </Button>
 
-      {!noPastActivity && onlyCurrentDay ? (
+      {todayHeader ? (
         <span className="my-3">Today&apos;s Activities</span>
       ) : null}
+
       {activities ? (
         <ul>
-          {activities.filter((a) =>
-            onlyCurrentDay ? sameDayFilter(a) : allActivitiesFilter(),
-          ).length === 0 && (
+          {activities.filter(sameDayFilter).length === 0 && (
             <span className="text-sm text-slate-500 my-5">
               Nothing here, record some activity!
             </span>
           )}
 
-          {activities
-            .filter((a) =>
-              onlyCurrentDay ? sameDayFilter(a) : allActivitiesFilter(),
-            )
-            .map((a) => {
-              if (a.foodItemId) {
-                return (
-                  <FoodItemActivityListItem
-                    activity={a}
-                    foodItem={foodItems?.find((f) => a.foodItemId === f.id)}
-                    key={a.id}
-                  />
-                );
-              }
+          {activities.filter(sameDayFilter).map((a) => {
+            if (a.foodItemId) {
               return (
-                <MealActivityListItem
+                <FoodItemActivityListItem
                   activity={a}
-                  foodItems={foodItems}
+                  foodItem={foodItems?.find((f) => a.foodItemId === f.id)}
                   key={a.id}
-                  meal={meals?.find((m) => m.id === a.mealId)}
-                  mealEntries={mealEntries?.filter(
-                    (me) => me.mealId === a.mealId,
-                  )}
                 />
               );
-            })}
+            }
+            return (
+              <MealActivityListItem
+                activity={a}
+                foodItems={foodItems}
+                key={a.id}
+                meal={meals?.find((m) => m.id === a.mealId)}
+                mealEntries={mealEntries?.filter(
+                  (me) => me.mealId === a.mealId,
+                )}
+              />
+            );
+          })}
         </ul>
       ) : null}
 
-      {!noPastActivity && onlyCurrentDay ? (
+      {pastActivity &&
+      activities &&
+      activities.filter(notSameDayFilter).length > 0 ? (
         <span className="my-3">Past Activities</span>
       ) : null}
 
-      {!noPastActivity && (
+      {pastActivity ? (
         <ul>
-          {onlyCurrentDay
-            ? activities
-                ?.filter((a) => notSameDayFilter(a))
-                .map((a) => {
-                  if (a.foodItemId) {
-                    return (
-                      <FoodItemActivityListItem
-                        activity={a}
-                        foodItem={foodItems?.find((f) => f.id === a.foodItemId)}
-                        key={a.id}
-                      />
-                    );
-                  }
-                  return (
-                    <MealActivityListItem
-                      activity={a}
-                      foodItems={foodItems}
-                      key={a.id}
-                      meal={meals?.find((m) => m.id === a.mealId)}
-                      mealEntries={mealEntries?.filter(
-                        (me) => me.mealId === a.mealId,
-                      )}
-                    />
-                  );
-                })
-            : null}
+          {activities?.filter(notSameDayFilter).map((a) => {
+            if (a.foodItemId) {
+              return (
+                <FoodItemActivityListItem
+                  activity={a}
+                  foodItem={foodItems?.find((f) => f.id === a.foodItemId)}
+                  key={a.id}
+                />
+              );
+            }
+
+            return (
+              <MealActivityListItem
+                activity={a}
+                foodItems={foodItems}
+                key={a.id}
+                meal={meals?.find((m) => m.id === a.mealId)}
+                mealEntries={mealEntries?.filter(
+                  (me) => me.mealId === a.mealId,
+                )}
+              />
+            );
+          })}
         </ul>
-      )}
+      ) : null}
     </div>
   );
 }

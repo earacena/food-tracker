@@ -5,7 +5,7 @@ export function Dashboard(): JSX.Element {
   return (
     <>
       <CalorieCounter />
-      <Activities noPastActivity onlyCurrentDay />
+      <Activities mainHeader={false} pastActivity={false} todayHeader />
     </>
   );
 }

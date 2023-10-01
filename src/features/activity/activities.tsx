@@ -1,21 +1,22 @@
 import { ActivityList } from './activity-list';
 
 interface ActivitiesProps {
-  onlyCurrentDay: boolean;
-  noPastActivity: boolean;
+  mainHeader: boolean;
+  todayHeader: boolean;
+  pastActivity: boolean;
 }
 
 export function Activities({
-  onlyCurrentDay,
-  noPastActivity,
+  mainHeader,
+  todayHeader,
+  pastActivity,
 }: ActivitiesProps): JSX.Element {
   return (
     <div className="flex flex-col items-center mx-auto">
-      <span className="text-xl text-semibold">Activities</span>
-      <ActivityList
-        noPastActivity={noPastActivity}
-        onlyCurrentDay={onlyCurrentDay}
-      />
+      {mainHeader ? (
+        <span className="text-xl text-semibold">Activities</span>
+      ) : null}
+      <ActivityList pastActivity={pastActivity} todayHeader={todayHeader} />
     </div>
   );
 }

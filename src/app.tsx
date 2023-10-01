@@ -26,7 +26,7 @@ export function App(): JSX.Element {
           <Route element={<MealForm />} path="/meals/form" />
           <Route element={<MealEntryForm />} path="/mealEntries/form/:mealId" />
           <Route
-            element={<Activities noPastActivity={false} onlyCurrentDay />}
+            element={<Activities mainHeader pastActivity todayHeader />}
             path="/activities"
           />
           <Route element={<ActivityForm />} path="/activities/form" />

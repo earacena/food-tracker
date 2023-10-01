@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Trash } from 'lucide-react';
 import type { FoodItem } from '../food-items/types/food-item.types';
 import type { Activity } from './types/activity.types';
 
@@ -27,10 +28,6 @@ export function FoodItemActivityListItem({
     computeFoodItemCalories();
   }, [activity.foodItemId, activity.quantityInGrams, foodItem]);
 
-  if (!foodItem) {
-    return null;
-  }
-
   return (
     <li className="flex flex-row border border-slate-500 p-3 rounded-md my-1 w-[360px]">
       <span className="flex flex-col text-xs text-slate-500 pr-2">
@@ -41,9 +38,15 @@ export function FoodItemActivityListItem({
       <span className="flex flex-col text-xs border-l-2 border-slate-400 text-slate-500 pr-2 flex-1 px-2">
         Consumed
         <span className="text-lg text-slate-800">
-          {foodItem.foodName.length > 15
-            ? foodItem.foodName.slice(0, 16).concat('...')
-            : foodItem.foodName}
+          {foodItem?.foodName
+            .slice(0, 16)
+            .concat(foodItem.foodName.length > 16 ? '...' : '')}
+          {!foodItem && (
+            <div className="flex flex-row items-center text-red-500">
+              {' '}
+              Deleted item <Trash size={20} />
+            </div>
+          )}
         </span>
       </span>
 
