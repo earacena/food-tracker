@@ -55,8 +55,8 @@ export function ActivityForm(): JSX.Element {
     mutationFn: (values: ActivityFormSchema) =>
       activityService.create({
         ...values,
-        userId: auth?.userId,
-        token: auth?.token,
+        userId: auth?.userId ?? null,
+        token: auth?.token ?? null,
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({

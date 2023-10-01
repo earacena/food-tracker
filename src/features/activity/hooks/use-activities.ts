@@ -2,11 +2,10 @@ import { useContext, useEffect } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/ui/toast-hook';
-import { AuthContext } from '@/features/auth';
+import { AuthContext, KeycloakContext } from '@/features/auth';
 import { logger } from '@/utils/logger';
 import { refreshToken } from '@/features/auth/refresh-token';
 import { AuthError } from '@/utils/errors';
-import { KeycloakContext } from '@/features/auth/keycloak-context';
 import { activityService } from '../api/activity.service';
 import type { Activities } from '../types/activity.types';
 
@@ -15,15 +14,14 @@ export function useActivities(): UseQueryResult<Activities> {
   const keycloak = useContext(KeycloakContext);
   const { toast } = useToast();
 
-  const validAuth: boolean =
-    auth?.userId !== undefined && auth.token !== undefined;
+  const validAuth: boolean = auth?.userId !== null && auth?.token !== null;
 
   const activitiesQuery = useQuery({
     queryKey: ['activities', auth?.userId, auth?.token],
     queryFn: () =>
       activityService.findActivitiesByUserId({
-        userId: auth?.userId,
-        token: auth?.token,
+        userId: auth?.userId ?? null,
+        token: auth?.token ?? null,
       }),
     enabled: validAuth,
   });
@@ -38,8 +36,8 @@ export function useActivities(): UseQueryResult<Activities> {
           activitiesQuery.error.message === 'jwt expired'
         ) {
           await refreshToken({
-            client: keycloak?.client,
-            setToken: auth?.setToken,
+            client: keycloak?.client ?? null,
+            setToken: auth?.setToken ?? null,
             logger,
           });
         } else {

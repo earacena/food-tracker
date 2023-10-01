@@ -21,7 +21,7 @@ async function findActivitiesByUserId({
   userId,
   token,
 }: FindActivitiesByUserIdProps): Promise<Activities> {
-  if (userId === undefined || token === undefined) {
+  if (userId === null || token === null) {
     void Promise.reject();
   }
 
@@ -51,7 +51,7 @@ async function create({
   userId,
   token,
 }: CreateProps): Promise<Activity> {
-  if (userId === undefined || token === undefined) {
+  if (userId === null || token === null) {
     void Promise.reject();
   }
 
