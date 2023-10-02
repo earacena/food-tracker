@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useFoodItems } from '@/features/food-items';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -24,7 +25,6 @@ import {
 } from '@/components/ui/form';
 import { logger } from '@/utils/logger';
 import { AuthContext } from '../auth';
-import { useFoodItems } from '../food-items/hooks/food-item.hooks';
 import { mealEntryService } from './api/meal-entry.service';
 import type { Meal } from './types/meals.types';
 import { useMeals } from './hooks/use-meals';
