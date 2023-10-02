@@ -63,8 +63,8 @@ function computeMealCalories({
 export function CalorieCounter(): JSX.Element {
   const { data: foodItems } = useFoodItems();
   const { data: mealEntries } = useMealEntries();
-  const { data: activities } = useActivities();
-  const { data: userProfile } = useProfile();
+  const { data: activities, isLoading: isLoadingActivities } = useActivities();
+  const { data: userProfile, isLoading: isLoadingProfile } = useProfile();
 
   const [calories, setCalories] = useState<number>(0);
   const [calorieGoal, setCalorieGoal] = useState<number>(0);
@@ -102,23 +102,21 @@ export function CalorieCounter(): JSX.Element {
     }
   }, [userProfile?.dailyCalorieGoal]);
 
+  if (isLoadingActivities || isLoadingProfile) {
+    return (
+      <div className="flex flex-row items-end">
+        <Skeleton className="h-12 w-32" />
+        <span className="text-slate-400">/</span>
+        <Skeleton className="h-5 w-12" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col mx-auto my-10 items-center">
       <div>
-        {!calorieGoal || !calories ? (
-          <div className="flex flex-row items-end">
-            <Skeleton className="h-12 w-32" />
-            <span className="text-slate-400">/</span>
-            <Skeleton className="h-5 w-12" />
-          </div>
-        ) : (
-          <>
-            <span className="text-5xl">{calorieGoal - calories}</span>
-            <span className="text-slate-400">
-              /{userProfile?.dailyCalorieGoal}
-            </span>
-          </>
-        )}
+        <span className="text-5xl">{calorieGoal - calories}</span>
+        <span className="text-slate-400">/{userProfile?.dailyCalorieGoal}</span>
       </div>
       calories to go!
     </div>
