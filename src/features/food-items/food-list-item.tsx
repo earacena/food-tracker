@@ -3,11 +3,15 @@ import type { FoodItem } from './types/food-item.types';
 
 interface FoodListItem {
   foodItem: FoodItem;
+  dropdown: boolean;
 }
 
-export function FoodListItem({ foodItem }: FoodListItem): JSX.Element {
+export function FoodListItem({
+  foodItem,
+  dropdown,
+}: FoodListItem): JSX.Element {
   return (
-    <li className="flex flex-row border border-slate-500 p-3 rounded-md my-1 w-[360px]">
+    <li className="flex flex-row border border-slate-500 p-3 rounded-md my-1 w-[360px] shadow-md">
       <span className="flex flex-col text-xs text-slate-500 pr-2 flex-1">
         Name
         <span className="text-lg text-slate-800">
@@ -31,7 +35,7 @@ export function FoodListItem({ foodItem }: FoodListItem): JSX.Element {
         </span>
       </span>
 
-      <FoodItemDropdownMenu foodItem={foodItem} />
+      {dropdown ? <FoodItemDropdownMenu foodItem={foodItem} /> : null}
     </li>
   );
 }
