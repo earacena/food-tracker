@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FoodListItem } from './food-list-item';
 import { useFoodItems } from './hooks/food-item.hooks';
+import { FoodItemDialog } from './food-item-dialog';
 
 export function FoodItemList(): JSX.Element {
   const navigate = useNavigate();
@@ -43,9 +44,11 @@ export function FoodItemList(): JSX.Element {
       </Button>
 
       {foodItems ? (
-        <ul>
+        <ul className="flex flex-col">
           {foodItems.map((f) => (
-            <FoodListItem foodItem={f} key={f.id} />
+            <FoodItemDialog foodItem={f} key={f.id}>
+              <FoodListItem dropdown={false} foodItem={f} key={f.id} />
+            </FoodItemDialog>
           ))}
         </ul>
       ) : null}
