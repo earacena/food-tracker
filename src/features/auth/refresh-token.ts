@@ -14,13 +14,17 @@ async function refresh({
   setToken,
   logger,
 }: RefreshProps): Promise<void> {
-  if (client) {
-    if ((await client.updateToken(5)) && setToken !== null) {
-      setToken(client.token ?? null);
-      logger.log('successfully refreshed token');
-    } else {
-      logger.log('unable to refresh token');
+  try {
+    if (client) {
+      if ((await client.updateToken(5)) && setToken !== null) {
+        setToken(client.token ?? null);
+        logger.log('successfully refreshed token');
+      } else {
+        logger.logError('unable to refresh token');
+      }
     }
+  } catch (err: unknown) {
+    logger.logError(err);
   }
 }
 
