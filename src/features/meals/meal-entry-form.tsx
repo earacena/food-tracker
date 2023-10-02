@@ -137,7 +137,7 @@ export function MealEntryForm(): JSX.Element {
           )}
         />
 
-        <Button disabled={auth?.token !== null} type="submit">
+        <Button disabled={auth?.token === null} type="submit">
           Submit
         </Button>
       </form>
