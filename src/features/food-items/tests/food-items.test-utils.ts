@@ -20,6 +20,7 @@ export function generateFoodItems({
       foodName: `food-${crypto.randomUUID()}`,
       caloriesPerServing: randomValueFromZeroTo({ to: 1000 }),
       servingSizeInGrams: randomValueFromZeroTo({ to: 1000 }),
+      servingSizeInUnits: randomValueFromZeroTo({ to: 100 }),
       searchVisibility: 'private',
       createdAt: new Date(),
     });
