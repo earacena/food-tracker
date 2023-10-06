@@ -12,7 +12,7 @@ describe('foodListItem', () => {
 
   it('should have a food name section', async () => {
     if (foodItem) {
-      renderApp(<FoodListItem foodItem={foodItem} />);
+      renderApp(<FoodListItem dropdown={false} foodItem={foodItem} />);
     }
 
     expect(await screen.findByText(/name/i)).toBeDefined();
@@ -20,17 +20,25 @@ describe('foodListItem', () => {
 
   it('should have calories per serving section', async () => {
     if (foodItem) {
-      renderApp(<FoodListItem foodItem={foodItem} />);
+      renderApp(<FoodListItem dropdown={false} foodItem={foodItem} />);
     }
 
     expect(await screen.findByText(/calories/i)).toBeDefined();
   });
 
-  it('should have serving size section', async () => {
+  it('should have serving size in grams section', async () => {
     if (foodItem) {
-      renderApp(<FoodListItem foodItem={foodItem} />);
+      renderApp(<FoodListItem dropdown={false} foodItem={foodItem} />);
     }
 
-    expect(await screen.findByText(/serving/i)).toBeDefined();
+    expect(await screen.findByText('Serving (g)')).toBeDefined();
+  });
+
+  it('should have serving size in units section', async () => {
+    if (foodItem) {
+      renderApp(<FoodListItem dropdown={false} foodItem={foodItem} />);
+    }
+
+    expect(await screen.findByText('Serving (unit)')).toBeDefined();
   });
 });
