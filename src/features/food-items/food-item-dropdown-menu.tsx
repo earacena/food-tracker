@@ -52,7 +52,7 @@ export function FoodItemDropdownMenu({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className="p-1" variant="ghost">
-          <MoreVertical />
+          <MoreVertical data-testid="menu-icon" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
@@ -68,7 +68,10 @@ export function FoodItemDropdownMenu({
               });
             }}
           >
-            <Trash className="mr-2 h-4 w-4 text-red-400" />
+            <Trash
+              className="mr-2 h-4 w-4 text-red-400"
+              data-testid="trash-icon"
+            />
             <span className="text-lg text-red-400">Delete</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
