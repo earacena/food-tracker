@@ -33,10 +33,19 @@ export function FoodItemDialog({
             <span className="text-2xl">{foodItem.servingSizeInGrams}</span>
           </span>
 
-          <span className="flex flex-col items-center">
-            <span className="text-xs">Calories Per Serving (kcal)</span>
-            <span className="text-2xl">{foodItem.caloriesPerServing}</span>
-          </span>
+          {foodItem.servingSizeInGrams ? (
+            <span className="flex flex-col items-center">
+              <span className="text-xs">Calories Per Serving (kcal)</span>
+              <span className="text-2xl">{foodItem.caloriesPerServing}</span>
+            </span>
+          ) : null}
+
+          {foodItem.servingSizeInUnits ? (
+            <span className="flex flex-col items-center">
+              <span className="text-xs">Serving Size (units) (kcal)</span>
+              <span className="text-2xl">{foodItem.servingSizeInUnits}</span>
+            </span>
+          ) : null}
         </DialogDescription>
       </DialogContent>
     </Dialog>

@@ -28,12 +28,23 @@ export function FoodListItem({
         </span>
       </span>
 
-      <span className="flex flex-col text-xs text-slate-500 border-l-2 border-slate-400 items-center pl-2">
-        Serving (g)
-        <span className="text-lg text-slate-800">
-          {foodItem.servingSizeInGrams}
+      {foodItem.servingSizeInGrams ? (
+        <span className="flex flex-col text-xs text-slate-500 border-l-2 border-slate-400 items-center pl-2">
+          Serving (g)
+          <span className="text-lg text-slate-800">
+            {foodItem.servingSizeInGrams}
+          </span>
         </span>
-      </span>
+      ) : null}
+
+      {foodItem.servingSizeInUnits ? (
+        <span className="flex flex-col text-xs text-slate-500 border-l-2 border-slate-400 items-center pl-2">
+          Serving (unit)
+          <span className="text-lg text-slate-800">
+            {foodItem.servingSizeInUnits}
+          </span>
+        </span>
+      ) : null}
 
       {dropdown ? <FoodItemDropdownMenu foodItem={foodItem} /> : null}
     </li>

@@ -17,16 +17,32 @@ export function FoodItemActivityListItem({
   useEffect(() => {
     function computeFoodItemCalories(): void {
       if (foodItem && activity.quantityInGrams && foodItem.servingSizeInGrams) {
+        // Compute using quantityInGrams
         const itemCalories = Math.floor(
           (activity.quantityInGrams / foodItem.servingSizeInGrams) *
             foodItem.caloriesPerServing,
+        );
+        setCalories(itemCalories);
+      } else if (
+        foodItem &&
+        activity.quantityInUnits &&
+        foodItem.servingSizeInUnits
+      ) {
+        // Compute using quantityInUnits
+        const itemCalories = Math.floor(
+          activity.quantityInUnits * foodItem.caloriesPerServing,
         );
         setCalories(itemCalories);
       }
     }
 
     computeFoodItemCalories();
-  }, [activity.foodItemId, activity.quantityInGrams, foodItem]);
+  }, [
+    activity.foodItemId,
+    activity.quantityInGrams,
+    activity.quantityInUnits,
+    foodItem,
+  ]);
 
   return (
     <li className="flex flex-row border border-slate-500 p-3 rounded-md my-1 w-[360px]">

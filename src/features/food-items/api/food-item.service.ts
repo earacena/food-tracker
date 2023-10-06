@@ -12,6 +12,7 @@ interface CreateFoodItemProps extends ServiceProps {
   foodName: string;
   caloriesPerServing: number;
   servingSizeInGrams: number;
+  servingSizeInUnits: number;
   searchVisibility: 'public' | 'private';
 }
 
@@ -25,6 +26,7 @@ async function create({
   foodName,
   caloriesPerServing,
   servingSizeInGrams,
+  servingSizeInUnits,
   searchVisibility,
   userId,
   token,
@@ -36,7 +38,8 @@ async function create({
   const requestBody = JSON.stringify({
     foodName,
     caloriesPerServing,
-    servingSizeInGrams,
+    servingSizeInGrams: servingSizeInGrams !== 0 ? servingSizeInGrams : null,
+    servingSizeInUnits: servingSizeInUnits !== 0 ? servingSizeInUnits : null,
     searchVisibility,
     userId,
   });
@@ -59,6 +62,7 @@ async function create({
   const foodItemCreateResponse = zFoodItemCreateResponse.parse(
     await response.json(),
   );
+
   return foodItemCreateResponse.data.newFoodItem;
 }
 
@@ -86,6 +90,7 @@ async function findFoodItemsByUserId({
   const userFoodItemResponse = zFoodItemsFetchByUserIdResponse.parse(
     await response.json(),
   );
+
   return userFoodItemResponse.data.userFoodItems;
 }
 

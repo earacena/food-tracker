@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,7 +18,9 @@ import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -28,6 +30,8 @@ import type { FoodItemFormSchema } from './types/food-item-form.types';
 import { foodItemService } from './api/food-item.service';
 
 export function FoodItemForm(): JSX.Element {
+  const [servingType, setServingType] = useState<string>('');
+
   const auth = useContext(AuthContext);
 
   const queryClient = useQueryClient();
@@ -40,9 +44,14 @@ export function FoodItemForm(): JSX.Element {
       foodName: '',
       caloriesPerServing: 100,
       servingSizeInGrams: 0,
+      servingSizeInUnits: 0,
       searchVisibility: 'private',
     },
   });
+
+  useEffect(() => {
+    form.reset();
+  }, [form, servingType]);
 
   const addFoodItem = useMutation({
     mutationFn: (newFoodItem: FoodItemFormSchema) =>
@@ -93,22 +102,70 @@ export function FoodItemForm(): JSX.Element {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="servingSizeInGrams"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Serving Size In Grams</FormLabel>
-              <FormControl>
-                <Input placeholder="150" type="number" {...field} />
-              </FormControl>
-              <FormDescription>
-                The number of grams in a single serving.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FormItem>
+          <FormLabel>Serving Type</FormLabel>
+          <Select
+            onValueChange={(value) => {
+              setServingType(value);
+            }}
+          >
+            <FormControl>
+              <SelectTrigger aria-label="Serving Type">
+                <SelectValue placeholder="Select Serving Type" />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Types</SelectLabel>
+                <SelectItem value="grams">Grams</SelectItem>
+                <SelectItem value="units">Units</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <FormDescription>
+            The type of measurement used for each serving.
+          </FormDescription>
+        </FormItem>
+
+        {servingType === 'grams' && (
+          <FormField
+            control={form.control}
+            name="servingSizeInGrams"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Serving Size In Grams</FormLabel>
+                <FormControl>
+                  <Input placeholder="150" type="number" {...field} />
+                </FormControl>
+                <FormDescription>
+                  The number of grams in a single serving.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+            rules={{ required: true }}
+          />
+        )}
+
+        {servingType === 'units' && (
+          <FormField
+            control={form.control}
+            name="servingSizeInUnits"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Serving Size In Units</FormLabel>
+                <FormControl>
+                  <Input placeholder="1" type="number" {...field} />
+                </FormControl>
+                <FormDescription>
+                  The quantity of pieces in a single serving.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+            rules={{ required: true }}
+          />
+        )}
 
         <FormField
           control={form.control}
