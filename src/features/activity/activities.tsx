@@ -14,7 +14,7 @@ export function Activities({
   return (
     <div className="flex flex-col items-center mx-auto">
       {mainHeader ? (
-        <span className="text-xl text-semibold">Activities</span>
+        <span className="text-3xl text-semibold">Activities</span>
       ) : null}
       <ActivityList pastActivity={pastActivity} todayHeader={todayHeader} />
     </div>
