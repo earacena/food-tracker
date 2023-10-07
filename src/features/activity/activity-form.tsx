@@ -37,7 +37,8 @@ export function ActivityForm(): JSX.Element {
   // const { toast } = useToast()
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [selectType, setSelectType] = useState<string>();
+  const [consumptionType, setConsumptionType] = useState<string>('');
+  const [servingType, setServingType] = useState<string>('');
   const { data: meals } = useMeals();
   const { data: foodItems } = useFoodItems();
 
@@ -73,8 +74,8 @@ export function ActivityForm(): JSX.Element {
     addActivity.mutate(values);
   }
 
-  const noMeals = selectType === 'meal' && meals?.length === 0;
-  const noFoodItems = selectType === 'foodItem' && foodItems?.length === 0;
+  const noMeals = consumptionType === 'meal' && meals?.length === 0;
+  const noFoodItems = consumptionType === 'foodItem' && foodItems?.length === 0;
 
   return (
     <Form {...form}>
@@ -89,7 +90,7 @@ export function ActivityForm(): JSX.Element {
           <FormLabel>Consumption type</FormLabel>
           <Select
             onValueChange={(value) => {
-              setSelectType(value);
+              setConsumptionType(value);
             }}
           >
             <SelectTrigger>
@@ -106,14 +107,14 @@ export function ActivityForm(): JSX.Element {
           <FormDescription>The type of consumption activity.</FormDescription>
         </FormItem>
 
-        {selectType === 'foodItem' && (
+        {consumptionType === 'foodItem' && (
           <>
             <FormField
               control={form.control}
               name="foodItemId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Food item</FormLabel>
+                  <FormLabel>Food Item</FormLabel>
                   <Select
                     defaultValue={field.value?.toString()}
                     onValueChange={field.onChange}
@@ -139,11 +140,38 @@ export function ActivityForm(): JSX.Element {
               )}
             />
 
+            <FormItem>
+              <FormLabel>Serving Type</FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  setServingType(value);
+                  form.reset();
+                }}
+              >
+                <FormControl>
+                  <SelectTrigger aria-label="Serving Type">
+                    <SelectValue placeholder="Select Serving Type" />
+                  </SelectTrigger>
+                </FormControl>
+
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Types</SelectLabel>
+                    <SelectItem value="grams">Grams</SelectItem>
+                    <SelectItem value="units">Units</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <FormDescription>
+                The type of measurement used for each serving.
+              </FormDescription>
+            </FormItem>
+
             <FormField
               control={form.control}
               name="quantityInGrams"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className={servingType === 'grams' ? '' : 'hidden'}>
                   <FormLabel>Quantity (grams)</FormLabel>
                   <FormControl>
                     <Input placeholder="200" {...field} />
@@ -155,10 +183,27 @@ export function ActivityForm(): JSX.Element {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="quantityInUnits"
+              render={({ field }) => (
+                <FormItem className={servingType === 'units' ? '' : 'hidden'}>
+                  <FormLabel>Quantity (units)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="1" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    This is the number of units of this item consumed.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </>
         )}
 
-        {selectType === 'meal' && (
+        {consumptionType === 'meal' && (
           <>
             <FormField
               control={form.control}
