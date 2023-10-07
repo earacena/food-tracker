@@ -22,13 +22,13 @@ export function FoodListItem({
       </span>
 
       <span className="flex flex-col text-xs text-slate-500 border-l-2 border-slate-400 items-center px-2">
-        Calories (S)
+        Calories (serv.)
         <span className="text-lg text-slate-800">
           {foodItem.caloriesPerServing}
         </span>
       </span>
 
-      <span className="flex flex-col text-xs text-slate-500 border-l-2 border-slate-400 items-center pl-2">
+      <span className="flex flex-col text-xs text-slate-500 border-l-2 border-slate-400 items-center px-2">
         Serving (g)
         <span className="text-lg text-slate-800">
           {foodItem.servingSizeInGrams ? foodItem.servingSizeInGrams : '-'}
