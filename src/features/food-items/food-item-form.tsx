@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -48,10 +48,6 @@ export function FoodItemForm(): JSX.Element {
       searchVisibility: 'private',
     },
   });
-
-  useEffect(() => {
-    form.reset();
-  }, [form, servingType]);
 
   const addFoodItem = useMutation({
     mutationFn: (newFoodItem: FoodItemFormSchema) =>
@@ -107,6 +103,7 @@ export function FoodItemForm(): JSX.Element {
           <Select
             onValueChange={(value) => {
               setServingType(value);
+              form.reset();
             }}
           >
             <FormControl>
