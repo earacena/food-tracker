@@ -45,8 +45,8 @@ export function ActivityForm(): JSX.Element {
   const form = useForm<ActivityFormSchema>({
     resolver: zodResolver(zActivityFormSchema),
     defaultValues: {
-      foodItemId: undefined,
-      mealId: undefined,
+      foodItemId: -1,
+      mealId: -1,
       quantityInGrams: 100,
       quantityInUnits: 1,
     },
@@ -76,6 +76,11 @@ export function ActivityForm(): JSX.Element {
 
   const noMeals = consumptionType === 'meal' && meals?.length === 0;
   const noFoodItems = consumptionType === 'foodItem' && foodItems?.length === 0;
+  const noMealSelected =
+    consumptionType === 'meal' && form.getValues().mealId === -1;
+  const noFoodItemSelected =
+    consumptionType === 'foodItem' && form.getValues().foodItemId === -1;
+  const noServingTypeSelected = servingType === '';
 
   return (
     <Form {...form}>
@@ -86,11 +91,19 @@ export function ActivityForm(): JSX.Element {
         <h2 className="self-center scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
           Add new activity
         </h2>
+
         <FormItem>
           <FormLabel>Consumption type</FormLabel>
           <Select
             onValueChange={(value) => {
               setConsumptionType(value);
+              setServingType('');
+
+              form.reset({
+                ...form.getValues(),
+                mealId: -1,
+                foodItemId: -1,
+              });
             }}
           >
             <SelectTrigger>
@@ -108,154 +121,154 @@ export function ActivityForm(): JSX.Element {
         </FormItem>
 
         {consumptionType === 'foodItem' && (
-          <>
-            <FormField
-              control={form.control}
-              name="foodItemId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Food Item</FormLabel>
-                  <Select
-                    defaultValue={field.value?.toString()}
-                    onValueChange={field.onChange}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select food item consumed" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {foodItems?.map((f) => (
-                        <SelectItem key={f.id} value={f.id.toString()}>
-                          {f.foodName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    This is the food item you consumed.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name="foodItemId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Food Item</FormLabel>
+                <Select
+                  defaultValue={field.value?.toString()}
+                  onValueChange={field.onChange}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select food item consumed" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {foodItems?.map((f) => (
+                      <SelectItem key={f.id} value={f.id.toString()}>
+                        {f.foodName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  This is the food item you consumed.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+            rules={{ required: true }}
+          />
+        )}
 
-            <FormItem>
-              <FormLabel>Serving Type</FormLabel>
-              <Select
-                onValueChange={(value) => {
-                  setServingType(value);
-                  form.reset();
-                }}
-              >
+        {consumptionType === 'foodItem' && (
+          <FormItem>
+            <FormLabel>Serving Type</FormLabel>
+            <Select
+              onValueChange={(value) => {
+                setServingType(value);
+
+                form.reset({
+                  ...form.getValues(),
+                  quantityInGrams: 0,
+                  quantityInUnits: 0,
+                });
+              }}
+            >
+              <FormControl>
+                <SelectTrigger aria-label="Serving Type">
+                  <SelectValue placeholder="Select Serving Type" />
+                </SelectTrigger>
+              </FormControl>
+
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Types</SelectLabel>
+                  <SelectItem value="grams">Grams</SelectItem>
+                  <SelectItem value="units">Units</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <FormDescription>
+              The type of measurement used for each serving.
+            </FormDescription>
+          </FormItem>
+        )}
+
+        {servingType === 'grams' && (
+          <FormField
+            control={form.control}
+            name="quantityInGrams"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Quantity (grams)</FormLabel>
                 <FormControl>
-                  <SelectTrigger aria-label="Serving Type">
-                    <SelectValue placeholder="Select Serving Type" />
-                  </SelectTrigger>
+                  <Input placeholder="200" {...field} />
                 </FormControl>
-
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Types</SelectLabel>
-                    <SelectItem value="grams">Grams</SelectItem>
-                    <SelectItem value="units">Units</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <FormDescription>
-                The type of measurement used for each serving.
-              </FormDescription>
-            </FormItem>
-
-            <FormField
-              control={form.control}
-              name="quantityInGrams"
-              render={({ field }) => (
-                <FormItem className={servingType === 'grams' ? '' : 'hidden'}>
-                  <FormLabel>Quantity (grams)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="200" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    This is the number of grams consumed.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="quantityInUnits"
-              render={({ field }) => (
-                <FormItem className={servingType === 'units' ? '' : 'hidden'}>
-                  <FormLabel>Quantity (units)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="1" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    This is the number of units of this item consumed.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </>
+                <FormDescription>
+                  This is the number of grams consumed.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         )}
 
         {consumptionType === 'meal' && (
-          <>
-            <FormField
-              control={form.control}
-              name="mealId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Meal</FormLabel>
-                  <Select
-                    defaultValue={field.value?.toString()}
-                    onValueChange={field.onChange}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select meal consumed" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {meals?.map((m) => (
-                        <SelectItem key={m.id} value={m.id.toString()}>
-                          {m.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    This is the meal you consumed.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="quantityInUnits"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Quantity (servings)</FormLabel>
+          <FormField
+            control={form.control}
+            name="mealId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Meal</FormLabel>
+                <Select
+                  defaultValue={field.value?.toString()}
+                  onValueChange={field.onChange}
+                >
                   <FormControl>
-                    <Input placeholder="200" {...field} />
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select meal consumed" />
+                    </SelectTrigger>
                   </FormControl>
-                  <FormDescription>
-                    This is the number of servings consumed.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </>
+                  <SelectContent>
+                    {meals?.map((m) => (
+                      <SelectItem key={m.id} value={m.id.toString()}>
+                        {m.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  This is the meal you consumed.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         )}
 
-        <Button disabled={noMeals || noFoodItems} type="submit">
+        {(servingType === 'units' || consumptionType === 'meal') && (
+          <FormField
+            control={form.control}
+            name="quantityInUnits"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Quantity (servings)</FormLabel>
+                <FormControl>
+                  <Input placeholder="200" {...field} />
+                </FormControl>
+                <FormDescription>
+                  This is the number of servings consumed.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        <Button
+          disabled={
+            noMeals ||
+            noFoodItems ||
+            noMealSelected ||
+            noFoodItemSelected ||
+            noServingTypeSelected
+          }
+          type="submit"
+        >
           Submit
         </Button>
       </form>
