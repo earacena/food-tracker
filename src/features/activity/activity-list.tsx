@@ -55,11 +55,6 @@ export function ActivityList({
 
   return (
     <div className="flex flex-col items-center">
-      {activities?.length === 0 && (
-        <span className="text-sm text-slate-500 my-5">
-          Nothing here, record some activity!
-        </span>
-      )}
       <Button
         className="my-1"
         onClick={() => {
