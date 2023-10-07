@@ -8,7 +8,7 @@ interface MealListItemProps {
 
 export function MealListItem({ meal }: MealListItemProps): JSX.Element {
   return (
-    <li className="flex flex-col border border-slate-500 rounded-md p-3 w-full">
+    <li className="flex flex-col border border-slate-500 rounded-md p-3 w-full m-1">
       <div className="flex flex-row items-center">
         <div className="flex flex-col mr-auto">
           <span className="text-xs text-slate-500">Meal Name</span>
