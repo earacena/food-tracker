@@ -24,12 +24,18 @@ export function MealActivityListItem({
       if (mealEntries) {
         const allCalories: number[] = mealEntries.map((me) => {
           const foodItem = foodItems?.find((f) => f.id === me.foodItemId);
-          if (foodItem) {
+          if (foodItem?.servingSizeInGrams && me.quantityInGrams) {
             return Math.floor(
-              (me.quantity / foodItem.servingSizeInGrams) *
+              (me.quantityInGrams / foodItem.servingSizeInGrams) *
+                foodItem.caloriesPerServing,
+            );
+          } else if (foodItem?.servingSizeInUnits && me.quantityInUnits) {
+            return Math.floor(
+              (me.quantityInUnits / foodItem.servingSizeInUnits) *
                 foodItem.caloriesPerServing,
             );
           }
+
           return 0;
         });
 
