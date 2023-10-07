@@ -10,7 +10,9 @@ import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -42,6 +44,8 @@ export function MealEntryForm(): JSX.Element {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const [servingType, setServingType] = useState<string>('');
+
   const { data: meals } = useMeals();
   const { data: foodItems } = useFoodItems();
   const { mealId } = zMealIdParam.parse(useParams());
@@ -50,7 +54,8 @@ export function MealEntryForm(): JSX.Element {
   const form = useForm<MealEntryFormSchema>({
     resolver: zodResolver(zMealEntryFormSchema),
     defaultValues: {
-      quantity: 50,
+      quantityInGrams: 0,
+      quantityInUnits: 0,
     },
   });
 
@@ -120,22 +125,75 @@ export function MealEntryForm(): JSX.Element {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="quantity"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Quantity (grams)</FormLabel>
-              <FormControl>
-                <Input placeholder="200" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is the number of grams consumed.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FormItem>
+          <FormLabel>Serving Type</FormLabel>
+          <Select
+            onValueChange={(value) => {
+              setServingType(value);
+
+              form.reset({
+                ...form.getValues(),
+                quantityInGrams: 0,
+                quantityInUnits: 0,
+              });
+            }}
+          >
+            <FormControl>
+              <SelectTrigger aria-label="Serving Type">
+                <SelectValue placeholder="Select Serving Type" />
+              </SelectTrigger>
+            </FormControl>
+
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Types</SelectLabel>
+                <SelectItem value="grams">Grams</SelectItem>
+                <SelectItem value="units">Units</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <FormDescription>
+            The type of measurement used for each serving.
+          </FormDescription>
+        </FormItem>
+
+        {servingType === 'grams' && (
+          <FormField
+            control={form.control}
+            name="quantityInGrams"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Quantity (grams)</FormLabel>
+                <FormControl>
+                  <Input placeholder="200" {...field} />
+                </FormControl>
+                <FormDescription>
+                  This is the number of grams consumed.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        {servingType === 'units' && (
+          <FormField
+            control={form.control}
+            name="quantityInUnits"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Quantity (units)</FormLabel>
+                <FormControl>
+                  <Input placeholder="200" {...field} />
+                </FormControl>
+                <FormDescription>
+                  This is the number of units consumed.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <Button disabled={auth?.token === null} type="submit">
           Submit

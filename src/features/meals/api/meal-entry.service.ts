@@ -13,7 +13,8 @@ type FindMealEntriesByUserIdProps = ServiceProps;
 interface CreateProps extends ServiceProps {
   foodItemId: number;
   mealId: number;
-  quantity: number;
+  quantityInUnits: number;
+  quantityInGrams: number;
 }
 
 interface DeleteMealEntryProps extends ServiceProps {
@@ -51,7 +52,8 @@ async function findMealEntriesByUserId({
 async function create({
   foodItemId,
   mealId,
-  quantity,
+  quantityInGrams,
+  quantityInUnits,
   userId,
   token,
 }: CreateProps): Promise<MealEntry> {
@@ -60,9 +62,10 @@ async function create({
   }
 
   const requestBody = JSON.stringify({
-    foodItemId,
-    mealId,
-    quantity,
+    foodItemId: foodItemId === -1 ? null : foodItemId,
+    mealId: mealId === -1 ? null : mealId,
+    quantityInGrams: quantityInGrams === 0 ? null : quantityInGrams,
+    quantityInUnits: quantityInUnits === 0 ? null : quantityInUnits,
     userId,
   });
 
