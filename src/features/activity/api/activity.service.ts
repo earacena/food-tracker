@@ -11,8 +11,8 @@ import {
 type FindActivitiesByUserIdProps = ServiceProps;
 
 interface CreateProps extends ServiceProps {
-  mealId: number | undefined;
-  foodItemId: number | undefined;
+  mealId: number;
+  foodItemId: number;
   quantityInUnits: number | undefined;
   quantityInGrams: number | undefined;
 }
@@ -56,8 +56,8 @@ async function create({
   }
 
   const requestBody = JSON.stringify({
-    mealId: mealId ?? null,
-    foodItemId: foodItemId ?? null,
+    mealId: mealId === -1 ? null : mealId,
+    foodItemId: foodItemId === -1 ? null : foodItemId,
     quantityInGrams: quantityInGrams ?? null,
     quantityInUnits: quantityInUnits ?? null,
     userId,
