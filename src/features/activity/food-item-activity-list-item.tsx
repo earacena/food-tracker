@@ -66,12 +66,23 @@ export function FoodItemActivityListItem({
         </span>
       </span>
 
-      <span className="flex flex-col text-xs border-l-2 border-slate-400 text-slate-500 pr-2 pl-2">
-        Serving (g)
-        <span className="text-lg text-slate-800">
-          {activity.quantityInGrams}
+      {activity.quantityInGrams ? (
+        <span className="flex flex-col text-xs border-l-2 border-slate-400 text-slate-500 pr-2 pl-2">
+          Serving (g)
+          <span className="text-lg text-slate-800">
+            {activity.quantityInGrams}
+          </span>
         </span>
-      </span>
+      ) : null}
+
+      {activity.quantityInUnits ? (
+        <span className="flex flex-col text-xs border-l-2 border-slate-400 text-slate-500 pr-2 pl-2">
+          Serving (qty)
+          <span className="text-lg text-slate-800">
+            {activity.quantityInUnits}
+          </span>
+        </span>
+      ) : null}
     </li>
   );
 }
