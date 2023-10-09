@@ -77,7 +77,7 @@ export function FoodItemActivityListItem({
 
       {activity.quantityInUnits ? (
         <span className="flex flex-col text-xs border-l-2 border-slate-400 text-slate-500 pr-2 pl-2">
-          Serving (qty)
+          Serving (#)
           <span className="text-lg text-slate-800">
             {activity.quantityInUnits}
           </span>
