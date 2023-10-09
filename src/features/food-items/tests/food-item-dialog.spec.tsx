@@ -115,7 +115,7 @@ describe('foodItemDialog', () => {
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
-    expect(screen.getByText(/calories/i)).toBeInTheDocument();
+    expect(screen.getByText(/calories per serving/i)).toBeInTheDocument();
   });
 
   it('should contain a section for serving size in grams', async () => {
@@ -138,7 +138,7 @@ describe('foodItemDialog', () => {
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
-    expect(screen.getByText('Serving Size (g)')).toBeInTheDocument();
+    expect(screen.getByText(/grams/i)).toBeInTheDocument();
   });
 
   it('should contain a section for serving size in units', async () => {
@@ -161,6 +161,6 @@ describe('foodItemDialog', () => {
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
-    expect(screen.getByText('Serving Size (units)')).toBeInTheDocument();
+    expect(screen.getByText(/units/i)).toBeInTheDocument();
   });
 });

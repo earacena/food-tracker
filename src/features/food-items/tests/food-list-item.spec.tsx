@@ -39,6 +39,6 @@ describe('foodListItem', () => {
       renderApp(<FoodListItem dropdown={false} foodItem={foodItem} />);
     }
 
-    expect(await screen.findByText('Serving (unit)')).toBeDefined();
+    expect(await screen.findByText('Serving (#)')).toBeDefined();
   });
 });
