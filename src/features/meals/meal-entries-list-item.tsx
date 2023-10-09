@@ -17,7 +17,7 @@ export function MealEntriesListItem({
 
   return (
     <li className="flex flex-row border border-slate-400 p-2 rounded-md my-1">
-      <span className="flex flex-1 flex-col text-xs text-slate-500 pr-2 border-r-2 ">
+      <span className="flex flex-1 flex-col text-xs text-slate-500 pr-2 border-r-2 items-center mr-auto">
         Food Item
         <span className="text-lg text-slate-800">
           {foodItem.foodName.length > 15
@@ -26,10 +26,23 @@ export function MealEntriesListItem({
         </span>
       </span>
 
-      <span className="flex flex-col text-xs text-slate-500 pl-2">
-        Serving (g)
-        <span className="text-lg text-slate-800">{mealEntry.quantity}</span>
-      </span>
+      {mealEntry.quantityInGrams ? (
+        <span className="flex flex-col text-xs text-slate-500 pl-2 items-center">
+          Serving (g)
+          <span className="text-lg text-slate-800">
+            {mealEntry.quantityInGrams}
+          </span>
+        </span>
+      ) : null}
+
+      {mealEntry.quantityInUnits ? (
+        <span className="flex flex-col text-xs text-slate-500 pl-2 items-center">
+          Serving (#)
+          <span className="text-lg text-slate-800">
+            {mealEntry.quantityInUnits}
+          </span>
+        </span>
+      ) : null}
 
       <MealEntryDropdownMenu foodItem={foodItem} mealEntry={mealEntry} />
     </li>
