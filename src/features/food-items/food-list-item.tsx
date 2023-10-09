@@ -36,7 +36,7 @@ export function FoodListItem({
       </span>
 
       <span className="flex flex-col text-xs text-slate-500 border-l-2 border-slate-400 items-center pl-2">
-        Serving (unit)
+        Serving (#)
         <span className="text-lg text-slate-800">
           {foodItem.servingSizeInUnits ? foodItem.servingSizeInUnits : '-'}
         </span>
