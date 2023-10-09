@@ -81,7 +81,7 @@ export function ActivityForm(): JSX.Element {
   const noMeals = consumptionType === 'meal' && meals?.length === 0;
   const noFoodItems = consumptionType === 'foodItem' && foodItems?.length === 0;
   const noMealSelected =
-    consumptionType === 'meal' && form.getValues().mealId === -1;
+    consumptionType === 'meal' && form.watch('mealId') === -1;
 
   return (
     <Form {...form}>
@@ -231,7 +231,8 @@ export function ActivityForm(): JSX.Element {
             noMeals ||
             noFoodItems ||
             noMealSelected ||
-            selectedFoodItem === undefined
+            consumptionType === '' ||
+            (consumptionType === 'foodItem' && selectedFoodItemId === -1)
           }
           type="submit"
         >
