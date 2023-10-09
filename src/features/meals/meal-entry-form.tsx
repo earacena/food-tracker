@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -10,9 +10,7 @@ import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -26,9 +24,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { logger } from '@/utils/logger';
+import { useToast } from '@/components/ui/toast-hook';
 import { AuthContext } from '../auth';
 import { mealEntryService } from './api/meal-entry.service';
-import type { Meal } from './types/meals.types';
 import { useMeals } from './hooks/use-meals';
 import {
   type MealEntryFormSchema,
@@ -44,16 +42,15 @@ export function MealEntryForm(): JSX.Element {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const [servingType, setServingType] = useState<string>('');
-
   const { data: meals } = useMeals();
   const { data: foodItems } = useFoodItems();
   const { mealId } = zMealIdParam.parse(useParams());
-  const [meal, setMeal] = useState<Meal | undefined>();
+  const { toast } = useToast();
 
   const form = useForm<MealEntryFormSchema>({
     resolver: zodResolver(zMealEntryFormSchema),
     defaultValues: {
+      foodItemId: -1,
       quantityInGrams: 0,
       quantityInUnits: 0,
     },
@@ -83,9 +80,24 @@ export function MealEntryForm(): JSX.Element {
     addMealEntry.mutate(values);
   }
 
+  const meal = meals?.find((m) => m.id.toString() === mealId.toString());
+  const isValidMeal = meal !== undefined;
+  const selectedFoodItemId = form.watch('foodItemId');
+  const selectedFoodItem = foodItems?.find(
+    (f) => f.id.toString() === selectedFoodItemId.toString(),
+  );
+
   useEffect(() => {
-    setMeal(meals?.find((m) => m.id === mealId));
-  }, [mealId, meals, setMeal]);
+    if (!isValidMeal) {
+      toast({
+        title: 'Error',
+        description: 'Meal does not exist',
+        variant: 'destructive',
+      });
+
+      navigate('/meals');
+    }
+  }, [isValidMeal, navigate, toast]);
 
   return (
     <Form {...form}>
@@ -125,39 +137,7 @@ export function MealEntryForm(): JSX.Element {
           )}
         />
 
-        <FormItem>
-          <FormLabel>Serving Type</FormLabel>
-          <Select
-            onValueChange={(value) => {
-              setServingType(value);
-
-              form.reset({
-                ...form.getValues(),
-                quantityInGrams: 0,
-                quantityInUnits: 0,
-              });
-            }}
-          >
-            <FormControl>
-              <SelectTrigger aria-label="Serving Type">
-                <SelectValue placeholder="Select Serving Type" />
-              </SelectTrigger>
-            </FormControl>
-
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Types</SelectLabel>
-                <SelectItem value="grams">Grams</SelectItem>
-                <SelectItem value="units">Units</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <FormDescription>
-            The type of measurement used for each serving.
-          </FormDescription>
-        </FormItem>
-
-        {servingType === 'grams' && (
+        {selectedFoodItem?.servingSizeInGrams ? (
           <FormField
             control={form.control}
             name="quantityInGrams"
@@ -174,9 +154,9 @@ export function MealEntryForm(): JSX.Element {
               </FormItem>
             )}
           />
-        )}
+        ) : null}
 
-        {servingType === 'units' && (
+        {selectedFoodItem?.servingSizeInUnits ? (
           <FormField
             control={form.control}
             name="quantityInUnits"
@@ -193,9 +173,12 @@ export function MealEntryForm(): JSX.Element {
               </FormItem>
             )}
           />
-        )}
+        ) : null}
 
-        <Button disabled={auth?.token === null} type="submit">
+        <Button
+          disabled={selectedFoodItem === undefined || auth?.token === null}
+          type="submit"
+        >
           Submit
         </Button>
       </form>
