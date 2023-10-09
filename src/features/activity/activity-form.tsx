@@ -38,7 +38,6 @@ export function ActivityForm(): JSX.Element {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [consumptionType, setConsumptionType] = useState<string>('');
-  const [servingType, setServingType] = useState<string>('');
   const { data: meals } = useMeals();
   const { data: foodItems } = useFoodItems();
 
@@ -47,8 +46,8 @@ export function ActivityForm(): JSX.Element {
     defaultValues: {
       foodItemId: -1,
       mealId: -1,
-      quantityInGrams: 100,
-      quantityInUnits: 1,
+      quantityInGrams: 0,
+      quantityInUnits: 0,
     },
   });
 
@@ -74,13 +73,15 @@ export function ActivityForm(): JSX.Element {
     addActivity.mutate(values);
   }
 
+  const selectedFoodItemId = form.watch('foodItemId');
+  // Number comparison did not work for this line, resolved by casting both ids to strings
+  const selectedFoodItem = foodItems?.find(
+    (f) => f.id.toString() === selectedFoodItemId.toString(),
+  );
   const noMeals = consumptionType === 'meal' && meals?.length === 0;
   const noFoodItems = consumptionType === 'foodItem' && foodItems?.length === 0;
   const noMealSelected =
     consumptionType === 'meal' && form.getValues().mealId === -1;
-  const noFoodItemSelected =
-    consumptionType === 'foodItem' && form.getValues().foodItemId === -1;
-  const noServingTypeSelected = servingType === '';
 
   return (
     <Form {...form}>
@@ -97,7 +98,6 @@ export function ActivityForm(): JSX.Element {
           <Select
             onValueChange={(value) => {
               setConsumptionType(value);
-              setServingType('');
 
               form.reset({
                 ...form.getValues(),
@@ -128,7 +128,7 @@ export function ActivityForm(): JSX.Element {
               <FormItem>
                 <FormLabel>Food Item</FormLabel>
                 <Select
-                  defaultValue={field.value?.toString()}
+                  defaultValue={field.value.toString()}
                   onValueChange={field.onChange}
                 >
                   <FormControl>
@@ -154,41 +154,8 @@ export function ActivityForm(): JSX.Element {
           />
         )}
 
-        {consumptionType === 'foodItem' && (
-          <FormItem>
-            <FormLabel>Serving Type</FormLabel>
-            <Select
-              onValueChange={(value) => {
-                setServingType(value);
-
-                form.reset({
-                  ...form.getValues(),
-                  quantityInGrams: 0,
-                  quantityInUnits: 0,
-                });
-              }}
-            >
-              <FormControl>
-                <SelectTrigger aria-label="Serving Type">
-                  <SelectValue placeholder="Select Serving Type" />
-                </SelectTrigger>
-              </FormControl>
-
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Types</SelectLabel>
-                  <SelectItem value="grams">Grams</SelectItem>
-                  <SelectItem value="units">Units</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <FormDescription>
-              The type of measurement used for each serving.
-            </FormDescription>
-          </FormItem>
-        )}
-
-        {servingType === 'grams' && (
+        {consumptionType === 'foodItem' &&
+        selectedFoodItem?.servingSizeInGrams ? (
           <FormField
             control={form.control}
             name="quantityInGrams"
@@ -205,7 +172,7 @@ export function ActivityForm(): JSX.Element {
               </FormItem>
             )}
           />
-        )}
+        ) : null}
 
         {consumptionType === 'meal' && (
           <FormField
@@ -215,7 +182,7 @@ export function ActivityForm(): JSX.Element {
               <FormItem>
                 <FormLabel>Meal</FormLabel>
                 <Select
-                  defaultValue={field.value?.toString()}
+                  defaultValue={field.value.toString()}
                   onValueChange={field.onChange}
                 >
                   <FormControl>
@@ -240,7 +207,7 @@ export function ActivityForm(): JSX.Element {
           />
         )}
 
-        {(servingType === 'units' || consumptionType === 'meal') && (
+        {selectedFoodItem?.servingSizeInUnits || consumptionType === 'meal' ? (
           <FormField
             control={form.control}
             name="quantityInUnits"
@@ -257,15 +224,14 @@ export function ActivityForm(): JSX.Element {
               </FormItem>
             )}
           />
-        )}
+        ) : null}
 
         <Button
           disabled={
             noMeals ||
             noFoodItems ||
             noMealSelected ||
-            noFoodItemSelected ||
-            noServingTypeSelected
+            selectedFoodItem === undefined
           }
           type="submit"
         >
