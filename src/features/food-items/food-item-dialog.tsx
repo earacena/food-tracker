@@ -27,23 +27,23 @@ export function FoodItemDialog({
         <DialogTitle className="mx-auto text-3xl">
           {foodItem.foodName}
         </DialogTitle>
-        <DialogDescription className="flex flex-row items-center justify-between">
-          <span className="flex flex-col items-center">
-            <span className="text-xs">Serving Size (g)</span>
-            <span className="text-2xl">
+        <DialogDescription className="flex flex-col items-start justify-between">
+          <span className="flex flex-col my-3">
+            Serving Size
+            <span className="flex flex-row text-3xl items-center">
               {foodItem.servingSizeInGrams ? foodItem.servingSizeInGrams : '-'}
+              <span className="ml-auto text-xs">grams</span>
+            </span>
+            <span className="flex flex-row text-3xl items-center">
+              {foodItem.servingSizeInUnits ? foodItem.servingSizeInUnits : '-'}
+              <span className="ml-auto text-xs">units</span>
             </span>
           </span>
-
-          <span className="flex flex-col items-center">
-            <span className="text-xs">Serving Size (units)</span>
-            <span className="text-2xl">
-              {foodItem.servingSizeInUnits ? foodItem.servingSizeInUnits : '-'}
-            </span>
-
-            <span className="flex flex-col items-center">
-              <span className="text-xs">Calories Per Serving (kcal)</span>
-              <span className="text-2xl">{foodItem.caloriesPerServing}</span>
+          <span className="flex flex-col items-start">
+            Calories Per Serving (kcal)
+            <span className="flex flex-row items-center text-3xl">
+              {foodItem.caloriesPerServing}
+              <span className="ml-5 text-xs">calories</span>
             </span>
           </span>
         </DialogDescription>
