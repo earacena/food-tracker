@@ -103,7 +103,11 @@ export function FoodItemForm(): JSX.Element {
           <Select
             onValueChange={(value) => {
               setServingType(value);
-              form.reset();
+              form.reset({
+                ...form.getValues(),
+                servingSizeInGrams: 0,
+                servingSizeInUnits: 0,
+              });
             }}
           >
             <FormControl>
