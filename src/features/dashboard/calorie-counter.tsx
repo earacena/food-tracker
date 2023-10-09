@@ -10,6 +10,7 @@ import { useProfile } from '../profile';
 
 interface ComputeFoodItemCaloriesProps {
   consumedQuantityInGrams: number | null;
+  consumedQuantityInUnits: number | null;
   foodItem: FoodItem | undefined;
 }
 
@@ -21,16 +22,28 @@ interface ComputeMealCaloriesProps {
 
 function computeFoodItemCalories({
   consumedQuantityInGrams,
+  consumedQuantityInUnits,
   foodItem,
 }: ComputeFoodItemCaloriesProps): number {
-  if (!consumedQuantityInGrams || !foodItem) {
+  if (!foodItem) {
     return 0;
   }
 
-  return Math.floor(
-    (consumedQuantityInGrams / foodItem.servingSizeInGrams) *
-      foodItem.caloriesPerServing,
-  );
+  if (consumedQuantityInGrams && foodItem.servingSizeInGrams) {
+    return Math.floor(
+      (consumedQuantityInGrams / foodItem.servingSizeInGrams) *
+        foodItem.caloriesPerServing,
+    );
+  }
+
+  if (consumedQuantityInUnits && foodItem.servingSizeInUnits) {
+    return Math.floor(
+      (consumedQuantityInUnits / foodItem.servingSizeInUnits) *
+        foodItem.caloriesPerServing,
+    );
+  }
+
+  return 0;
 }
 
 function computeMealCalories({
@@ -51,7 +64,8 @@ function computeMealCalories({
 
     if (entry !== undefined) {
       calories += computeFoodItemCalories({
-        consumedQuantityInGrams: entry.quantity,
+        consumedQuantityInGrams: entry.quantityInGrams,
+        consumedQuantityInUnits: entry.quantityInUnits,
         foodItem: item,
       });
     }
@@ -78,6 +92,7 @@ export function CalorieCounter(): JSX.Element {
             if (a.foodItemId) {
               return computeFoodItemCalories({
                 consumedQuantityInGrams: a.quantityInGrams,
+                consumedQuantityInUnits: a.quantityInUnits,
                 foodItem: foodItems?.find((f) => f.id === a.foodItemId),
               });
             }
