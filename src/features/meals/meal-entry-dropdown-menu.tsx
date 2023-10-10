@@ -37,8 +37,8 @@ export function MealEntryDropdownMenu({
     mutationFn: ({ mealEntryId }: DeleteMutationProps) =>
       mealEntryService.deleteMealEntry({
         mealEntryId,
-        userId: auth?.userId,
-        token: auth?.token,
+        userId: auth?.userId ?? null,
+        token: auth?.token ?? null,
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
