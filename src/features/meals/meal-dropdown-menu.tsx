@@ -64,6 +64,10 @@ export function MealDropdownMenu({ meal }: MealDropdownMenuProps): JSX.Element {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
+        queryKey: ['activities', auth?.userId, auth?.token],
+      });
+
+      await queryClient.invalidateQueries({
         queryKey: ['mealEntries', auth?.userId, auth?.token],
       });
 
