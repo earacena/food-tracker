@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Trash } from 'lucide-react';
 import type { FoodItem } from '../food-items/types/food-item.types';
 import type { Activity } from './types/activity.types';
+import { ActivityDropdownMenu } from './activity-dropdown-menu';
 
 interface FoodItemActivityListItemProps {
   activity: Activity;
@@ -83,6 +84,8 @@ export function FoodItemActivityListItem({
           </span>
         </span>
       ) : null}
+
+      <ActivityDropdownMenu activity={activity} />
     </li>
   );
 }

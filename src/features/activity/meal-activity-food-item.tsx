@@ -3,6 +3,7 @@ import { type Meal } from '../meals/types/meals.types';
 import type { MealEntries } from '../meals/types/meal-entries.types';
 import type { FoodItems } from '../food-items/types/food-item.types';
 import type { Activity } from './types/activity.types';
+import { ActivityDropdownMenu } from './activity-dropdown-menu';
 
 interface MealActivityListItemProps {
   activity: Activity;
@@ -73,6 +74,8 @@ export function MealActivityListItem({
           {activity.quantityInUnits}
         </span>
       </span>
+
+      <ActivityDropdownMenu activity={activity} />
     </li>
   );
 }
