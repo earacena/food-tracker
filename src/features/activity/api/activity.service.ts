@@ -17,6 +17,14 @@ interface CreateProps extends ServiceProps {
   quantityInGrams: number | undefined;
 }
 
+interface DeleteActivitiesByMealIdProps extends ServiceProps {
+  mealId: number;
+}
+
+interface DeleteActivityProps extends ServiceProps {
+  activityId: number;
+}
+
 async function findActivitiesByUserId({
   userId,
   token,
@@ -84,7 +92,57 @@ async function create({
   return activityCreateResponse.data.newActivity;
 }
 
+async function deleteActivity({
+  activityId,
+  userId,
+  token,
+}: DeleteActivityProps): Promise<void> {
+  if (userId === null || token === null) {
+    void Promise.reject();
+  }
+
+  const response = await fetch(`${baseUrl}/api/activities/${activityId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      accept: 'application/json',
+      authentication: `Bearer ${token}`,
+    },
+  });
+
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json());
+    throw new AuthError(errorResponse.errorMessage);
+  }
+}
+
+async function deleteActivitiesByMealId({
+  mealId,
+  userId,
+  token,
+}: DeleteActivitiesByMealIdProps): Promise<void> {
+  if (userId === null || token === null) {
+    void Promise.reject();
+  }
+
+  const response = await fetch(`${baseUrl}/api/activities/meal/${mealId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      accept: 'application/json',
+      authentication: `Bearer ${token}`,
+    },
+  });
+
+  if (response.status === 401) {
+    const errorResponse = zErrorResponse.parse(await response.json());
+    throw new AuthError(errorResponse.errorMessage);
+  }
+}
+
 export const activityService = {
   findActivitiesByUserId,
   create,
+  deleteActivity,
+  deleteActivitiesByMealId,
 };
