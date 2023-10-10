@@ -24,6 +24,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { AuthContext } from '@/features/auth';
+import { activityService } from '../activity/api/activity.service';
 import { mealService } from './api/meal.service';
 import { mealEntryService } from './api/meal-entry.service';
 import type { Meal } from './types/meals.types';
@@ -43,6 +44,12 @@ export function MealDropdownMenu({ meal }: MealDropdownMenuProps): JSX.Element {
 
   const removeMeal = useMutation({
     mutationFn: async ({ mealId }: DeleteMutationProps) => {
+      await activityService.deleteActivitiesByMealId({
+        mealId,
+        userId: auth?.userId ?? null,
+        token: auth?.token ?? null,
+      });
+
       await mealEntryService.deleteMealEntriesByMealId({
         mealId,
         userId: auth?.userId ?? null,
