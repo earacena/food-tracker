@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- Keep shadcn components and exported objecs colocated in the same file to prevent clutter */
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
