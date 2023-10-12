@@ -12,6 +12,10 @@ module.exports = {
     'import/resolver': {
       typescript: {
         project,
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        tsconfigRootDir: __dirname
+
       },
     },
   },
@@ -21,8 +25,11 @@ module.exports = {
     require.resolve('@vercel/style-guide/eslint/typescript'),
     require.resolve('@vercel/style-guide/eslint/jest-react'),
     'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-type-checked',
+    'plugin:@typescript-eslint/stylistic-type-checked',
     'plugin:react-hooks/recommended',
+    'plugin:react/recommended',
+    'plugin:react/jsx-runtime'
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
