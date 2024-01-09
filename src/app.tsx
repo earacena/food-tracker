@@ -8,6 +8,7 @@ import { FoodItems, FoodItemForm } from './features/food-items';
 import { Activities, ActivityForm } from './features/activity';
 import { Meals, MealEntryForm, MealForm } from './features/meals';
 import { Menu } from './features/menu';
+import { EmailLoginForm, EmailSignUpForm, LoginMenu } from './features/auth';
 
 export function App(): JSX.Element {
   return (
@@ -26,6 +27,9 @@ export function App(): JSX.Element {
           path="/activities"
         />
         <Route element={<ActivityForm />} path="/activities/form" />
+        <Route element={<LoginMenu />} path="/signin" />
+        <Route element={<EmailLoginForm />} path="/signin/email" />
+        <Route element={<EmailSignUpForm />} path="/signup/email" />
       </Routes>
       <Toaster />
       <ReactQueryDevtools initialIsOpen={false} />

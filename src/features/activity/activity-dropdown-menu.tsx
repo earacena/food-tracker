@@ -39,20 +39,20 @@ export function ActivityDropdownMenu({
   activity,
 }: ActivityDropdownMenuProps): JSX.Element {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
-  const auth = useContext(AuthContext);
+  const authUser = useContext(AuthContext);
   const queryClient = useQueryClient();
 
   const removeActivity = useMutation({
     mutationFn: async ({ activityId }: DeleteMutationProps) => {
       await activityService.deleteActivity({
         activityId,
-        userId: auth?.userId ?? null,
-        token: auth?.token ?? null,
+        userId: authUser?.userId ?? null,
+        token: authUser?.token ?? null,
       });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['activities', auth?.userId, auth?.token],
+        queryKey: ['activities', authUser?.userId, authUser?.token],
       });
     },
     onError: (error) => {
@@ -68,12 +68,12 @@ export function ActivityDropdownMenu({
             <MoreVertical />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>Activity Options</DropdownMenuLabel>
-          <DropdownMenuSeparator />
+        <DropdownMenuContent className="w-56" sideOffset={0}>
+          <DropdownMenuLabel className="">Activity Options</DropdownMenuLabel>
+          <DropdownMenuSeparator className="" />
           <DropdownMenuGroup>
             <AlertDialogTrigger asChild>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="">
                 <Trash className="mr-2 h-4 w-4 text-red-400" />
                 <span className="text-lg text-red-400">Delete</span>
               </DropdownMenuItem>
