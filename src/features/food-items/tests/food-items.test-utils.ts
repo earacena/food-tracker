@@ -31,7 +31,7 @@ export function generateFoodItems({
 
 export const foodItemsRequestHandlers = [
   http.get(`${baseUrl}/api/foodItems/user/:userId`, ({ params }) => {
-    const { userId } = z.object({ userId: z.string().uuid() }).parse(params);
+    const { userId } = z.object({ userId: z.string() }).parse(params);
     const body = {
       success: true,
       data: {

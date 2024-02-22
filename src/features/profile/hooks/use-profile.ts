@@ -2,20 +2,16 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/components/ui/toast-hook';
-import { AuthContext, KeycloakContext } from '@/features/auth/';
-import { refreshToken } from '@/features/auth/refresh-token';
+import { AuthContext } from '@/features/auth/';
 import { profileService } from '@/features/profile/api/profile.service';
 import { logger } from '@/utils/logger';
-import { AuthError, NotFoundError } from '@/utils/errors';
+import { NotFoundError } from '@/utils/errors';
+import { useToast } from '@/components/ui/toast-hook';
 import type { Profile } from '../types/profile.types';
 
 export function useProfile(): UseQueryResult<Profile | null> {
   const auth = useContext(AuthContext);
-  const keycloak = useContext(KeycloakContext);
   const { toast } = useToast();
-  const navigate = useNavigate();
-
   const validAuth: boolean = auth?.userId !== null && auth?.token !== null;
 
   const profileQuery = useQuery({
@@ -29,22 +25,15 @@ export function useProfile(): UseQueryResult<Profile | null> {
     enabled: validAuth,
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    async function processErrors(): Promise<void> {
+    function processErrors(): void {
       if (profileQuery.error) {
         logger.logError(profileQuery.error);
 
         if (profileQuery.error instanceof NotFoundError) {
           navigate('/profile/form');
-        } else if (
-          profileQuery.error instanceof AuthError &&
-          profileQuery.error.message === 'jwt expired'
-        ) {
-          await refreshToken({
-            client: keycloak?.client ?? null,
-            setToken: auth?.setToken ?? null,
-            logger,
-          });
         } else {
           toast({
             variant: 'destructive',
@@ -55,8 +44,8 @@ export function useProfile(): UseQueryResult<Profile | null> {
       }
     }
 
-    void processErrors();
-  }, [keycloak, auth?.setToken, navigate, profileQuery.error, toast]);
+    processErrors();
+  }, [navigate, profileQuery.error, toast]);
 
   return profileQuery;
 }

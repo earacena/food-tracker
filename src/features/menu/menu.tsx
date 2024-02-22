@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { LogOut, Menu as MenuIcon } from 'lucide-react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
+import { getAuth } from 'firebase/auth';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { KeycloakContext } from '@/features/auth';
+import { logger } from '@/utils/logger';
 
 interface LinkItem {
   link: string;
@@ -18,11 +19,12 @@ const linkItems: LinkItem[] = [
 ];
 
 export function Menu(): JSX.Element {
-  const keycloak = useContext(KeycloakContext);
   const [open, setOpen] = useState<boolean>(false);
 
-  async function logout(): Promise<void> {
-    await keycloak?.client?.logout();
+  function logout(): void {
+    logger.log('Logging out user');
+
+    void getAuth().signOut();
   }
 
   return (
@@ -49,7 +51,9 @@ export function Menu(): JSX.Element {
 
         <Button
           className="self-center mt-auto"
-          onClick={() => void logout()}
+          onClick={() => {
+            logout();
+          }}
           variant="destructive"
         >
           <LogOut />

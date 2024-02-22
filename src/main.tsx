@@ -2,10 +2,9 @@ import { StrictMode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { initializeApp } from 'firebase/app';
 import { App } from './app.tsx';
 import './index.css';
-import { KeycloakProvider } from './features/auth/keycloak-provider.tsx';
-import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from './utils/firebase.ts';
 import { UserCredentialProvider } from './features/auth';
 
@@ -17,16 +16,14 @@ const rootNode = document.getElementById('root');
 
 if (rootNode) {
   createRoot(rootNode).render(
-    <KeycloakProvider>
-      <StrictMode>
+    <StrictMode>
+      <BrowserRouter>
         <UserCredentialProvider>
-          <BrowserRouter>
-            <QueryClientProvider client={client}>
-              <App />
-            </QueryClientProvider>
-          </BrowserRouter>
+          <QueryClientProvider client={client}>
+            <App />
+          </QueryClientProvider>
         </UserCredentialProvider>
-      </StrictMode>
-    </KeycloakProvider>,
+      </BrowserRouter>
+    </StrictMode>,
   );
 }

@@ -2,7 +2,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 import type { SetStateAction } from 'react';
 import { createContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { logger } from '@/utils/logger';
 
 interface AuthContextType {
@@ -25,9 +25,9 @@ export function UserCredentialProvider({
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
-  const auth = getAuth();
-
   const navigate = useNavigate();
+  const location = useLocation();
+  const auth = getAuth();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -37,14 +37,17 @@ export function UserCredentialProvider({
       } else {
         logger.log('User is currently logged out');
         setAuthUser(null);
-        navigate('/signin');
+        const basePath = location.pathname.split('/')[1];
+        if (basePath !== 'signin' && basePath !== 'signup') {
+          navigate('/signin');
+        }
       }
     });
 
     return () => {
       unsubscribe();
     };
-  }, [auth, navigate]);
+  }, [auth, location.pathname, navigate]);
 
   useEffect(() => {
     async function fetchToken(): Promise<void> {

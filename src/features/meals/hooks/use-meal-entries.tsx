@@ -1,17 +1,14 @@
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useContext, useEffect } from 'react';
-import { AuthContext, KeycloakContext } from '@/features/auth';
-import { useToast } from '@/components/ui/toast-hook';
+import { AuthContext } from '@/features/auth';
 import { logger } from '@/utils/logger';
-import { refreshToken } from '@/features/auth/refresh-token';
-import { AuthError } from '@/utils/errors';
+import { useToast } from '@/components/ui/toast-hook';
 import { mealEntryService } from '../api/meal-entry.service';
 import type { MealEntries } from '../types/meal-entries.types';
 
 export function useMealEntries(): UseQueryResult<MealEntries> {
   const auth = useContext(AuthContext);
-  const keycloak = useContext(KeycloakContext);
   const { toast } = useToast();
 
   const validAuth: boolean = auth?.userId !== null && auth?.token !== null;
@@ -27,31 +24,20 @@ export function useMealEntries(): UseQueryResult<MealEntries> {
   });
 
   useEffect(() => {
-    async function processErrors(): Promise<void> {
+    function processErrors(): void {
       if (mealEntriesQuery.error) {
         logger.logError(mealEntriesQuery.error);
 
-        if (
-          mealEntriesQuery.error instanceof AuthError &&
-          mealEntriesQuery.error.message === 'jwt expired'
-        ) {
-          await refreshToken({
-            client: keycloak?.client ?? null,
-            setToken: auth?.setToken ?? null,
-            logger,
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error',
-            description: 'Unable to fetch meal entries',
-          });
-        }
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Unable to fetch meal entries',
+        });
       }
     }
 
-    void processErrors();
-  }, [keycloak, auth?.setToken, mealEntriesQuery.error, toast]);
+    processErrors();
+  }, [mealEntriesQuery.error, toast]);
 
   return mealEntriesQuery;
 }
