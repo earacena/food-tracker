@@ -88,7 +88,7 @@ export function MealDropdownMenu({ meal }: MealDropdownMenuProps): JSX.Element {
             <MoreVertical />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
+        <DropdownMenuContent className="w-56" sideOffset={0}>
           <DropdownMenuLabel>
             &apos;{meal.name}&apos; Meal Options
           </DropdownMenuLabel>

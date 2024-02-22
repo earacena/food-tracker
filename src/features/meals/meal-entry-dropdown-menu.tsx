@@ -57,7 +57,7 @@ export function MealEntryDropdownMenu({
           <MoreVertical />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent className="w-56" sideOffset={0}>
         <DropdownMenuLabel>
           &apos;{foodItem.foodName}&apos; Entry Options
         </DropdownMenuLabel>

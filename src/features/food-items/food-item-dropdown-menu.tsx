@@ -55,13 +55,14 @@ export function FoodItemDropdownMenu({
           <MoreVertical data-testid="menu-icon" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>
+      <DropdownMenuContent className="w-56" sideOffset={0}>
+        <DropdownMenuLabel className="">
           &apos;{foodItem.foodName}&apos; Item Options
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="" />
         <DropdownMenuGroup>
           <DropdownMenuItem
+            className=""
             onClick={() => {
               removeFoodItem.mutate({
                 foodItemId: foodItem.id,
