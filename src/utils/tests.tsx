@@ -41,9 +41,8 @@ export function createWrapper(): ReactWrapperFn {
           token: 'token',
           userId: crypto.randomUUID(),
           // eslint-disable-next-line @typescript-eslint/no-empty-function -- not necessary when using msw to mock requests
-          setToken: () => {},
-          // eslint-disable-next-line @typescript-eslint/no-empty-function -- not necessary when using msw to mock requests
-          setUserId: () => {},
+          setAuthUser: () => {},
+          authUser: null,
         }}
       >
         <QueryClientProvider client={queryClient}>
@@ -63,9 +62,8 @@ export function renderApp(ui: React.ReactElement): RenderResult {
         token: 'token',
         userId: crypto.randomUUID(),
         // eslint-disable-next-line @typescript-eslint/no-empty-function -- not necessary when using msw to mock requests
-        setToken: () => {},
-        // eslint-disable-next-line @typescript-eslint/no-empty-function -- not necessary when using msw to mock requests
-        setUserId: () => {},
+        setAuthUser: () => {},
+        authUser: null,
       }}
     >
       <BrowserRouter>
@@ -83,9 +81,8 @@ export function renderApp(ui: React.ReactElement): RenderResult {
             token: 'token',
             userId: crypto.randomUUID(),
             // eslint-disable-next-line @typescript-eslint/no-empty-function -- not necessary when using msw to mock requests
-            setToken: () => {},
-            // eslint-disable-next-line @typescript-eslint/no-empty-function -- not necessary when using msw to mock requests
-            setUserId: () => {},
+            setAuthUser: () => {},
+            authUser: null,
           }}
         >
           <BrowserRouter>
