@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const zMeal = z.object({
   id: z.number(),
-  userId: z.string().uuid(),
+  userId: z.string(),
   name: z.string(),
   createdAt: z.coerce.date(),
 });

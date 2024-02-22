@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const zFoodItem = z.object({
   id: z.number(),
   foodName: z.string(),
-  userId: z.string().uuid(),
+  userId: z.string(),
   caloriesPerServing: z.number(),
   servingSizeInGrams: z.number().nullable(),
   servingSizeInUnits: z.number().nullable(),
