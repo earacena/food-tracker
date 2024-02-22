@@ -47,6 +47,6 @@ module.exports = {
         devDependencies: ['**/*.spec.{ts,tsx}', 'setup-tests.ts', '**/*.test-utils.ts', './src/utils/tests.tsx'],
       },
     ],
-    "react/prop-types": [2, { "ignore": ["className"] }],
+    "react/prop-types": off,
   },
 };
