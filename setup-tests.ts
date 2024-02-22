@@ -31,9 +31,9 @@ class MockPointerEvent extends Event {
 
   constructor(type: string, props: PointerEventInit) {
     super(type, props);
-    this.button = props.button || 0;
-    this.ctrlKey = props.ctrlKey || false;
-    this.pointerType = props.pointerType || 'mouse';
+    this.button = props.button ?? 0;
+    this.ctrlKey = props.ctrlKey ?? false;
+    this.pointerType = props.pointerType ?? 'mouse';
   }
 }
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any -- necessary for setup
