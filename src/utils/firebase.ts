@@ -11,7 +11,7 @@ export const firebaseConfig: FirebaseOptions = {
     .string()
     .parse(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID),
   appId: z.string().parse(import.meta.env.VITE_FIREBASE_APP_ID),
-  measurementId: z.string().parse(import.meta.env.VITE_FIREBASE_MEASUREMENT_ID),
+  // measurementId: z.string().parse(import.meta.env.VITE_FIREBASE_MEASUREMENT_ID),
 };
 
 logger.log('Using firebase config: ', firebaseConfig);
