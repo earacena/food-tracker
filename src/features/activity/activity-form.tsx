@@ -207,7 +207,7 @@ export function ActivityForm(): JSX.Element {
           />
         )}
 
-        {selectedFoodItem?.servingSizeInUnits || consumptionType === 'meal' ? (
+        {selectedFoodItem?.servingSizeInUnits ?? consumptionType === 'meal' ? (
           <FormField
             control={form.control}
             name="quantityInUnits"
