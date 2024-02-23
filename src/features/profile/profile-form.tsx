@@ -39,6 +39,7 @@ export function ProfileForm(): JSX.Element {
   const form = useForm<ProfileFormSchemaType>({
     resolver: zodResolver(zProfileFormSchema),
     defaultValues: {
+      name: '',
       dailyCalorieGoal: 2000,
     },
   });
@@ -80,6 +81,20 @@ export function ProfileForm(): JSX.Element {
         <h2 className="self-center scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
           Create a new profile
         </h2>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="2000" {...field} />
+              </FormControl>
+              <FormDescription>This will be your display name.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="dailyCalorieGoal"
