@@ -12,6 +12,7 @@ import {
 type FetchProfileByUserIdProps = ServiceProps;
 
 interface CreateProfileProps extends ServiceProps {
+  name: string;
   dailyCalorieGoal: number;
 }
 
@@ -46,6 +47,7 @@ async function fetchProfileByUserId({
 }
 
 async function create({
+  name,
   dailyCalorieGoal,
   userId,
   token,
@@ -56,6 +58,7 @@ async function create({
 
   const requestBody = JSON.stringify({
     userId,
+    name,
     dailyCalorieGoal,
   });
 
