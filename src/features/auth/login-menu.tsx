@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export function LoginMenu(): JSX.Element {
   return (
-    <div className="flex flex-col items-center justify-center h-full">
+    <div className="flex flex-col items-center justify-center h-full mx-auto">
       <h2 className="text-3xl mb-4">Sign Up</h2>
       <ul>
         <li>
