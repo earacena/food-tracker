@@ -63,7 +63,7 @@ export function EmailLoginForm(): JSX.Element {
   }
 
   return (
-    <div className="flex h-full flex-col items-center justify-center">
+    <div className="flex h-full flex-col items-center justify-center mx-auto">
       <h2 className="text-3xl">Sign In With Email</h2>
       <Form {...form}>
         <form
