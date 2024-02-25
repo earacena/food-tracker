@@ -70,7 +70,7 @@ async function create({
     userId,
   });
 
-  const response = await fetch('/api/mealEntries/', {
+  const response = await fetch(`${baseUrl}/api/mealEntries/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ async function deleteMealEntry({
     void Promise.reject();
   }
 
-  const response = await fetch(`/api/mealEntries/${mealEntryId}`, {
+  const response = await fetch(`${baseUrl}/api/mealEntries/${mealEntryId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ async function deleteMealEntriesByMealId({
     void Promise.reject();
   }
 
-  const response = await fetch(`/api/mealEntries/meal/${mealId}`, {
+  const response = await fetch(`${baseUrl}/api/mealEntries/meal/${mealId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
