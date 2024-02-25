@@ -26,8 +26,10 @@ async function fetchProfileByUserId({
 
   const response = await fetch(`${baseUrl}/api/profiles/${userId}`, {
     headers: {
+      'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
   });
 
@@ -68,6 +70,7 @@ async function create({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
     body: requestBody,
   });

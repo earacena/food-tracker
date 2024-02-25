@@ -31,6 +31,7 @@ async function findMealsByUserId({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
   });
 
@@ -58,6 +59,7 @@ async function create({ name, userId, token }: CreateMealProps): Promise<Meal> {
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
     body: requestBody,
   });
@@ -86,6 +88,7 @@ async function deleteMeal({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
   });
 

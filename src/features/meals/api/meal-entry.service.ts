@@ -36,6 +36,7 @@ async function findMealEntriesByUserId({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
   });
 
@@ -75,6 +76,7 @@ async function create({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
     body: requestBody,
   });
@@ -105,6 +107,7 @@ async function deleteMealEntry({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
   });
 
@@ -129,6 +132,7 @@ async function deleteMealEntriesByMealId({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
   });
 

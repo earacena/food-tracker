@@ -77,6 +77,7 @@ async function create({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
     body: requestBody,
   });
@@ -107,6 +108,7 @@ async function deleteActivity({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
   });
 
@@ -131,6 +133,7 @@ async function deleteActivitiesByMealId({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
   });
 

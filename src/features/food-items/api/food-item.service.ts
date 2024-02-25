@@ -50,6 +50,7 @@ async function create({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
     body: requestBody,
   });
@@ -79,6 +80,7 @@ async function findFoodItemsByUserId({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
   });
 
@@ -109,6 +111,7 @@ async function deleteFoodItem({
       'Content-Type': 'application/json',
       accept: 'application/json',
       authentication: `Bearer ${token}`,
+      credentials: 'include',
     },
   });
 
