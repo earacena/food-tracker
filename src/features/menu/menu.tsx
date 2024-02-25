@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import { LogOut, Menu as MenuIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { getAuth } from 'firebase/auth';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { logger } from '@/utils/logger';
+import { AuthContext } from '../auth';
 
 interface LinkItem {
   link: string;
@@ -20,11 +21,14 @@ const linkItems: LinkItem[] = [
 
 export function Menu(): JSX.Element {
   const [open, setOpen] = useState<boolean>(false);
+  const auth = useContext(AuthContext);
 
   function logout(): void {
     logger.log('Logging out user');
 
     void getAuth().signOut();
+
+    setOpen(false);
   }
 
   return (
@@ -49,16 +53,18 @@ export function Menu(): JSX.Element {
           </Link>
         ))}
 
-        <Button
-          className="self-center mt-auto"
-          onClick={() => {
-            logout();
-          }}
-          variant="destructive"
-        >
-          <LogOut />
-          Sign Out
-        </Button>
+        {auth?.authUser !== null ? (
+          <Button
+            className="self-center mt-auto"
+            onClick={() => {
+              logout();
+            }}
+            variant="destructive"
+          >
+            <LogOut />
+            Sign Out
+          </Button>
+        ) : null}
       </SheetContent>
     </Sheet>
   );

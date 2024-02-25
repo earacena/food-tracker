@@ -36,7 +36,11 @@ export function UserCredentialProvider({
         setUserId(user.uid);
       } else {
         logger.log('User is currently logged out');
+
         setAuthUser(null);
+        setUserId(null);
+        setToken(null);
+
         const basePath = location.pathname.split('/')[1];
         if (basePath !== 'signin' && basePath !== 'signup') {
           navigate('/signin');
