@@ -5,7 +5,11 @@ import { Dashboard } from './features/dashboard';
 import { ProfileForm } from './features/profile';
 import { Toaster } from './components/ui/toaster';
 import { FoodItems, FoodItemForm } from './features/food-items';
-import { Activities, ActivityForm } from './features/activity';
+import {
+  Activities,
+  ActivityCalendar,
+  ActivityForm,
+} from './features/activity';
 import { Meals, MealEntryForm, MealForm } from './features/meals';
 import { Menu } from './features/menu';
 import { EmailLoginForm, EmailSignUpForm, LoginMenu } from './features/auth';
@@ -26,6 +30,7 @@ export function App(): JSX.Element {
           element={<Activities mainHeader pastActivity todayHeader />}
           path="/activities"
         />
+        <Route element={<ActivityCalendar />} path="/activities/calendar" />
         <Route element={<ActivityForm />} path="/activities/form" />
         <Route element={<LoginMenu />} path="/signin" />
         <Route element={<EmailLoginForm />} path="/signin/email" />
