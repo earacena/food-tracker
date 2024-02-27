@@ -62,7 +62,7 @@ export function ActivityForm(): JSX.Element {
       await queryClient.invalidateQueries({
         queryKey: ['activities', auth?.userId, auth?.token],
       });
-      navigate('/activities');
+      navigate('/');
     },
     onError: (error) => {
       logger.logError(error);
@@ -136,7 +136,7 @@ export function ActivityForm(): JSX.Element {
                       <SelectValue placeholder="Select food item consumed" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
+                  <SelectContent className="max-h-72">
                     {foodItems?.map((f) => (
                       <SelectItem key={f.id} value={f.id.toString()}>
                         {f.foodName}
