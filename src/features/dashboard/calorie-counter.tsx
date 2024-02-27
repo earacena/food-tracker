@@ -119,7 +119,7 @@ export function CalorieCounter(): JSX.Element {
 
   if (isLoadingActivities || isLoadingProfile) {
     return (
-      <div className="flex flex-row items-end">
+      <div className="flex flex-row items-end mx-auto">
         <Skeleton className="h-12 w-32" />
         <span className="text-slate-400">/</span>
         <Skeleton className="h-5 w-12" />
