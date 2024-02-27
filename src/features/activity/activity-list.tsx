@@ -14,11 +14,15 @@ import { useActivities } from './hooks/use-activities';
 interface ActivityListProps {
   todayHeader: boolean;
   pastActivity: boolean;
+  formButton: boolean;
+  date?: Date;
 }
 
 export function ActivityList({
   todayHeader,
   pastActivity,
+  formButton,
+  date,
 }: ActivityListProps): JSX.Element {
   const navigate = useNavigate();
   const { data: foodItems } = useFoodItems();
@@ -26,8 +30,11 @@ export function ActivityList({
   const { data: mealEntries } = useMealEntries();
   const { data: activities, isLoading } = useActivities();
 
+  // Either the day is supplied or a new current date object is created for comparison
   function sameDayFilter(a: Activity): boolean {
-    return isSameDay(a.createdAt, new Date());
+    return date !== undefined
+      ? isSameDay(a.createdAt, date)
+      : isSameDay(a.createdAt, new Date());
   }
 
   function notSameDayFilter(a: Activity): boolean {
@@ -37,10 +44,12 @@ export function ActivityList({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center">
-        <Button className="my-1" disabled>
-          <PlusIcon />
-          Add New Activity
-        </Button>
+        {formButton ? (
+          <Button className="my-1" disabled>
+            <PlusIcon />
+            Add New Activity
+          </Button>
+        ) : null}
         {todayHeader ? (
           <span className="my-3">Today&apos;s Activities</span>
         ) : null}
@@ -55,15 +64,17 @@ export function ActivityList({
 
   return (
     <div className="flex flex-col items-center">
-      <Button
-        className="my-1"
-        onClick={() => {
-          navigate('/activities/form');
-        }}
-      >
-        <PlusIcon />
-        Add New Activity
-      </Button>
+      {formButton ? (
+        <Button
+          className="my-1"
+          onClick={() => {
+            navigate('/activities/form');
+          }}
+        >
+          <PlusIcon />
+          Add New Activity
+        </Button>
+      ) : null}
 
       {todayHeader ? (
         <span className="my-3">Today&apos;s Activities</span>
@@ -73,7 +84,9 @@ export function ActivityList({
         <ul>
           {activities.filter(sameDayFilter).length === 0 && (
             <span className="text-sm text-slate-500 my-5">
-              Nothing here, record some activity!
+              {date !== undefined
+                ? 'No activities recorded on this date.'
+                : 'Nothing here, record some activity!'}
             </span>
           )}
 
