@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-test:
+  build-test-deploy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -25,12 +25,9 @@ jobs:
       run: npm run build --if-present
     - name: 'Run tests'
       run: npm test -- --silent
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Wait for Render Deployment
-        uses: bounceapp/render-action@0.6.0
-        with:
-          render-token: ${{ secrets.RENDER_TOKEN }}
-          github-token: ${{ secrets.GH_TOKEN }}
-          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+    - name: Wait for Render Deployment
+      uses: bounceapp/render-action@0.6.0
+      with:
+        render-token: ${{ secrets.RENDER_TOKEN }}
+        github-token: ${{ secrets.GH_TOKEN }}
+        service-id: ${{ secrets.RENDER_SERVICE_ID }}
